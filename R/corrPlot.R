@@ -1,22 +1,29 @@
 corPlot <- function(eset, samples=NULL, grouping=NULL, ref=NULL, ...)
 {
   #0. assess arguments:
-  stopifnot(inherits(eset, "ExpressionSet"))
+  stopifnot(inherits(eset, "ExpressionSet")|(is.numeric(eset)&is.matrix(eset)))
+  
+  if(inherits(eset, "ExpressionSet"))
+    eset <- exprs(eset)
+  
   if (!is.null(samples)){
     notValidSamples <- switch(class(samples),
-                              "character"=!(samples %in% sampleNames(eset)),
+                              "character"=!(samples %in% colnames(eset)),
                               "numeric"=!(samples %in% 1:ncol(eset)))
     if (any(notValidSamples))
       stop(paste("Samples",samples[notValidSamples],"not defined!\n"))
   } else {
-    samples <-  1:ncol(eset)
+    if (is.null(colnames(eset)))
+      samples <- 1:ncol(eset)
+    else
+      samples <- colnames(eset)
   }
   if (!is.null(grouping)){
     stopifnot(length(grouping)==ncol(eset))
     grouping <- factor(grouping)
   } else {
     groupvec <- rep(NA, ncol(eset))
-    names(groupvec)   <- sampleNames(eset)
+    names(groupvec)   <- colnames(eset)
     groupvec[samples] <- samples
     grouping <- factor(groupvec)
   }
@@ -30,7 +37,7 @@ corPlot <- function(eset, samples=NULL, grouping=NULL, ref=NULL, ...)
     groupmat[inGroup,i] <- 1/nInGroup
   }
   # compute group-wise means for each probe
-  datmat <- exprs(eset)%*%groupmat
+  datmat <- eset%*%groupmat
   colnames(datmat) <- as.character(levels(grouping))    
   pairs(datmat, lower.panel=panel.scatter, upper.panel=panel.cor)
   invisible(NULL)
@@ -47,11 +54,11 @@ panel.scatter <- function(x, y, pch=".", col="blue", nMaxPoints=1e5){
   abline(0, 1, col="red")
 }#panel.scatter
 
-panel.cor <- function(x, y, digits=3, prefix="CC ", cex.cor)
+panel.cor <- function(x, y, digits=3, prefix="CC ",  cex.cor)
 {
   usr <- par("usr"); on.exit(par(usr))
   par(usr = c(0, 1, 0, 1))
-  r <- abs(cor(x, y))
+  r <- cor(x, y, method="spearman", use="complete.obs")
   txt <- format(c(r, 0.123456789), digits=digits)[1]
   txt <- paste(prefix, txt, sep="")
   if(missing(cex.cor)) cex <- 0.8/strwidth(txt)

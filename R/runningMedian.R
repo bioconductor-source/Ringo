@@ -1,31 +1,3 @@
-runningMedians <- function(positions, scores, cutoff) {
-  stopifnot(identical(length(positions), length(scores)),
-            cutoff <= max(positions), !is.unsorted(positions))
-  # non-C++ version:
-  neighborMedians   <- vector("numeric",length(positions))
-  diffpos <- diff(positions)
-  posLimits <- range(positions)
-  startidx <- 1
-  endidx <- 1
-  curridx <- 1
-  extendedPositions <- c(positions,Inf)
-  while (curridx <= length(positions)){
-    # up to which distance should scores be added to lis
-    while (positions[curridx] + cutoff >= extendedPositions[endidx+1]){
-      endidx = endidx +1} # while probes are close enough, add them to right
-    # now save scores:
-    neighborMedians[curridx] <- median(scores[startidx:endidx])
-    # move index one right:
-    if (curridx==length(positions)) break
-    curridx = curridx + 1
-    while (positions[startidx] + cutoff < positions[curridx]){
-      startidx = startidx + 1 } # drop those to far left
-      # do we need to drop scores from the left?
-  }# while (curridx <= length(positions))
-  names(neighborMedians) <- positions
-  return(neighborMedians)
-}# runningMedians
-
 
 sliding.median <- function(positions, scores, half.width, return.counts=TRUE) {
   stopifnot(!is.unsorted(positions), length(positions) == length(scores), half.width >= 0)
@@ -44,7 +16,6 @@ sliding.median <- function(positions, scores, half.width, return.counts=TRUE) {
 computeRunningMedians <- function(xSet, probeAnno, modColumn="Cy5", allChr=c(1:19,"X","Y"), winHalfSize=400, min.probes = 5, combineReplicates=FALSE, verbose=TRUE)
 {
   stopifnot(inherits(xSet,"ExpressionSet"), all(is.character(allChr)))
-  #all.mods <- unique(pData(xSet)[[modColumn]])
   # initialize result matrix:
   if (combineReplicates)
     grouping <- factor(pData(xSet)[[modColumn]])
@@ -59,8 +30,6 @@ computeRunningMedians <- function(xSet, probeAnno, modColumn="Cy5", allChr=c(1:1
     chrend <- get(paste(chr,"end",sep="."), env=probeAnno)
     chrmid <- round((chrsta+chrend)/2)
     chridx <- get(paste(chr,"index",sep="."), env=probeAnno)      
-    # take mean over replicated before computing run median
-    #chrrm <- runningMedians(chrmid, rowMeans(exprs(xSet)[chridx,takeSample, drop=FALSE]), winHalfSize) # take mean over replicated before computing run median
     
     for (i in 1:nlevels(grouping)){
       modSamples   <- which(grouping == levels(grouping)[i])

@@ -37,7 +37,7 @@ sliding.median(positions, scores, half.width, return.counts = TRUE)
   If argument \code{return.counts} is \code{FALSE}, only a vector
   of the medians is returned, with the positions as \code{names}.
 }
-\author{Oleg Sklyer and Joern Toedling}
+\author{Oleg Sklyar and Joern Toedling}
 \seealso{\code{\link[stats]{median}}}
 \examples{
   sampleSize <- 1000

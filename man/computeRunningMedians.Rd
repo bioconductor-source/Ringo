@@ -42,7 +42,7 @@ combineReplicates = FALSE, verbose = TRUE)
 }
 \author{Joern Toedling \email{toedling@ebi.ac.uk}}
 \seealso{\code{\link[Biobase]{ExpressionSet}},
-  \code{\link{runningMedians}}}
+  \code{\link{sliding.median}}}
 \examples{
   current.dir <- getwd()
   setwd(system.file("exData",package="Ringo"))

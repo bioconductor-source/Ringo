@@ -1,5 +1,4 @@
 \name{Ringo-internal}
-\alias{compResiduals}
 \alias{clusters}
 \alias{panel.scatter}
 \alias{panel.cor}

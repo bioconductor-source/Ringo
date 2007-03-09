@@ -3,14 +3,15 @@
 \alias{corPlot}
 \title{Function to plot correlation of different samples}
 \description{
-  This function can be used to visualize the correlation in expression
-  data between different samples or sample groups.
+  This function can be used to visualize the (rank) correlation in
+  expression data between different samples or sample groups.
 }
 \usage{
 corPlot(eset, samples = NULL, grouping = NULL, ref = NULL,...)
 }
 \arguments{
-  \item{eset}{object of class \code{ExpressionSet} holding the array data}
+  \item{eset}{object of class \code{ExpressionSet} holding the array
+    data, or a numeric matrix instead}
   \item{samples}{which samples' expression shall be correlated to each
     other; either a numeric vector of sample numbers in the
     \code{ExpressionSet} or a character vector that must be contained in
@@ -27,7 +28,7 @@ corPlot(eset, samples = NULL, grouping = NULL, ref = NULL,...)
   \item{\dots}{additional arguments, not used yet}
 }
 \value{
-  No useful return. The funciton is called for its side-effect to
+  No useful return. The function is called for its side-effect to
   produce the pairs plot.
 }
 \author{Joern Toedling}
