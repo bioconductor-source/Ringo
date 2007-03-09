@@ -1,0 +1,3 @@
+SlideNumber	FileNameCy3	FileNameCy5	Set	Cell-line	Cy3	Cy5
+56577	56577_532_pair.txt	56577_635_pair.txt	1	HL1	input	H3ac
+55773	55773_532_pair.txt	55773_635_pair.txt	2	HL1	input	H3ac

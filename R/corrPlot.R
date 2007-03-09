@@ -1,0 +1,59 @@
+corPlot <- function(eset, samples=NULL, grouping=NULL, ref=NULL, ...)
+{
+  #0. assess arguments:
+  stopifnot(inherits(eset, "ExpressionSet"))
+  if (!is.null(samples)){
+    notValidSamples <- switch(class(samples),
+                              "character"=!(samples %in% sampleNames(eset)),
+                              "numeric"=!(samples %in% 1:ncol(eset)))
+    if (any(notValidSamples))
+      stop(paste("Samples",samples[notValidSamples],"not defined!\n"))
+  } else {
+    samples <-  1:ncol(eset)
+  }
+  if (!is.null(grouping)){
+    stopifnot(length(grouping)==ncol(eset))
+    grouping <- factor(grouping)
+  } else {
+    groupvec <- rep(NA, ncol(eset))
+    names(groupvec)   <- sampleNames(eset)
+    groupvec[samples] <- samples
+    grouping <- factor(groupvec)
+  }
+  if (!is.null(ref)) grouping = relevel(grouping,ref=ref)
+  ngroups  <- nlevels(grouping)
+  groupmat <- matrix(0, nrow=ncol(eset), ncol=ngroups)
+  for (i in 1:ngroups){
+    thisLevel <- levels(grouping)[i]
+    inGroup <- (grouping == thisLevel)
+    nInGroup <- sum(inGroup, na.rm=TRUE)
+    groupmat[inGroup,i] <- 1/nInGroup
+  }
+  # compute group-wise means for each probe
+  datmat <- exprs(eset)%*%groupmat
+  colnames(datmat) <- as.character(levels(grouping))    
+  pairs(datmat, lower.panel=panel.scatter, upper.panel=panel.cor)
+  invisible(NULL)
+}#corPlot
+
+panel.scatter <- function(x, y, pch=".", col="blue", nMaxPoints=1e5){
+  stopifnot(length(x)==length(y))
+  if (length(x)>nMaxPoints){
+    randomPoints <- sample(1:length(x), nMaxPoints)
+    x <- x[randomPoints]
+    y <- y[randomPoints]
+  }# if (length(x)>nMaxPoints)
+  points(x, y, pch=pch, col=col)
+  abline(0, 1, col="red")
+}#panel.scatter
+
+panel.cor <- function(x, y, digits=3, prefix="CC ", cex.cor)
+{
+  usr <- par("usr"); on.exit(par(usr))
+  par(usr = c(0, 1, 0, 1))
+  r <- abs(cor(x, y))
+  txt <- format(c(r, 0.123456789), digits=digits)[1]
+  txt <- paste(prefix, txt, sep="")
+  if(missing(cex.cor)) cex <- 0.8/strwidth(txt)
+  text(0.5, 0.5, txt, cex = cex * r)
+}#panel.cor

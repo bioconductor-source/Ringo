@@ -1,0 +1,37 @@
+\name{readNimblegen}
+\alias{readNimblegen}
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{Function to read in Nimblegen Intensity Text Files}
+\description{
+  Function to read in Nimblegen Intensity Text Files into an
+  \code{RGList}. Calls some other functions for actual reading of data.
+  This function is to be used with two-color NimbleGen array data.
+  Use the function \code{read.xysfiles} of the \code{oligo} package
+  for single-color data.
+}
+\usage{
+readNimblegen(hybesFile, spotTypesFile, path = getwd(), verbose = TRUE, ...)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{hybesFile}{Name of the file describing the arrays. In
+    \code{limma} this file would be called targets file.}
+  \item{spotTypesFile}{spot types also used by \code{limma}}
+  \item{path}{path to the files \code{hybesFile} and
+    \code{spotTypesFile} and also the intensity files.}
+  \item{verbose}{logical; progress output to STDOUT?}
+  \item{\dots}{futher arguments passed on the \code{readNgIntensitiesTxt}}
+}
+\value{
+  Returns raw intensity values in form of an \code{RGList}.
+}
+\author{Joern Toedling \email{toedling@ebi.ac.uk}}
+\seealso{\code{\link[limma]{rglist}},
+  \code{\link[limma]{readTargets}}}
+\examples{
+  exDir <- system.file("exData",package="Ringo")
+  exRG <- readNimblegen("example_files.txt","spottypes.txt",path=exDir)
+  print(exRG)
+}
+\keyword{file}% at least one, from doc/KEYWORDS
+\keyword{IO}% at least one, from doc/KEYWORDS

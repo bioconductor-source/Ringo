@@ -1,0 +1,6 @@
+SpotType	GENE_EXPR_OPTION	PROBE_ID	Color
+Probe	BLOCK1	*	black
+Negative	NGS_CONTROLS	*	yellow
+H_Code	H_CODE	*	red
+V_Code	V_CODE	*	blue
+Random	RANDOM	*	green
