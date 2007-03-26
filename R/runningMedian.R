@@ -12,10 +12,23 @@ sliding.median <- function(positions, scores, half.width, return.counts=TRUE) {
   return(res)
 }#sliding.median
 
+sliding.quantile <- function(positions, scores, half.width, prob=0.5, return.counts=TRUE) {
+  stopifnot(!is.unsorted(positions), length(positions) == length(scores), half.width >= 0, prob >= 0, prob <= 1)
+  res <- .Call("sliding_quantile", as.integer(positions), as.numeric(scores), as.integer(half.width), as.numeric(prob), PACKAGE="Ringo")
+  if (return.counts){
+    colnames(res) <- c("quantile","count")
+    rownames(res) <- positions
+  } else {
+    res <- res[,1, drop=TRUE]
+    names(res) <- positions
+  }
+  return(res)
+}#sliding.quantile
 
-computeRunningMedians <- function(xSet, probeAnno, modColumn="Cy5", allChr=c(1:19,"X","Y"), winHalfSize=400, min.probes = 5, combineReplicates=FALSE, verbose=TRUE)
+computeRunningMedians <- function(xSet, probeAnno, modColumn="Cy5", allChr=c(1:19,"X","Y"), winHalfSize=400, min.probes=5, quant=0.5, combineReplicates=FALSE, verbose=TRUE)
 {
-  stopifnot(inherits(xSet,"ExpressionSet"), all(is.character(allChr)))
+  stopifnot(inherits(xSet,"ExpressionSet"), all(is.character(allChr)),
+            is.numeric(quant), (quant>=0)&(quant<=1), length(quant)==1)
   # initialize result matrix:
   if (combineReplicates)
     grouping <- factor(pData(xSet)[[modColumn]])
@@ -37,9 +50,11 @@ computeRunningMedians <- function(xSet, probeAnno, modColumn="Cy5", allChr=c(1:1
       combined.dat <- as.vector(t(exprs(xSet)[chridx,modSamples,drop=FALSE]))
       # as.vector(t(X)) leads to columns (samples) being appended one value by one value into long vector
       combined.pos <- rep(chrmid, each=length(modSamples))
-      slidingRes <- sliding.median(positions=combined.pos, scores=combined.dat, half.width=winHalfSize, return.counts=TRUE)
+      ## old version: only median possible
+      #slidingRes <- sliding.median(positions=combined.pos, scores=combined.dat, half.width=winHalfSize, return.counts=TRUE)
+      slidingRes <- sliding.quantile(positions=combined.pos, scores=combined.dat, half.width=winHalfSize, prob=quant, return.counts=TRUE)
       slidingRes <- slidingRes[seq(1, nrow(slidingRes)+1-length(modSamples), by=length(modSamples)),,drop=FALSE]
-      chrrm <- slidingRes[,"median"]
+      chrrm <- slidingRes[,"quantile"] #chrrm <- slidingRes[,"median"]
       slidingRes[,"count"] <- slidingRes[,"count"]/length(modSamples)
       areBelow <- slidingRes[,"count"] < min.probes
       if (any(areBelow)) chrrm[areBelow] <- NA

@@ -2,12 +2,13 @@
 \alias{computeRunningMedians}
 \title{Function to compute running medians on a tiling expression set}
 \description{
-  Function to compute running medians on a tiling expression set 
+  Function to compute running medians (or other quantiles) on a tiling
+  expression set.
 }
 \usage{
 computeRunningMedians(xSet, probeAnno, modColumn = "Cy5",
 allChr = c(1:19, "X", "Y"), winHalfSize = 400, min.probes = 5,
-combineReplicates = FALSE, verbose = TRUE)
+quant = 0.5, combineReplicates = FALSE, verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,7 +25,10 @@ combineReplicates = FALSE, verbose = TRUE)
   \item{min.probes}{integer; if less probes are in the sliding window,
     NA instead of the median is returned. This meant to avoid to
     computing non-meaningful medians. If unwanted, set this to 1 or
-    less}
+    less} 
+  \item{quant}{numeric; which quantile to use for the smoothing.
+    The default \code{0.5} means compute the median over the values in
+    the sliding window.}
   \item{combineReplicates}{logical; should the median not be computed
     over individual samples in the ExpressionSet, but should samples be
     combined according to the column \code{modColumn} of the
@@ -42,7 +46,7 @@ combineReplicates = FALSE, verbose = TRUE)
 }
 \author{Joern Toedling \email{toedling@ebi.ac.uk}}
 \seealso{\code{\link[Biobase]{ExpressionSet}},
-  \code{\link{sliding.median}}}
+  \code{\link{sliding.quantile}}}
 \examples{
   current.dir <- getwd()
   setwd(system.file("exData",package="Ringo"))
