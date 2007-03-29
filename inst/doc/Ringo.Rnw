@@ -1,6 +1,6 @@
 %\VignetteIndexEntry{R Investigation of NimbleGen Oligoarrays}
 %\VignetteDepends{Ringo}
-%\VignetteKeywords{microarray NimbleGen nimblegen}
+%\VignetteKeywords{microarray ChIP-chip NimbleGen nimblegen}
 %\VignettePackage{Ringo} % name of package
 
 %%%% HEAD SECTION: START EDITING BELOW %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,14 +66,19 @@ set.seed(123)
 \section{Introduction}
 
 The package \Rpackage{Ringo} deals with the analysis of two-color
-oligonucleotide microarrays from the company 
+oligonucleotide microarrays used in ChIP-chip projects. 
+The package was started to facilitate the analysis of
+two-color microarrays from the company 
 NimbleGen\footnote{for NimbleGen one-color microarrays,
-we recommend the Bioconductor package \Rpackage{oligo}}, 
-which for example can be used in ChIP-chip projects. 
+we recommend the Bioconductor package \Rpackage{oligo}},
+but the package has a modular design,
+such that the platform-specific functionality is encapsulated
+and analogous two-color tiling array platforms can also be
+processed.
 The package employs functions from other
 packages of the Bioconductor project \citep{bioconductor}
-and provides additional NimbleGen-specific and
-ChIP-chip-specific functionalities.
+and provides additional
+ChIP-chip-specific and NimbleGen-specific functionalities.
 
 <<loadpackage, results=hide>>=
 library("Ringo")
@@ -134,7 +139,12 @@ head(exRG$genes)
 exRG$targets
 @ 
 
-\section{Quality control}
+The user can alternatively supply raw two-color microarray readouts
+from other platforms in \Rclass{RGList} format,
+and the other functions of \Rpackage{Ringo} can work equally well on
+that data.
+
+\section{Quality assessment}
 
 The \Rfunction{image} function allows us to look at the spatial 
 distribution of the intensities on a chip. This can be useful to
@@ -181,7 +191,13 @@ head(get("8.start",exProbeAnno))
 head(get("8.index",exProbeAnno))
 @ 
 
-In addition, this data file also contains a \emph{GFF (General Feature Format)}
+The package's \texttt{scripts} directory contains a script
+\texttt{makeProbeAnno.R} that demonstrates how to generate such a
+mapping object either from a NimbleGen \texttt{POS} file or
+from result files of aligning the probe sequences to the genome.
+
+In addition, the data file loaded above also contains a 
+\emph{GFF (General Feature Format)}
 file of all transcripts on mouse chromosome 8 annotated in the 
 \href{http://www.ensembl.org/Mus_musculus/index.html}{Ensembl} database 
 (version 39, June 2006).
@@ -212,7 +228,7 @@ later on during data analysis.
 
 \section{Preprocessing}
 
-Following quality control of the raw data,
+Following quality assessment of the raw data,
 we perform normalization of the probe intensities
 and derive fold changes of probes' intensities in the enriched sample
 divided by their intensities in the non-enriched \emph{input} sample
@@ -308,7 +324,9 @@ apart from another affected position in the region (we require a certain
 probe spacing to have confidence in detected peaks)
 \end{itemize}
 
-Setting the threshold $y_0$ is an important, but non-trivial, issue.
+For setting the threshold $y_0$, one has to assess the 
+expected (smoothed) probe levels in non-enriched genomic regions,
+i.e. the \emph{null distribution} of probe levels.
 In a perfect world, we could use a log ratio of $0$ as definite cut-off.
 In this case the ``enriched'' DNA and the input DNA sample would be
 present in equal amounts, so no antibody-bound epitope, i.e. a modified
@@ -395,12 +413,18 @@ and it is reassuring that the algorithm recovers it as well.
 
 \section{Concluding Remarks}
 
-The package \Rpackage{Ringo} is meant to simplify analysis of data
-gained from NimbleGen two-color microarrays. We constructed it
-during the analysis of a ChIP-chip experiment for the 
-genome-wide identification of modified histone sites 
-and the package contains an ad-hoc algorithm for this
-purpose as well. While the algorithm worked quite well on our data, 
+The package \Rpackage{Ringo} aims to facilitate the analysis 
+ChIP-chip readouts.
+We constructed it during the analysis of a ChIP-chip experiment for the 
+genome-wide identification of modified histone sites on data
+gained from NimbleGen two-color microarrays. 
+Analogous two-color microarray platforms, however, can also be processed.
+Key functionalities of \Rpackage{Ringo} are data read-in,
+quality assessment, preprocessing of the raw data,
+and visualization of the raw and preprocessed data.
+The package contains a heuristic algorithm for the detection of
+for ChIP-enriched genomic regions, too. 
+While this algorithm worked quite well on our data, 
 we do not claim it to be the definite algorithm for that task.
 
 This vignette was generated using the following package versions:

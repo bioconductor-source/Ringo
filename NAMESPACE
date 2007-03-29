@@ -1,0 +1,15 @@
+useDynLib("Ringo")
+
+import("methods") 
+import("graphics") 
+
+export("autocor", "chipAlongChrom","corPlot",
+       "computeRunningMedians", "sliding.median","sliding.quantile",
+       "findPeaksOnSmoothed", "peakByThreshold","newPeak","relatePeaks",
+       "preprocess","readNimblegen",
+       "as.data.frame.peakList")
+
+S3method("plot", "peak")
+S3method("plot", "autocor.result")
+S3method("image", "RGList")
+S3method("as.data.frame", "peakList")

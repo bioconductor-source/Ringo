@@ -133,6 +133,19 @@ extern "C" {
     return res;
   } 
 
+
+ /* This next function is meant to replace the sliding.median function
+     above. It uses a different data structure, a linked list, and in 
+     most use cases it is faster than the sliding.median function.
+     It also allows the computation of any quantile in the window, not
+     only the median.
+     Again, irregular spacing of data points.
+     The number of points inside the window is returned in addition
+     to the quantile value.
+
+     Written by Oleg Sklyar and Joern Toedling, March 2007.
+  */
+
   SEXP
   sliding_quantile(SEXP ind, SEXP val, SEXP hlfsize, SEXP probability) {
     /* ind and x must be passed sorted! ensured in R */
