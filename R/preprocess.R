@@ -41,8 +41,21 @@ asExprSet <- function(myMA){
 
 nimblegenNorm <- function(myRG, ...){
   # function to compute Nimblegen's scaled log ratios
-  require(affy)
   stopifnot(inherits(myRG, "RGList"), all(c("genes","R","G","targets") %in% names(myRG)))
+
+  ## copied from 'affy', no need to include the whole package because of this
+  tukey.biweight <- function (x, c = 5, epsilon = 1e-04)
+    {
+      m <- median(x)
+      s <- median(abs(x - m))
+      u <- (x - m)/(c * s + epsilon)
+      w <- rep(0, length(x))
+      i <- abs(u) <= 1
+      w[i] <- ((1 - u^2)^2)[i]
+      t.bi <- sum(w * x)/sum(w)
+      return(t.bi)
+    }
+
   srat <- log2(myRG$R) - log2(myRG$G)
   srat.tbw <- apply(srat, 2, tukey.biweight, ...)
   stopifnot(length(srat.tbw)==ncol(myRG$R))

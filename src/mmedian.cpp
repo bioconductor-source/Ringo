@@ -21,10 +21,7 @@ extern "C" {
 
   /* HEADER: LOGISTICS MOSTLY IMPORTANT FOR WINDOWS DLL */
 
-  /* this part just does not work so far, maybe needs to be in a .c file 
-     or within extern "C"*/
-
-  static R_CallMethodDef Ringo_calls[] = {
+   static R_CallMethodDef Ringo_calls[] = {
     {"sliding_median", (DL_FUNC) &sliding_median, 3},
     {"sliding_quantile", (DL_FUNC) &sliding_quantile, 4},
 
@@ -86,8 +83,8 @@ extern "C" {
       rval[i] = R_NaN;
 
     int first = 0, last = 0;
-    // we assume indexes, and therefore x, to be in accending order!
-    // iterate over all positions, center the sliding window at position i:
+    /* we assume indexes, and therefore x, to be in accending order!
+       iterate over all positions, center the sliding window at position i: */
     for (i = 0; i < nval; i++ ) {
 
       /* see if due to moving the window, values at left side are dropped
@@ -131,7 +128,7 @@ extern "C" {
     UNPROTECT(nprotect);
 
     return res;
-  } 
+  } // end of sliding_median
 
 
  /* This next function is meant to replace the sliding.median function
@@ -160,7 +157,7 @@ extern "C" {
     int nval = LENGTH(ind);
     double prob = REAL(probability)[0];
 
-    /* results, initialized with NA */
+    /* result, initialized with NA */
     PROTECT( res = allocVector( REALSXP, nval * 2) );
     nprotect++;
     double * rval = REAL(res);
@@ -180,7 +177,7 @@ extern "C" {
 
     int first = 0, last = -1, prevlast, pos;
 
-    for (i = 0; i < nval; i++ ) { // position of the frame middle
+    for (i = 0; i < nval; i++ ) { // i is position of the frame middle
       /* calculate first index */
       for (; first <= last && x[first] < x[i] - hs; ++first);
       /* drop values from the list that have indexes below first */
@@ -193,7 +190,7 @@ extern "C" {
             tmpyit = yit; yit++;
             xx.erase(tmpxit);
             yy.erase(tmpyit);
-            continue; // moves to next loop iteration, as "next" in R
+            continue; // moves to next loop iteration, like "next" in R
           }
           xit++;
           yit++;
@@ -238,17 +235,22 @@ extern "C" {
 
       if ( yy.size() == 0 ) {
         UNPROTECT( nprotect ); // let the garbage collector delete res, which is not returned
-        error("zero frame size in the sliding.median C-routine");
+        error("zero frame size in the sliding.quantile C-routine");
       }
 
-      /* now median of sorted list of odd length is defined as the element in
-       * in the middle element. If list has even length it's the mean of the
-       * the two elements in the middle */
+      /* now the q (0<=q<=1) quantile of sorted list yy of length n is defined 
+       * as follows:  first compute  k = (q * n)
+       * then the quantile is
+       * yy[k] if k is integer
+       * yy[floor(k)] + q*(yy[ceiling(k)]-yy[floor(k)]),
+       * the value of the element floor(k) plus the q proportion of the 
+       * difference between it and the next higher element */
+
       pos = (int)((yy.size() - 1) * prob);
       yit = yy.begin();
       for ( j = 0; j < pos; j++ ) yit++;
       rval[i] = *yit;
-      if ( (int)( pos / prob ) + 1 != yy.size() ) {
+      if ( (int)( pos / prob ) + 1 != (int) yy.size() ) {
         yit++;
         rval[i] = *yit * prob + rval[i] * (1.0 - prob);
       }

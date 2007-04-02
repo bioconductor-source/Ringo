@@ -1,7 +1,8 @@
 
 sliding.median <- function(positions, scores, half.width, return.counts=TRUE) {
   stopifnot(!is.unsorted(positions), length(positions) == length(scores), half.width >= 0)
-  res <- .Call("sliding_median", as.integer(positions), as.numeric(scores), as.integer(half.width), PACKAGE="Ringo")
+  res <- .Call(ringoSlidingMedian, as.integer(positions), as.numeric(scores), as.integer(half.width))
+  #res <- .Call("sliding_median", as.integer(positions), as.numeric(scores), as.integer(half.width), PACKAGE="Ringo")
   if (return.counts){
     colnames(res) <- c("median","count")
     rownames(res) <- positions
@@ -14,7 +15,8 @@ sliding.median <- function(positions, scores, half.width, return.counts=TRUE) {
 
 sliding.quantile <- function(positions, scores, half.width, prob=0.5, return.counts=TRUE) {
   stopifnot(!is.unsorted(positions), length(positions) == length(scores), half.width >= 0, prob >= 0, prob <= 1)
-  res <- .Call("sliding_quantile", as.integer(positions), as.numeric(scores), as.integer(half.width), as.numeric(prob), PACKAGE="Ringo")
+  res <- .Call(ringoSlidingQuantile, as.integer(positions), as.numeric(scores), as.integer(half.width), as.numeric(prob))
+  #res <- .Call("sliding_quantile", as.integer(positions), as.numeric(scores), as.integer(half.width), as.numeric(prob), PACKAGE="Ringo")
   if (return.counts){
     colnames(res) <- c("quantile","count")
     rownames(res) <- positions

@@ -1,4 +1,4 @@
-useDynLib("Ringo")
+useDynLib("Ringo", ringoSlidingQuantile=sliding_quantile, ringoSlidingMedian=sliding_median)
 
 import("methods") 
 import("graphics") 
@@ -6,7 +6,7 @@ import("graphics")
 export("autocor", "chipAlongChrom","corPlot",
        "computeRunningMedians", "sliding.median","sliding.quantile",
        "findPeaksOnSmoothed", "peakByThreshold","newPeak","relatePeaks",
-       "preprocess","readNimblegen",
+       "preprocess","nimblegenNorm","readNimblegen",
        "as.data.frame.peakList")
 
 S3method("plot", "peak")

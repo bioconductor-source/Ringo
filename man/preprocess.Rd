@@ -61,5 +61,12 @@ preprocess(myRG, method = "vsn", returnMAList=FALSE, verbose=TRUE, ...)
    sampleNames(exampleX) <- paste(exRG$targets$Cell.line,
                        exRG$targets$Cy5,exRG$targets$Set,sep=".")
    print(exampleX)
+
+   ### compare VSN to NimbleGen's tukey-biweight normalization
+   exampleX.NG <- preprocess(exRG, method="nimblegen")
+   sampleNames(exampleX.NG) <- sampleNames(exampleX)
+   if (interactive())
+     corPlot(cbind(exprs(exampleX),exprs(exampleX.NG)),
+       grouping=rep(c("VSN normalized","NimbleGen normalized"),each=2))
 }
 \keyword{manip}% at least one, from doc/KEYWORDS

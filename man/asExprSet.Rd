@@ -23,4 +23,4 @@
   exMA  <- preprocess(exRG, "none", returnMAList=TRUE)
   exX   <- Ringo:::asExprSet(exMA)
 }
-\keyword{manip}% at least one, from doc/KEYWORDS
+\keyword{internal}% at least one, from doc/KEYWORDS
