@@ -429,7 +429,7 @@ we do not claim it to be the definite algorithm for that task.
 
 This vignette was generated using the following package versions:
 
-<<sessionInfo, results=tex>>=
+<<sessionInfo, echo=FALSE, results=tex>>=
 toLatex(sessionInfo())
 @
 
