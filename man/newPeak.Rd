@@ -19,7 +19,7 @@ newPeak(name, chr, start, end, cellType = NULL, modification, maxPeak, score = N
   \item{modification}{required character vector describing the
     modification or characteristic for which fragments were supposedly
     enriched in immuno-precipitation step}
-  \item{maxPeak}{numeric; maximal probe level in teh peak}
+  \item{maxPeak}{numeric; maximal probe level in the peak}
   \item{score}{optional numeric score of the peak}
   \item{probes}{optional character vector of probe identifiers of probes
   that make up the peak}

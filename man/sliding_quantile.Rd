@@ -34,7 +34,7 @@ sliding.quantile(positions, scores, half.width, prob = 0.5,
   Matrix with two columns:
   \item{quantile}{medians over running window centered at the
     positions that were specified in argument \code{positions}.}
-  \item{count}{number of points that were considerd for computing
+  \item{count}{number of points that were considered for computing
     the median at each position}
   These positions are given as \code{row.names} of the resulting vector.
   If argument \code{return.counts} is \code{FALSE}, only a vector

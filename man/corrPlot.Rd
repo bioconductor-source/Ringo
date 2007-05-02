@@ -22,7 +22,7 @@ corPlot(eset, samples = NULL, grouping = NULL, ref = NULL,...)
   samples. If two or more samples are assigned into the same group,
   the mean over these samples' expression values is taken before
   computing correlation. Default NULL means assess correlation between
-  indivdidual samples only.}
+  individual samples only.}
   \item{ref}{reference than only applies if argument \code{grouping} is
     given; see \code{\link[stats]{relevel}}}
   \item{\dots}{additional arguments, not used yet}

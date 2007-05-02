@@ -20,7 +20,7 @@ readNimblegen(hybesFile, spotTypesFile, path = getwd(), verbose = TRUE, ...)
   \item{path}{path to the files \code{hybesFile} and
     \code{spotTypesFile} and also the intensity files.}
   \item{verbose}{logical; progress output to STDOUT?}
-  \item{\dots}{futher arguments passed on the \code{readNgIntensitiesTxt}}
+  \item{\dots}{further arguments passed on the \code{readNgIntensitiesTxt}}
 }
 \value{
   Returns raw intensity values in form of an \code{RGList}.

@@ -28,7 +28,7 @@ ftr2xys(ftr.file, path=getwd())
 %\references{ ~put references to the literature/web site here ~ }
 \author{Joern Toedling \email{toedling@ebi.ac.uk}}
 \note{
-  This function should only be used with one-colour Nimblegen
+  This function should only be used with one-color Nimblegen
   microarrays and when the correct xys-file of the raw
   data is not available. The output file can be used with the function
   \code{read.xysfiles} of package \code{oligo}.

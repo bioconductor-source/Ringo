@@ -20,7 +20,7 @@ channel = c("red","green","logratio"), verbose = TRUE)
     the raw intensities.}
   \item{probeAnno}{Environment holding chromosomal start positions and
     indices of probes in data matrix.}
-  \item{chrom}{character; chromosome to compuute the autocorrelation for}
+  \item{chrom}{character; chromosome to compute the autocorrelation for}
   \item{samples}{which samples of the data to use; if more than 1 for
     each probe the mean intensity over these samples is taken.}
   \item{lag.max}{integer; maximal offset from the original position, the

@@ -13,7 +13,7 @@ relatePeaks(pl, gff, upstream = 5000, verbose = TRUE)
 \arguments{
   \item{pl}{Object of class \code{peakList}}
   \item{gff}{\code{data.frame} holding genomic feature annotation}
-  \item{upstream}{up to how many bases upstream of annated genomic
+  \item{upstream}{up to how many bases upstream of annotated genomic
     features should peaks be counted as related to that feature (see
     details)}
   \item{verbose}{logical; extended output to STDOUT?}

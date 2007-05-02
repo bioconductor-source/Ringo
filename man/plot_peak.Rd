@@ -12,7 +12,7 @@
 \arguments{
   \item{x}{object of class \code{peak}}
   \item{dat}{data object of class \code{ExpressionSet} that was used for
-  function \code{findPeaksOnSmooth}}
+  function \code{findPeaksOnSmoothed}}
   \item{probeAnno}{environment holding probe to genome mappings}
   \item{samples}{which samples to plot, either a numeric vector of
     entries in 1 to \code{ncol(dat)}, or character vector with entries

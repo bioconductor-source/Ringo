@@ -37,7 +37,7 @@
     \item{maxPeak}{optional numeric of maximal (smoothed) probe level
     in the peak, e.g. 1.74 }
     \item{score}{optional numeric of a peak score, currently we use the
-    sum of smooted probe levels (log fold changes), e.g. 0.703 }
+    sum of smoothed probe levels (log fold changes), e.g. 0.703 }
     \item{probes}{optional character vector of probe identifiers of
     all probes with match positions in the peak }
     \item{distMid2TSS}{optional named numeric vector of distances of

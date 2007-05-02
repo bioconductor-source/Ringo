@@ -10,9 +10,6 @@
   coordinates of probes on array.
   \code{arrayImage} is a synonym of \code{image.RGList}.
 }
-%\usage{arrayImage(myRG, arrayno, channel = c("red", "green",
-%"logratio"), mycols = colorRampPalette(c("White", "Yellow",
-%"Red"))(256), mybreaks = NULL, channelMax = 65600, ...)}
 \usage{
 \method{image}{RGList}(x,arrayno,channel=c("red","green","logratio"),
          mycols=NULL, mybreaks=NULL,...)
@@ -33,7 +30,7 @@
 }
 \value{
   invisibly returns matrix of raw intensities, in which rows and columns
-  correspond to X and Y coordiantes on arrays. Can be directly plotted
+  correspond to X and Y coordinates on arrays. Can be directly plotted
   with function \code{image.default}.
 }
 %\references{ ~put references to the literature/web site here ~ }

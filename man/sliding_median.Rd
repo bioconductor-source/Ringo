@@ -30,7 +30,7 @@ sliding.median(positions, scores, half.width, return.counts = TRUE)
   Matrix with two columns:
   \item{median}{medians over running window centered at the
     positions that were specified in argument \code{positions}.}
-  \item{count}{number of points that were considerd for computing
+  \item{count}{number of points that were considered for computing
     the median at each position}
   These positions are given as \code{row.names} of the resulting vector.
 

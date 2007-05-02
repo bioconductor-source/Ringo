@@ -39,7 +39,7 @@ quant = 0.5, combineReplicates = FALSE, verbose = TRUE)
   \item{verbose}{logical; detailed progress output to STDOUT?}
 }
 \value{
-  An object of class \code{ExpressionSet}, holding smoothed intentesity
+  An object of class \code{ExpressionSet}, holding smoothed intensity
   values for the probes of the supplied ExpressionSet. The number of
   results samples is the number of levels in the supplied
   \code{modColumn} of the supplied ExpressionSet's phenoData.

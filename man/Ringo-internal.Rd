@@ -16,7 +16,7 @@
 \alias{readNimblegenHeader}
 \alias{readNgIntensitiesTxt}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{Internal Ringo funcions}
+\title{Internal Ringo functions}
 \description{
   Called internally by other \code{Ringo} functions.
   Normally need not be called by the user.
