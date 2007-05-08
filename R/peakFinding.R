@@ -51,7 +51,7 @@ findPeaksOnSmoothed <- function(smoothedX, probeAnno, thresholds, allChr=c(1:19,
         x <- chr.peaks[[z]];
         peakID <- paste(cellType, this.sample, paste("chr",chr,sep=""), paste("peak",z,sep=""),sep=".")
         peakID <- gsub("(^\\.+)|(\\.+$)","",peakID)#remove any leading and trailing dots
-        return(newPeak(peakID, chr=chr, start=as.integer(names(x)[1]), end=as.integer(names(x)[length(x)]), cellType=cellType, modification=this.sample, maxPeak=max(x), score=attr(x,"score"), probes=as.character(chridx[names(x)])))})
+        return(newPeak(peakID, chr=chr, start=as.integer(names(x)[1]), end=as.integer(names(x)[length(x)]), cellType=cellType, antibody=this.sample, maxPeak=max(x), score=attr(x,"score"), probes=as.character(chridx[names(x)])))})
       return(chr.peaks)
     })
     #names(thisModPeaks) <- allChr

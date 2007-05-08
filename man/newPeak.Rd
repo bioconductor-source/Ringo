@@ -6,7 +6,7 @@
   of class \code{peak}.
 }
 \usage{
-newPeak(name, chr, start, end, cellType = NULL, modification, maxPeak, score = NULL, probes = c(), ...)
+newPeak(name, chr, start, end, cellType = NULL, antibody, maxPeak, score = NULL, probes = c(), ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -16,8 +16,8 @@ newPeak(name, chr, start, end, cellType = NULL, modification, maxPeak, score = N
   \item{end}{integer; genomic end coordinate of the peak}
   \item{cellType}{optional character describing the cell type in which
     the peak was identified.}
-  \item{modification}{required character vector describing the
-    modification or characteristic for which fragments were supposedly
+  \item{antibody}{required character vector describing the
+    antibody or other characteristic for which fragments were supposedly
     enriched in immuno-precipitation step}
   \item{maxPeak}{numeric; maximal probe level in the peak}
   \item{score}{optional numeric score of the peak}
@@ -39,7 +39,7 @@ newPeak(name, chr, start, end, cellType = NULL, modification, maxPeak, score = N
 \examples{
   my.peak <- newPeak("H3ac.HAND2.upstream.peak",
                      chr="8", start=60210400, end=60213000,
-                     modification="H3ac",cellType="cellLine.HL1",
+                     antibody="H3ac",cellType="cellLine.HL1",
                      maxPeak=3.5, score=100)
   print(my.peak)
 }

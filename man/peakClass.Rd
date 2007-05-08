@@ -24,8 +24,8 @@
     chromosome, e.g. 60209540 }
     \item{cellType}{optional character vector describing the cell
     type the ChIP chip experiment has been done on, e.g. "cellLine.HL1"}
-    \item{modification}{required character vector describing the
-    modification or characteristic for which fragments were supposedly
+    \item{antibody}{required character vector describing the
+    antibody or characteristic for which fragments were supposedly
     enriched in immuno-precipitation step,
     e.g. "H3ac" for acetylation of histone 3}
     \item{typeUpstream}{optional character vector of features that this
