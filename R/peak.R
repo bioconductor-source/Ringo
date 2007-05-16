@@ -104,8 +104,10 @@ generatePeakList = function(peaks,gff, g2t=NULL, allChr=c(1:19, "X", "Y"), tssCo
 
 
 relatePeaks <- function(pl, gff, upstream=5000, verbose=TRUE){
-  stopifnot(inherits(pl,"peakList"),inherits(gff,"data.frame"),
-            all(c("strand","name","start","end","chr") %in% names(gff)),all(gff$start<gff$end))
+  stopifnot(is.list(pl),inherits(pl[[1]],"peak"),
+            inherits(gff,"data.frame"),
+            all(c("strand","name","start","end","chr") %in% names(gff)),
+            all(gff$start<gff$end))
   peakChr <- sapply(pl, function(x) x$chr)
   peakMid <- sapply(pl, function(x) round((x$start+x$end)/2))
   ## get borders of upstream region:
@@ -130,5 +132,3 @@ relatePeaks <- function(pl, gff, upstream=5000, verbose=TRUE){
   }#for
   return(pl)
 }#relatePeaks
-
-#pX = relatePeaks(peaksX, exGFF)

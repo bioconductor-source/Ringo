@@ -94,12 +94,8 @@ if("probeAnno" %in% what) {
     ## uniqueness codes:  0 = probe has one unique hit;   3= probe has multiple hits
   }
   cat("\n")
-
-  save(probeAnno, file=probeAnnoFile, save=TRUE)
-  
+  save(probeAnno, file=probeAnnoFile)
 }# if("probeAnno" %in% what)
-
-
 
 ##--------------------------------------------------
 ## gff
@@ -118,12 +114,14 @@ if("gff" %in% what) {
   gff <- getBM(attributes=sel.attributes, filters="ensembl_transcript_id", value=trans.ids, mart=ensembl)
 
   martDisconnect(ensembl)
-  
+
+  ## replace attribute names by standardized names
   gff$name <- gff$ensembl_transcript_id
   gff$chr <- gff$chromosome_name
   gff$symbol <- gff$marker_symbol
+  gff$start <- gff$transcript_start
+  gff$end <- gff$transcript_end
   gff$feature <- rep("transcript",nrow(gff))
-
   gff$chromosome_name <- gff$marker_symbol <- NULL
 
   save(gff, file=gffFile, compress=TRUE)
