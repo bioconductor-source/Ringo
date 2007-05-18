@@ -109,6 +109,8 @@ if("gff" %in% what) {
 
   # what information to get for each transcript:
   sel.attributes=c("ensembl_transcript_id", "ensembl_gene_id", "chromosome_name", "strand", "transcript_start", "transcript_end","markersymbol", "description")
+  # if 'markersymbol' is not a defined attribute for your data species, try to find equivalent, using commands like this one:
+  grep("symbol",listAttributes(ensembl)[,1], value=TRUE)
 
   # retreive information:
   gff <- getBM(attributes=sel.attributes, filters="ensembl_transcript_id", value=trans.ids, mart=ensembl)
