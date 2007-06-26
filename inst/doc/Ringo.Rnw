@@ -84,6 +84,13 @@ ChIP-chip-specific and NimbleGen-specific functionalities.
 library("Ringo")
 @ 
 
+If you use Ringo for analyzing your data, please cite:
+\begin{itemize}
+\item{Joern Toedling, Oleg Sklyar, Wolfgang Huber (2007) Ringo - an R/Bioconductor package for analyzing ChIP-chip readouts. \textsl{BMC Bioinformatics}, 8:221.}
+\end{itemize}
+
+\nocite{Ringo2007}
+
 \section{Reading in the raw data}
 
 For each microarray, the scanning output consists of two files, one holding

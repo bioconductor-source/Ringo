@@ -1,0 +1,10 @@
+citHeader("If you use Ringo for analyzing your data, please cite:")
+
+citEntry(entry="article",  
+  title  = paste("Ringo","-","an {R/Bioconductor} package for analyzing {ChIP-chip} readouts"),
+  author = paste("Joern Toedling and Oleg Sklyar and Wolfgang Huber"),
+journal = "BMC Bioinformatics",
+  year = "2007",
+  volume = "8",
+  pages = "221",
+  textVersion = paste("Joern Toedling, Oleg Sklyar, Wolfgang Huber (2007)","Ringo - an R/Bioconductor package for analyzing ChIP-chip readouts.", "BMC Bioinformatics, 8:221."))
