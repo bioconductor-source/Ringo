@@ -1,12 +1,15 @@
 Package: Ringo
 Type: Package
 Title: R Investigation of NimbleGen Oligoarrays
-Version: 1.1.6
-Date: 2007-06-26
+Version: 1.1.7
+Date: 2007-06-28
 Author: Joern Toedling, Oleg Sklyar, Tammo Krueger, Matt Ritchie, Wolfgang Huber
 Maintainer: J. Toedling <toedling@ebi.ac.uk>
 Depends:  graphics, methods, Biobase, geneplotter, limma, vsn, RColorBrewer
 Description: The package Ringo simplifies the analysis of two-color oligonucleotide microarrays from NimbleGen, which for example can be used in ChIP-chip projects. The package employs functions from various other packages of the Bioconductor project and provides additional NimbleGen-specific and ChIP-chip-specific functionalities. Its mainly covered subjects are data read-in, quality control, visualisation and identification of genomic regions showing enrichment in ChIP-chip. Please take note that Ringo is geared towards two-color NimbleGen microarrays. For single-channel NimbleGen arrays, we recommend the package 'oligo'. 
+Reference: Joern Toedling, Oleg Sklyar, Wolfgang Huber (2007).
+           Ringo - an R/Bioconductor package for analyzing ChIP-chip readouts.
+           BMC Bioinformatics, 8:221.
 License: Artistic License 2.0
 biocViews: Microarray,TwoChannel,DataImport,QualityControl,Preprocessing
 LazyLoad: yes

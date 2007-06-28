@@ -258,3 +258,11 @@ takeMeanOverGroups <- function(xSet, modColumn="Cy5")
   featureNames(newEset) <- featureNames(xSet)
   return(newEset)
 }#takeMeanOverGroups
+
+
+compute.gc <- function(probe.sequences, digits=2){
+  stopifnot(is.character(probe.sequences))
+  splitted.seqs <- strsplit(toupper(probe.sequences),split="")
+  round(sapply(splitted.seqs, function(x) length(grep("[GC]",x)))/
+    listLen(splitted.seqs), digits=digits)
+}#compute.gc

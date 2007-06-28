@@ -15,7 +15,7 @@
 ##    index: index (1...6553600) of the PM on the chip (integer) 
 ##    unique: whether the probe hits multiple places (logical)
 ## 3. Construct GFF dataframe
-## 4. Construct probeAnnoReverse and probeAnnoDirect lists
+## 4. optional: compute probes' GC content from NDF file supplied by NimbleGen
 ## 5. Write 'probeAnno.rda'
 ##--------------------------------------------------------------------------------
 
@@ -46,10 +46,10 @@ probeAnnoFile <- "ngchip2probeAnno_array2.rda"
 allChr <- c(1:19,"X","Y")  # mouse musculus! our arrays have no probes matching mtDNA
 
 # what can this script do:
-possibleProducts <- c("probeAnno","gff")
+possibleProducts <- c("probeAnno","gff","probegc")
 
 # IMPORTANT  what do we want to do now:
-what <- possibleProducts[1]
+what <- possibleProducts[c(1,3)]
 
 ### READ IN ###################################################
 
@@ -94,6 +94,25 @@ if("probeAnno" %in% what) {
     ## uniqueness codes:  0 = probe has one unique hit;   3= probe has multiple hits
   }
   cat("\n")
+
+  if (probegc %in% what) {
+    ### add the GC content of each probe on the used arrays to the probeAnno environment
+    ndf.file.name <- "/panfs/panda1/huber/sperling/tfchip/DesignFiles/2006-11-15_Sperling_mm8_array1.ndf"
+    ndf <- read.delim(ndf.file.name, header=TRUE, as.is=TRUE)
+    stopifnot(all(c("PROBE_ID","PROBE_SEQUENCE") %in% names(ndf)))
+    ndf.file.name2 <- "/panfs/panda1/huber/sperling/tfchip/DesignFiles/2006-11-15_Sperling_mm8_array2.ndf"
+    ndf2 <- read.delim(ndf.file.name2, header=TRUE, as.is=TRUE)
+    stopifnot(all(c("PROBE_ID","PROBE_SEQUENCE") %in% names(ndf2)))
+    ndf <- rbind(ndf, ndf2)
+    are.unique <- !duplicated(ndf[["PROBE_ID"]])
+    probes.gc <- compute.gc(ndf[["PROBE_SEQUENCE"]][are.unique])
+    # takes about 5 minutes for 777000 probes on our system
+    names(probes.gc) <- ndf[["PROBE_ID"]][are.unique]
+
+    assign("probes.gc", value=probes.gc, env=probeAnno)
+    rm(ndf, ndf2, ndf.file.name1, ndf.file.name2);gc()
+  }# if (probegc %in% what)
+  
   save(probeAnno, file=probeAnnoFile)
 }# if("probeAnno" %in% what)
 
@@ -129,3 +148,4 @@ if("gff" %in% what) {
   save(gff, file=gffFile, compress=TRUE)
 
 } # make gff
+
