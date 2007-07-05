@@ -22,10 +22,15 @@ relatePeaks(pl, gff, upstream = 5000, verbose = TRUE)
   Peaks will be counted as related to genomic features, if
   \itemize{
     \item their middle position is located between start and end
-      position of the feature
+    position of the feature
     \item their middle position is located not more than argument
-      \code{upstream} bases upstream of the feature start
-  }
+    \code{upstream} bases upstream of the feature start
+  }.
+  
+  One can visualize such peak-feature relations as a graph using
+  the Bioconductor package \code{Rgraphviz}.
+  See the script 'graphPeaks2Transcripts.R' in Ringo's scripts
+  directory for an example. 
 }
 \value{
   An object of class \code{peakList} with for each peak the elements

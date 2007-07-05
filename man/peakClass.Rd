@@ -8,9 +8,10 @@
 \title{Class peak - A list holding ChIP-chip peak characteristics}
 \description{
   An object of class \code{peak} is a list holding characteristics of an
-  enrichment peak from ChIP chip data. While this is not a formal
-  \code{S4} class (yet), the presence of certain list elements enables a
-  standardized approach to working with peaks identified from the data.
+  enrichment peak from ChIP chip data. While this is only a S3 rather
+  than a formal \code{S4} class (yet), the presence of certain list
+  elements enables a standardized approach to working with enriched
+  regions identified from ChIP-chip data.
 }
 \section{Slots/List Components}{
   \describe{
