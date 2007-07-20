@@ -11,9 +11,9 @@
 chipAlongChrom(eSet, chrom, probeAnno, xlim, ylim = NULL, 
  samples = NULL, paletteName = "Dark2", colPal = NULL,
  byStrand = FALSE, ylabel = "Intensity", rugCol = "#000010",
- itype = "p", ipch ="-", icex = 3, ilwd = 2, ilty = 1, useGFF = TRUE,
+ itype = "r", ipch = 20, icex = 1, ilwd = 3, ilty = 1, useGFF = TRUE,
  gff = NULL, featCol = "darkblue", zero.line = TRUE, putLegend = TRUE,
- add = FALSE, verbose = TRUE, ...)
+ add = FALSE, maxInterDistance = 200, verbose = TRUE, ...)
 }
 \arguments{
   \item{eSet}{An expression set containing the (normalized) ChIP
@@ -41,7 +41,9 @@ chipAlongChrom(eSet, chrom, probeAnno, xlim, ylim = NULL,
   \item{rugCol}{color to use for marking the probe positions on the
     x-axis (genomic coordinate) }
   \item{itype}{character; type of plot type to use for the sample
-    intensities. Defaults to "p".}
+    intensities. Can be "r","u", or any of the \code{type}
+    specifications used in \code{plot.default}.
+    Defaults to "r". Please refer to the details section below.}
   \item{ipch}{plot character to use with \code{itype="p"}}
   \item{icex}{character expansion to use for plotting symbol}
   \item{ilwd}{line width of plotted lines if \code{itype="l"}}
@@ -56,29 +58,56 @@ chipAlongChrom(eSet, chrom, probeAnno, xlim, ylim = NULL,
   \item{putLegend}{logical; should a legend be put into the plot?}
   \item{add}{logical; should expression set intensities be plotted onto
     current device instead of a new one?}
+  \item{maxInterDistance}{numeric; only used when \code{itype} is either
+    "r" or "u"; specifies the maximal distance up to which
+    adjacent probe positions should be connected by a line.}
   \item{verbose}{logical; progress output to STDOUT.}
   \item{\dots}{further parameters passed on to \code{plot.default}, see
     details}
 }
 \value{
-  returns \code{invisible} matrix of probe intensities in the selected
+  \code{\link{invisible}} matrix of probe intensities in the selected
   genomic regions
 }
 \details{
-  the following \code{plot.default} arguments are already defined by
+  The following \code{plot.default} arguments are already defined by
   arguments of this function and thus may not be included in \code{...}:
   \code{xlim, ylim, col, pch, cex, lwd, lty, frame.plot}
+
+  The \code{itype} argument specifies the desired type of plot. It can
+  be any valid specification of the \code{type} argument in
+  \code{plot.default} or one of two special types:
+  \describe{
+    \item{"r"}{\strong{r}estricted drawing of position-connecting
+      lines. adjacent probe connections will be connected by a line
+      only if less or equal to argument \code{maxInterDistance} apart
+      from each other; each probe position will be marked by an
+      individual point anyway (whose shape is determined by the argument
+      \code{ipch}).}
+    \item{"u"}{similar as "r" but the lines and the points will be
+      \strong{u}nconnected; reminiscent of \code{plot.default}'s
+      \code{type} "b".}
+  }
 }
 \author{Joern Toedling \email{toedling@ebi.ac.uk}}
 \note{Use the function \code{\link[geneplotter]{alongChrom}} for
   alternative ways to display probe intensities in genomic regions.}
-\seealso{\code{\link[geneplotter]{alongChrom}}}
+\seealso{\code{\link[graphics]{plot.default}};
+  \code{plotAlongChrom} in package \code{tilingArray}}
 \examples{
+  # load data
   ringoExampleDir <- system.file("exData",package="Ringo")
   load(file.path(ringoExampleDir,"exampleProbeAnno.rda"))
   load(file.path(ringoExampleDir,"exampleX.rda"))
+
+  # show a gene that is well represented on this microarray
   chipAlongChrom(exampleX, chrom="8", xlim=c(60208500,60216000),
                  ylim=c(-1,6), colPal=2:3, probeAnno=exProbeAnno,
-                 gff=exGFF)  
+                 gff=exGFF)
+
+  # show a less well represented gene:
+  chipAlongChrom(exampleX, chrom="8", xlim=c(60400000,60405000),
+                 ylim=c(-2,4), colPal=2:3, probeAnno=exProbeAnno,
+                 gff=exGFF)
 }
 \keyword{hplot}% at least one, from doc/KEYWORDS

@@ -119,13 +119,13 @@ relatePeaks <- function(pl, gff, upstream=5000, verbose=TRUE){
   for (i in 1:length(pl)){
     if (verbose & i%%1000==0) cat(i,"...")
     p <- pl[[i]]
-    p$typeUpstream <- subset(gff, gff$chr==p$chr & peakMid[i]>=gffUpStart & peakMid[i] <= gffUpEnd, select=name, drop=TRUE)
-    p$typeDownstream <- subset(gff, gff$chr==p$chr & peakMid[i]>=gff$start & peakMid[i] <= gff$end, select=name, drop=TRUE)
+    p$typeUpstream <- subset(gff, gff$chr==p$chr & peakMid[i]>=gffUpStart & peakMid[i] <= gffUpEnd, select="name", drop=TRUE)
+    p$typeDownstream <- subset(gff, gff$chr==p$chr & peakMid[i]>=gff$start & peakMid[i] <= gff$end, select="name", drop=TRUE)
     p$distMid2TSS <- abs(realTSS[c(p$typeUpstream, p$typeDownstream, recursive=TRUE)]-peakMid[i])
     # the c(,recursive) is to prevent (illegal) indexing with 0-row data.frames
     if ("symbol" %in% names(gff)){
-      p$upSymbol <-  subset(gff, gff$chr==p$chr & peakMid[i]>=gffUpStart & peakMid[i] <= gffUpEnd, select=symbol, drop=TRUE)
-      p$downSymbol <- subset(gff, gff$chr==p$chr & peakMid[i]>=gff$start & peakMid[i] <= gff$end, select=symbol, drop=TRUE)
+      p$upSymbol <-  subset(gff, gff$chr==p$chr & peakMid[i]>=gffUpStart & peakMid[i] <= gffUpEnd, select="symbol", drop=TRUE)
+      p$downSymbol <- subset(gff, gff$chr==p$chr & peakMid[i]>=gff$start & peakMid[i] <= gff$end, select="symbol", drop=TRUE)
     }
     p$type <- paste(c("U","D")[c(length(p$typeUpstream)>0,length(p$typeDownstream)>0)],collapse="/")
     pl[[i]] <- p
