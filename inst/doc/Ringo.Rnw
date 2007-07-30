@@ -15,7 +15,8 @@ pdfauthor={Joern Toedling},%
 pdfsubject={Ringo Vignette},%
 pdfkeywords={Bioconductor},%
 pagebackref,bookmarks,colorlinks,linkcolor=darkblue,citecolor=darkblue,%
-pagecolor=darkblue,raiselinks,plainpages,pdftex]{hyperref}
+filecolor=darkblue,urlcolor=darkblue,pagecolor=darkblue,%
+raiselinks,plainpages,pdftex]{hyperref}
 
 \usepackage{amsmath,a4,t1enc, graphicx}
 \usepackage{natbib}
@@ -84,12 +85,18 @@ ChIP-chip-specific and NimbleGen-specific functionalities.
 library("Ringo")
 @ 
 
-If you use Ringo for analyzing your data, please cite:
+If you use Ringo for analyzing your data, please cite: \nocite{Ringo2007}
 \begin{itemize}
 \item{Joern Toedling, Oleg Sklyar, Wolfgang Huber (2007) Ringo - an R/Bioconductor package for analyzing ChIP-chip readouts. \textsl{BMC Bioinformatics}, 8:221.}
 \end{itemize}
 
-\nocite{Ringo2007}
+\subsection*{Getting help}
+
+If possible, please send questions about \Rpackage{Ringo} to the 
+Bioconductor mailing list.\\
+See \url{http://www.bioconductor.org/docs/mailList.html} \\
+Their archive of questions and responses may prove helpful, too.
+
 
 \section{Reading in the raw data}
 
@@ -107,14 +114,19 @@ head(read.delim(file.path(exDir,"56577_532_pair.txt"), skip=1))[,c(1,4:8,10)]
 @
 
 In addition, there is a file with more details on the samples, including 
-which files belong to which sample.
+which files belong to which sample\footnote{You will probaby have to
+manually construct such a text file for your own data. 
+The \texttt{scripts} directory of the package contains a script
+\texttt{convertSampleKeyTxt.R} as an inspiration how the file 
+\texttt{SampleKey.txt} provided by NimbleGen could be used for this.}.
 
 <<exampleFilesTxt>>=
 read.delim(file.path(exDir,"example_files.txt"), header=TRUE) 
 @ 
 
 The columns \texttt{FileNameCy3} and \texttt{FileNameCy5} hold which of the
-raw data files belong to which sample. The immuno-precipitated extract
+raw data files belong to which sample. 
+The immuno-precipitated extract 
 was colored with the Cy5 dye in our experiment, so the column \texttt{Cy5} 
 essentially holds which antibody has been used for the immuno-precipitation, 
 in this case one against \texttt{H3ac} that is acetylated Histone 3 residues.
