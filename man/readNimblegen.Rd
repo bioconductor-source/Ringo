@@ -17,8 +17,11 @@ readNimblegen(hybesFile, spotTypesFile, path = getwd(), verbose = TRUE, ...)
   \item{hybesFile}{Name of the file describing the arrays. In
     \code{limma} this file would be called targets file.}
   \item{spotTypesFile}{spot types also used by \code{limma}}
-  \item{path}{path to the files \code{hybesFile} and
-    \code{spotTypesFile} and also the intensity files.}
+  \item{path}{Path to directoy that hold the files \code{hybesFile},
+    \code{spotTypesFile} and also the intensity files. Set this to
+    \code{NULL} if you prefer the arguments \code{hybesFile},
+    \code{spotTypesFile} and the file-name entries of the hybes file to 
+    be treated as absolute or relative file paths themselves.}
   \item{verbose}{logical; progress output to STDOUT?}
   \item{\dots}{further arguments passed on the \code{readNgIntensitiesTxt}}
 }

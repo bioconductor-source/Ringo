@@ -1,9 +1,11 @@
 
-readNimblegen <- function(hybesFile, spotTypesFile, path = getwd(), verbose=TRUE, ...)
+readNimblegen <- function(hybesFile, spotTypesFile, path=getwd(), verbose=TRUE, ...)
 {
   # 0. check arguments:
-  hybesFile     <- file.path(path, hybesFile)
-  spotTypesFile <- file.path(path, spotTypesFile)
+  if (!is.null(path)){
+    hybesFile     <- file.path(path, hybesFile)
+    spotTypesFile <- file.path(path, spotTypesFile)
+  }# if (!is.null(path))
   stopifnot(file.exists(hybesFile), file.exists(spotTypesFile))
 
   # 1. read in raw intensities:
@@ -32,8 +34,7 @@ readNimblegen <- function(hybesFile, spotTypesFile, path = getwd(), verbose=TRUE
 }# readNimblegen
   
 
-readNgIntensitiesTxt <- function (files, path = NULL, ext = NULL, names = NULL, columns = NULL,
-                                  wt.fun = NULL, verbose = TRUE, sep = "\t", quote = "\"",...)
+readNgIntensitiesTxt <- function(files, path=NULL, ext=NULL, names=NULL, columns=NULL, wt.fun=NULL, verbose=TRUE, sep="\t", quote="\"",...)
 {
     if (is.null(dim(files))) {
         if (length(files)%%2 == 0)
