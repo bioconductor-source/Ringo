@@ -20,16 +20,14 @@ preprocess <- function(myRG, method="vsn", returnMAList=FALSE,
 }# preprocess
 
 asExprSet <- function(myMA){
-  stopifnot(inherits(myMA,"MAList"), !is.null(myMA$targets), nrow(myMA$targets)==ncol(myMA$M))
+  stopifnot(inherits(myMA,"MAList"), !is.null(myMA$targets))
+  myMA$M <- as.matrix(myMA$M) # if only one sample, M is a vector
+  stopifnot(nrow(myMA$targets)==ncol(as.matrix(myMA$M)))
   if (is.null(rownames(myMA$targets)))
     rownames(myMA$targets) <- as.character(myMA$targets[[1]])
   ## include some matching between colnames(myMA$M) and
   ##  rownames of 'targets' here
   colnames(myMA$M) <- rownames(myMA$targets)
-  ## old version using "exprSet":
-  #myPD <- new("phenoData", pData=myMA$targets, varLabels=as.list(colnames(myMA$targets)))
-  #myEset <- new("exprSet", exprs=myMA$M, phenoData=myPD)
-  #myEset <- as(myEset, "ExpressionSet")  
   myPD <- new("AnnotatedDataFrame", data=myMA$targets,
               varMetadata=data.frame("varLabel"=colnames(myMA$targets),
                 row.names=colnames(myMA$targets)))
