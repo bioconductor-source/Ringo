@@ -123,29 +123,34 @@ if("gff" %in% what) {
   # augment list of transcript details with further info and save as gff
 
   library("biomaRt")
-  ensembl <- useMart("ensembl", dataset="mmusculus_gene_ensembl")  
-  trans.ids <- getFeature(type="ensembl_transcript_id", chr=c(1:19,"X","Y"), mart=ensembl)[,2]
+  ensembl <- useMart("ensembl", dataset="mmusculus_gene_ensembl")
 
+  gene.ids <- unique(unlist(lapply(as.list(c(1:19,"X","Y")), function(this.chr)
+     getFeature(type="ensembl_gene_id", chr=this.chr, mart=ensembl)[,2]), use.names=FALSE))
+  
   # what information to get for each transcript:
-  sel.attributes=c("ensembl_transcript_id", "ensembl_gene_id", "chromosome_name", "strand", "transcript_start", "transcript_end","markersymbol", "description")
+  sel.attributes=c("ensembl_gene_id", "ensembl_transcript_id", "chromosome_name", "strand", "transcript_start", "transcript_end","markersymbol", "description")
   # if 'markersymbol' is not a defined attribute for your data species, try to find equivalent, using commands like this one:
   grep("symbol",listAttributes(ensembl)[,1], value=TRUE)
 
   # retreive information:
-  gff <- getBM(attributes=sel.attributes, filters="ensembl_transcript_id", value=trans.ids, mart=ensembl)
+  gff <- getBM(attributes=sel.attributes, filters="ensembl_gene_id", value=gene.ids, mart=ensembl)
 
   martDisconnect(ensembl)
 
   ## replace attribute names by standardized names
   gff$name <- gff$ensembl_transcript_id
   gff$chr <- gff$chromosome_name
-  gff$symbol <- gff$marker_symbol
+  gff$symbol <- gff$markersymbol
   gff$start <- gff$transcript_start
   gff$end <- gff$transcript_end
   gff$feature <- rep("transcript",nrow(gff))
-  gff$chromosome_name <- gff$marker_symbol <- NULL
+  gff$chromosome_name <- gff$markersymbol <- NULL
+  gff$transcript_start <- gff$transcript_end <- NULL
 
+  # reorder by chromosome and start position
+  gff <- gff[order(gff$chr, gff$start),]
+  
   save(gff, file=gffFile, compress=TRUE)
 
 } # make gff
-

@@ -9,6 +9,7 @@ library("Ringo")
 library("Rgraphviz")
 
 doFunctionTest <- FALSE
+analyzeTfPeaks3 <- FALSE
 
 # small function to capitalize 1st letter of each element of character vector
 capit <- function(x){ # capitalize first letter
@@ -24,7 +25,7 @@ peakList2AssignTable <- function(pl, target.names=c("upSymbol","downSymbol"),
                                  tableNames=c("antibody","target"), verbose=TRUE)
 {
   stopifnot(is.list(pl), inherits(pl[[1]],"peak"),
-            "modification" %in% names(pl[[1]]), length(tableNames)==2)
+            "antibody" %in% names(pl[[1]]), length(tableNames)==2)
   if (!all(target.names %in% names(pl[[1]])))
     stop(paste("Some of the target names", paste(target.names, collapse=", "),
                "are not specified for the peaks in the list.\n"))
@@ -52,10 +53,12 @@ peakList2AssignTable <- function(pl, target.names=c("upSymbol","downSymbol"),
 }#peakList2AssignTable
 
 ## next function is a wrapper around tfM2graphNEL
-assignTable2Graph <- function(assignTab, antibody.colors=NULL, target.color="#B0C4DE", edge.color="darkslategrey", by.antibody=TRUE, sel.patterns=NULL){
+assignTable2Graph <- function(assignTab, weights=NULL, antibody.colors=NULL, target.color="#B0C4DE", edge.color="darkslategrey", by.antibody=TRUE, sel.patterns=NULL, weight.colors=NULL, weight.breaks=NULL){
   # by.antibody = should edges by color-coded by used antibody?
   # sel.nodes = if specified, only a sub-graph is created in which each node names matches to any of these regular expression patterns (see ?grep)
-  myGraph <- ftM2graphNEL(assignTab)
+  if (!is.null(weights))
+    stopifnot(length(weights)==nrow(assignTab))
+  myGraph <- ftM2graphNEL(assignTab, W=weights)
   if (!is.null(sel.patterns)){
     sel.nodes <- unique(unlist(lapply(as.list(sel.patterns), grep, x=nodes(myGraph), ignore.case=TRUE, value=TRUE)))
     myGraph <- subGraph(sel.nodes, myGraph)
@@ -73,17 +76,29 @@ assignTable2Graph <- function(assignTab, antibody.colors=NULL, target.color="#B0
     antibody.colors <- antibody.colors[my.antibodies]
   }
   ## set some graph attributes for coloring
-  myGraphAttrs <- list(node = list(fillcolor=target.color, fontsize="20", fixedsize="FALSE"), edge = list(color = edge.color))
+  myGraphAttrs <- list(node = list(fillcolor=target.color, fontsize="20", fixedsize="false"), edge = list(color = edge.color))
   myNodeAttrs <- list()
   myNodeAttrs$fillcolor <- as.list(antibody.colors)
   myEdges <- edges(myGraph)
   myEdgeAttrs <- list()
-  if (by.antibody){
+  if (by.antibody|!is.null(weight.colors)){
     myEdgeAttrs$color <- list()
+    if (!is.null(weight.colors)){
+      if (is.null(weight.breaks))
+        weight.breaks <- seq(min(weights),max(weights)+0.1,length.out=length(weight.colors)+1)
+      else
+        stopifnot(length(weight.breaks)==length(weight.colors)+1,
+                  min(weights)>=min(weight.breaks), max(weights)<max(weight.breaks))
+      myEdgeWeights <- edgeWeights(myGraph)
+    } #if (!is.null(weight.colors))
     for (this.antibody in my.antibodies)
       for (this.target in myEdges[[this.antibody]])
-        myEdgeAttrs$color[[paste(this.antibody,this.target,sep="~")]] <- antibody.colors[this.antibody]
-  }#if (by.antibody)
+        myEdgeAttrs$color[[paste(this.antibody,this.target,sep="~")]] <-
+          ifelse(is.null(weight.colors),
+                 antibody.colors[this.antibody],
+                 weight.colors[findInterval(myEdgeWeights[[this.antibody]][this.target], weight.breaks)])
+  }#if (by.antibody|!is.null(weight.colors))
+  ### color edges by their weight:
   attr(myGraph,"graphAttrs") <- myGraphAttrs
   attr(myGraph,"nodeAttrs") <- myNodeAttrs
   attr(myGraph,"edgeAttrs") <- myEdgeAttrs
@@ -91,9 +106,9 @@ assignTable2Graph <- function(assignTab, antibody.colors=NULL, target.color="#B0
   return(myGraph)
 }# assignTable2Graph
 
-myGraphPlot <- function(x,...){
-  par(mar=c(0.1,0.1,0.1,0.1), font=2, lwd=2)
-  class(x) <- "graphNEL"
+myGraphPlot <- function(x, edge.lwd=2, ...){
+  stopifnot(inherits(x,"graphNEL"))
+  par(mar=c(0.1,0.1,0.1,0.1), font=2, lwd=edge.lwd)
   plot(x, attrs=attr(x,"graphAttrs"), nodeAttrs=attr(x,"nodeAttrs"),
        edgeAttrs=attr(x,"edgeAttrs"),...)
 }#myGraphPlot
@@ -103,9 +118,12 @@ if (doFunctionTest) {
   example(findPeaksOnSmoothed)
   assignTabX <- peakList2AssignTable(peaksX,target.name=c("upSymbol","downSymbol"))
   print(assignTabX)
-  ### convert table into a graph:
+  ### convert table into a graph without weights:
   graphX <- assignTable2Graph(assignTabX)
   myGraphPlot(graphX)
+  ### convert table into a graph with weights:
+  graphXw <- assignTable2Graph(assignTabX, weights=c(1,1,-1,-1), weight.colors=c("green","red"), weight.breaks=c(-1,0,1.1))
+  myGraphPlot(graphXw)
 }#if (doFunctionTest)
 
 
@@ -114,6 +132,7 @@ if (doFunctionTest) {
 ### feel free to modify it to suit your own data
 #############################################################################
 
+if (analyzeTfPeaks3){
 ### tell R in which directory the saved binary data resides
 dataDir <- "/panfs/panda1/huber/sperling/tfchip/data"
 
@@ -121,9 +140,9 @@ dataDir <- "/panfs/panda1/huber/sperling/tfchip/data"
 load(file=file.path(dataDir,"peaksV3c.RData"))
 ## the loaded object allTFPeaks is a list of lists of peaks
 tfPeaks <- unlist(allTFPeaks,recursive=FALSE, use.names=FALSE)
-if ("modification" %in% names(tfPeaks[[1]])
-    tfPeaks <- lapply(tfPeaks, function(p){names(p)[names(p)=="modification"] <- "antibody"; p})
-    
+if ("modification" %in% names(tfPeaks[[1]]))
+  tfPeaks <- lapply(tfPeaks, function(p){names(p)[names(p)=="modification"] <- "antibody"; p})
+
 assignTF <- peakList2AssignTable(tfPeaks)
 assignTF[,1] <- gsub("H1.cdna.2","Dpf3.1", assignTF[,1])
 assignTF[,1] <- gsub("H1.cdna.3","Dpf3.2", assignTF[,1])
@@ -136,3 +155,4 @@ graphTF <- assignTable2Graph(assignTF, sel.patterns=my.patterns, antibody.colors
 #pdf(file.path(dataDir,"graphTF.pdf"),width=12,height=10)
 myGraphPlot(graphTF)
 #dev.off()
+}#if (analyzeTfPeaks3)
