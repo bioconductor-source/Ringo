@@ -30,8 +30,8 @@ chipAlongChrom <- function (eSet, chrom, probeAnno, xlim, ylim=NULL, samples=NUL
     usedProbesCol <- as.numeric(uni[areProbesInLimits]!=0)+1
   } else {usedProbes <- mid}
 
-  nGenes <- length(usedProbes)
-  if (nGenes < 1){cat("No probes in specified region!\n"); invisible(vector("numeric",0))}
+  if ((length(usedProbes) < 1) & verbose)
+    cat("No feature-mapped positions in specified region!\n")
   nSamples <- length(samples)
   usedProbesIdx <- match(names(usedProbes),eSetProbeNames)
   chromExprs <- exprs(eSet)[usedProbesIdx, samples, drop=FALSE]
@@ -67,31 +67,39 @@ chipAlongChrom <- function (eSet, chrom, probeAnno, xlim, ylim=NULL, samples=NUL
     mtext(paste("Chromosome",chrom,"Coordinate [bp]"), side=xaxisSide, line=2.5, font=2)
     if (zero.line) abline(h=0, lty=2)
   }#if (!add)
-  for (i in 1:nSamples){
-    if (itype %in% c("r","u")){
-      for (j in 1:nrow(closeProbeClusters)){
-        clusterPos <- closeProbeClusters[j,1]+(0:closeProbeClusters[j,2])
-        lines(x=absProbes[clusterPos], y=chromExprs[clusterPos,i], col=colPal[i], lwd=ilwd, lty=ilty, type=switch(itype,"r"="l","u"="c"), cex=icex)
-      }
-      points(absProbes, y=chromExprs[,i], col=c(colPal[i],ifelse(itype=="p","grey",colPal[i]))[usedProbesCol], lwd=ilwd, type="p", pch=ipch, cex=icex)
-    } else {
-      points(x=absProbes, y=chromExprs[,i], col=c(colPal[i],ifelse(itype=="p","grey",colPal[i]))[usedProbesCol], lwd=ilwd, lty=ilty, type=itype, pch=ipch, cex=icex)
-    }# if (itype %in% c("r","u"))
-  }#for (i in 1:nSamples)
-  # if we are plotting points, we can colour non-unique probe signals grey,
-  #  if not, we have to take care that we don't color everything grey
-  if (!add){
-    rug(absProbes, side=xaxisSide, col=rugCol, lwd=2)
-    if (any(usedProbesCol==2))
-      rug(absProbes[usedProbesCol==2], side=xaxisSide, col="grey", lwd=2)
-  }#if (!add)
+  
+  if (length(usedProbes) > 0) {
+    for (i in 1:nSamples){
+      if (itype %in% c("r","u")){
+        if (nrow(closeProbeClusters)>0){
+          for (j in 1:nrow(closeProbeClusters)){
+            clusterPos <- closeProbeClusters[j,1]+(0:closeProbeClusters[j,2])
+            lines(x=absProbes[clusterPos], y=chromExprs[clusterPos,i], col=colPal[i], lwd=ilwd, lty=ilty, type=switch(itype,"r"="l","u"="c"), cex=icex)
+          }#for (j in 1:nrow(closeProbeClusters))
+        }#if (nrow(closeProbeClusters)>0)
+        points(absProbes, y=chromExprs[,i], col=c(colPal[i],ifelse(itype=="p","grey",colPal[i]))[usedProbesCol], lwd=ilwd, type="p", pch=ipch, cex=icex)
+      } else {
+        points(x=absProbes, y=chromExprs[,i], col=c(colPal[i],ifelse(itype=="p","grey",colPal[i]))[usedProbesCol], lwd=ilwd, lty=ilty, type=itype, pch=ipch, cex=icex)
+      }# if (itype %in% c("r","u"))
+    }#for (i in 1:nSamples)
+    # if we are plotting points, we can colour non-unique probe signals grey,
+    #  if not, we have to take care that we don't color everything grey
+    if (!add){
+      rug(absProbes, side=xaxisSide, col=rugCol, lwd=2)
+      if (any(usedProbesCol==2))
+        rug(absProbes[usedProbesCol==2], side=xaxisSide, col="grey", lwd=2)
+    }#if (!add)
+  } #if (length(usedProbes) < 1)
+  
   if (putLegend){
     if (is.character(samples))
       samples <- match(samples,sampleNames(eSet))
     legend(x=ifelse(add,"bottomleft","topleft"), legend=sampleNames(eSet)[samples], fill=colPal, bty="n")
   }#if (putLegend)
+  
   # 4. annotate genomic features as well
   if (all(useGFF,!is.null(gff),!add)){
+    stopifnot(is.data.frame(gff), all(c("gene","chr","strand","start","end")%in%names(gff)))
     if (verbose) cat("Obtain genomic features...\n")
     if (! "symbol" %in% names(gff)){ gff$symbol <- gff$gene}
     else { gff$symbol[gff$symbol==""] <- gff$gene[gff$symbol==""]}
