@@ -110,7 +110,7 @@ in NimbleGen's \emph{pair} format.
 <<locateData>>=
 exDir <- system.file("exData",package="Ringo")
 list.files(exDir, pattern="pair.txt")
-head(read.delim(file.path(exDir,"56577_532_pair.txt"), skip=1))[,c(1,4:8,10)]
+head(read.delim(file.path(exDir,"MOD_20551_PMT1_pair.txt"), skip=1))[,c(1,4:7,9)]
 @
 
 In addition, there is a file with more details on the samples, including 
@@ -121,15 +121,15 @@ The \texttt{scripts} directory of the package contains a script
 \texttt{SampleKey.txt} provided by NimbleGen could be used for this.}.
 
 <<exampleFilesTxt>>=
-read.delim(file.path(exDir,"example_files.txt"), header=TRUE) 
+read.delim(file.path(exDir,"example_targets.txt"), header=TRUE) 
 @ 
 
 The columns \texttt{FileNameCy3} and \texttt{FileNameCy5} hold which of the
 raw data files belong to which sample. 
 The immuno-precipitated extract 
-was colored with the Cy5 dye in our experiment, so the column \texttt{Cy5} 
+was colored with the Cy5 dye in the experiment, so the column \texttt{Cy5} 
 essentially holds which antibody has been used for the immuno-precipitation, 
-in this case one against \texttt{H3ac} that is acetylated Histone 3 residues.
+in this case one against the protein \texttt{Suz12}.
 
 Furthermore, there is a file describing the probe categories
 on the array (you might know these Spot Types files from \Rpackage{limma}
@@ -144,7 +144,7 @@ and obtain an object of \Rclass{RGList}, a class defined
 in package \Rpackage{limma}.
 
 <<readNimblegen, results=hide>>=
-exRG <- readNimblegen("example_files.txt","spottypes.txt",path=exDir)
+exRG <- readNimblegen("example_targets.txt","spottypes.txt",path=exDir)
 @ 
 
 This object is essentially a list and contains the raw intensities of the two 
@@ -185,15 +185,15 @@ dev.off()
 \myincfig{Ringo-imageRG}{0.6\textwidth}{Spatial distribution of raw probe intensities laid out by the probe position on the microarray surface.}
 
 See figure \ref{Ringo-imageRG} for the image.
-Since the provided example data set only holds the probe
-intensities of probes that could be mapped to chromosome 8,
+Since the provided example data set only holds the intensities for reporters
+mapped to the forward strand of chromosome 9,
 the image only shows the few green dots of these probes' positions.
-We see, however, that these chromosome 8 probes are well distributed
-over the whole array surface rather than being bundled together in one
+We see, however, that these chromosome 9 reporters are well distributed
+over the whole array surface rather than being clustered together in one
 part of the array.
 
 It may also be useful to look at the absolute distribution of 
-the single-channel densities. \Rpackage{Limma}'s function
+the single-channel densities. \Rpackage{limma}'s function
 \Rfunction{plotDensities} may be useful for this purpose.
 
 <<plotDensities, fig=TRUE, include=TRUE, width=6, height=4>>=
@@ -206,8 +206,8 @@ probes and genomic positions.
 <<loadProbeAnno>>=
 load(file.path(exDir,"exampleProbeAnno.rda"))
 ls(exProbeAnno)
-head(get("8.start",exProbeAnno))
-head(get("8.index",exProbeAnno))
+head(get("9.start",exProbeAnno))
+head(get("9.index",exProbeAnno))
 @ 
 
 The package's \texttt{scripts} directory contains a script
@@ -217,12 +217,15 @@ from result files of aligning the probe sequences to the genome.
 
 In addition, the data file loaded above also contains a 
 \emph{GFF (General Feature Format)}
-file of all transcripts on mouse chromosome 8 annotated in the 
+file of all transcripts on human chromose 9 annotated in the 
 \href{http://www.ensembl.org/Mus_musculus/index.html}{Ensembl} database 
-(version 39, June 2006).
+(release 46, August 2007).
+The aforementioned script \texttt{makeProbeAnno.R} also contains
+some example source code showing how the Bioconductor package
+\Rpackage{biomaRt} can be used to generate such a GFF data frame.
 
 <<showGFF>>=
-head(exGFF[,c(2:6,14,17)])
+head(exGFF[,c("name","symbol","chr","strand","start","end")])
 @ 
 
 To assess the impact of the small distance between probes 
@@ -234,15 +237,15 @@ intensities at positions $x$.
 The computed correlation is plotted against the lag $d$.
 
 <<autocorRG0, results=hide, fig=TRUE, include=TRUE, width=6, height=4>>=
-exAc <- autocor(exRG, probeAnno=exProbeAnno, chrom="8", lag.step=250)
+exAc <- autocor(exRG, probeAnno=exProbeAnno, chrom="9", lag.max=1000)
 plot(exAc)
 @ 
 
-We see a high autocorrelation between probes up to 750 base-pairs
+We see some auto-correlation between probe position up to 800 base-pairs
 apart. Since the sonicated fragments that are hybridized to the
-array have an average size of 900 bp, such a high
-auto-correlation up to this distance is to be expected, but
-nevertheless has to be taken into account 
+array have an average size in the range of up to 1000 bp, 
+such a degree of auto-correlation up to this distance can be expected, 
+but nevertheless has to be taken into account 
 later on during data analysis.
 
 \section{Preprocessing}
@@ -268,35 +271,44 @@ load(file.path(exDir,"exampleX.rda"))
 print(exampleX)
 @ 
 
-\section{Correlation between replicates}
+Among the provided alternative preprocessing options is also the
+Tukey-biweight scaling procedure that NimbleGen have used to scale ChIP-chip
+readouts so that the data is centered on zero.
 
-After preprocessing, we assess the degree of correlation between
-our two samples, which in fact are biological replicates of the same experiment.
-
-<<corPlotX, results=hide, fig=TRUE, include=TRUE, width=5, height=5>>=
-corPlot(exampleX, grouping=c("H3Ac Rep1", "H3Ac Rep2"))
+<<preprocessNG>>=
+exampleX.NG <- preprocess(exRG, method="nimblegen")
+sampleNames(exampleX.NG) <- sampleNames(exampleX)
 @ 
 
-Remember that these are true biological replicates rather than technical replicates,
-and thus we do not expect perfect correlation.
+The effects of different preprocessing procedures on the data, can be
+assessed using the \Rfunction{corPlot} function.
+
+<<comparePreprocessings, results=hide, fig=TRUE, include=TRUE, width=5, height=5>>=
+corPlot(cbind(exprs(exampleX),exprs(exampleX.NG)),
+        grouping=c("VSN normalized","Tukey-biweight scaled"))
+@ 
+
+The same function can also be used to assess the correlation between biological 
+and technical replicates among the microarray samples.
+
 
 \section{Visualize intensities along the chromosome}
 
 <<chipAlongChrom0, eval=FALSE>>=
-load(file.path(exDir,"exampleX.rda"))
-chipAlongChrom(exampleX, chrom="8", xlim=c(60208500,60216000), ylim=c(-1,6), colPal=2:3, probeAnno=exProbeAnno, gff=exGFF)  
+chipAlongChrom(exampleX, chrom="9", xlim=c(34318000,34321000), ylim=c(-2,4), probeAnno=exProbeAnno, gff=exGFF)
 @ 
 <<chipAlongChrom, echo=FALSE, results=hide>>=
 load(file.path(exDir,"exampleX.rda"))
 jpeg("Ringo-chipAlongChrom.jpg", quality=100, width=960, height=480)
 par(mar=c(2.5,4.2,4,1.5), font.lab=2)
-chipAlongChrom(exampleX, chrom="8", xlim=c(60208500,60216000), ylim=c(-1,6), colPal=2:3, probeAnno=exProbeAnno, gff=exGFF)
+chipAlongChrom(exampleX, chrom="9", xlim=c(34318000,34321000), ylim=c(-2,4), probeAnno=exProbeAnno, gff=exGFF)
 dev.off()
 @ 
 
-\myincfig{Ringo-chipAlongChrom}{0.98\textwidth}{Normalized probe intensities around the TSS of the \texttt{Hand2} gene.}
+\myincfig{Ringo-chipAlongChrom}{0.98\textwidth}{Normalized probe intensities around the TSS of the \texttt{Nudt2} gene.}
 
 See the result in figure \ref{Ringo-chipAlongChrom}.
+
 
 \section{Smoothing of probe intensities}
 
@@ -311,29 +323,30 @@ of those probes inside the window  that is centered at $x_0$.
 
 <<smoothing, results=hide>>=
 smoothX <- computeRunningMedians(exampleX, probeAnno=exProbeAnno,
-modColumn = "Cy5", allChr = c("8"), winHalfSize = 400, 
-combineReplicates = TRUE, verbose = TRUE)
+modColumn = "Cy5", allChr = "9", winHalfSize = 400)
+sampleNames(smoothX) <- paste(sampleNames(exampleX),"smoothed")
 @ 
 <<plotSmoothed0, eval=FALSE, results=hide>>=
-chipAlongChrom(exampleX, chrom="8", xlim=c(60208500,60216000), ylim=c(-1,6), colPal=2:3, probeAnno=exProbeAnno, gff=exGFF)
-chipAlongChrom(smoothX, chrom="8", xlim=c(60208000,60216000), probeAnno=exProbeAnno, itype="l", ilwd=3, paletteName="Spectral", add=TRUE)
+chipAlongChrom(exampleX, chrom="9", xlim=c(34318000,34321000), ylim=c(-2,4), probeAnno=exProbeAnno, gff=exGFF)
+chipAlongChrom(smoothX, chrom="9", xlim=c(34318000,34321000), probeAnno=exProbeAnno, itype="l", ilwd=4, paletteName="Spectral", add=TRUE)
 @ 
+
 <<plotSmoothed, echo=FALSE, results=hide>>=
 jpeg("Ringo-smoothAlongChrom.jpg", quality=100, width=960, height=480)
 par(mar=c(2.5,4.2,4,1.5), font.lab=2)
-chipAlongChrom(exampleX, chrom="8", xlim=c(60208500,60216000), ylim=c(-1,6), colPal=2:3, probeAnno=exProbeAnno, gff=exGFF)
-chipAlongChrom(smoothX, chrom="8", xlim=c(60208000,60216000), probeAnno=exProbeAnno, itype="l", ilwd=3, paletteName="Spectral", add=TRUE)
+chipAlongChrom(exampleX, chrom="9", xlim=c(34318000,34321000), ylim=c(-2,4), probeAnno=exProbeAnno, gff=exGFF)
+chipAlongChrom(smoothX, chrom="9", xlim=c(34318000,34321000), probeAnno=exProbeAnno, itype="l", ilwd=4, paletteName="Spectral", add=TRUE)
 dev.off()
 @ 
 
-\myincfig{Ringo-smoothAlongChrom}{0.98\textwidth}{Smoothed probe intensities around the TSS of the \texttt{Hand2} gene.}
+\myincfig{Ringo-smoothAlongChrom}{0.98\textwidth}{Normalized and smoothed probe intensities around the TSS of the \texttt{Nudt2} gene.}
 
 See the smoothed probe levels in figure \ref{Ringo-smoothAlongChrom}.
 
+
 \section{Peak finding}
 
-To identify genomic regions, in which the histones are modified,
-we require the following:
+To identify antibody-enriched genomic regions, we require the following:
 
 \begin{itemize}
 \item smoothed intensities of probes mapped to this region are exceed a certain threshold $y_0$
@@ -348,8 +361,8 @@ expected (smoothed) probe levels in non-enriched genomic regions,
 i.e. the \emph{null distribution} of probe levels.
 In a perfect world, we could use a log ratio of $0$ as definite cut-off.
 In this case the ``enriched'' DNA and the input DNA sample would be
-present in equal amounts, so no antibody-bound epitope, i.e. a modified
-histone residue in our case,  could be found at this genomic site.
+present in equal amounts, so no antibody-bound epitope, 
+could be found at this genomic site.
 In practice, there are some reasons why zero may be a too naive cut-off
 for calling a probe-hit genomic site \emph{enriched} in our case.
 See \citet{BourgonPhD} for an extensive discussion on problematic issues
@@ -367,35 +380,42 @@ sequence properties of the probe, varying quality of the synthesis of
 probes on the array and other reasons.
 To ameliorate this fact, we employ the sliding-window smoothing approach.
 
-Most importantly, in the current setting we are looking for regions
-enriched for histone modifications. The frequency and extent of
-genomic regions with modified histones is expected to by much larger than,
+Please note that this procedure was developed to identify genomic regions
+enriched for histone modifications rather than transcription factor binding 
+sites. The frequency and extent of
+genomic regions with modified histones is expected to be much larger than,
 say, regions containing binding sites for a certain transcription factor.
-Thus, we cannot assume that the large majority of probes does not
+In that case one cannot assume that the large majority of probes does not
 show enrichment. 
+In the example data case, however, we look for enriched 
+transcription-factor-bound regions. For this setup a number of alternative,
+and likely superior, algorithms for detecting enriched regions
+have been suggested, 
+some being available in other Bioconductor packages, too.
 
 The aforementioned issues make it difficult to come up with a reasonable 
 estimate for the null distribution of smoothed probe levels 
 in non-enriched genomic regions. 
 We simulate such a distribution by permuting the probe match positions 
 on the chromosome. 
-We take the 99\% quantile of these smoothed intensities as the threshold $y_0$
+We take the 99\% quantile of these smoothed intensities 
+as the threshold $y_0$
 \footnote{To get a more realistic estimate for such a null distribution, 
 one should shuffle all chromosomes' positions and repeat the whole process
 many times.}.
 
 <<permutedSmoothing>>=
 permProbeAnno <- copyEnv(exProbeAnno)
-sampled.index <- sample(get("8.index",env=exProbeAnno))
-assign("8.index", sampled.index, env=permProbeAnno)
+sampled.index <- sample(get("9.index",env=exProbeAnno))
+assign("9.index", sampled.index, env=permProbeAnno)
 sampledX <- computeRunningMedians(exampleX, probeAnno=permProbeAnno,
-modColumn = "Cy5", allChr = c("8"), winHalfSize = 400, verbose=FALSE)
+modColumn = "Cy5", allChr = c("9"), winHalfSize = 400, verbose=FALSE)
 (y0 <- quantile(exprs(sampledX), 0.99, na.rm=TRUE))
 @ 
 
 Since antibodies vary in their efficiency to bind to their target epitope,
 we suggest to obtain a different threshold for each antibody. In the example
-data, however, we have only one antibody against histone 3 acetylation.
+data, however, we have only one antibody against \texttt{Suz12}.
 
 While this threshold worked well for us, 
 we do not claim this way to be a gold standard for determining the
@@ -404,21 +424,21 @@ In particular, it does not take into account the auto-correlation between
 near-by probes.
 
 <<peakFinding, results=hide>>=
-peaksX <- findPeaksOnSmoothed(smoothX, probeAnno=exProbeAnno, thresholds=y0, allChr = c("8"),distCutOff=600, cellType="HL1")
+peaksX <- findPeaksOnSmoothed(smoothX, probeAnno=exProbeAnno, thresholds=y0, allChr="9", distCutOff=600, cellType="human")
 peaksX <- relatePeaks(peaksX, exGFF)
 peaksXD <- as.data.frame.peakList(peaksX)
 @ 
 <<showPeaks>>=
-peaksXD[2,]
+peaksXD
 @ 
 
 <<plotPeak0, eval=FALSE, results=hide>>=
-plot(peaksX[[2]], smoothX, probeAnno=exProbeAnno, gff=exGFF)
+plot(peaksX[[1]], smoothX, probeAnno=exProbeAnno, gff=exGFF)
 @ 
 <<plotPeak, echo=FALSE, results=hide>>=
 jpeg("Ringo-plotPeak.jpg", quality=100, width=960, height=480)
 par(mar=c(2.5,4.2,4,1.5), font.lab=2)
-plot(peaksX[[2]], smoothX, probeAnno=exProbeAnno, gff=exGFF)
+plot(peaksX[[1]], smoothX, probeAnno=exProbeAnno, gff=exGFF)
 dev.off()
 @ 
 
@@ -426,9 +446,10 @@ dev.off()
   antibody enrichment on chromosome 8.}
 
 Figure \ref{Ringo-plotPeak} displays the identified peak, which is the one
-upstream of the \texttt{HAND2}. This peak was obvious in plots of the 
-normalized data (see figure \ref{Ringo-smoothAlongChrom}) 
-and it is reassuring that the algorithm recovers it as well.
+upstream of the \texttt{Nudt2} gene. This peak was obvious in plots of the 
+normalized data (see figure \ref{Ringo-smoothAlongChrom}).
+And while it is reassuring that our method recovers it as well, a number
+of other approaches would certainly have reported it as well.
 
 \section{Concluding Remarks}
 

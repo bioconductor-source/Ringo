@@ -38,10 +38,11 @@
 \seealso{\code{\link{readNimblegen}},\code{\link[graphics]{image}}}
 \examples{
    exDir <- system.file("exData",package="Ringo")
-   exRG <- readNimblegen("example_files.txt","spottypes.txt",path=exDir)
+   exRG <- readNimblegen("example_targets.txt","spottypes.txt",path=exDir)
    image(exRG,arrayno=1,channel="red")
    ## this example looks strange because the example data files only
-   ## includes the probe intensities of probes mapped to chromosome 8.
+   ## includes the probe intensities of probes mapped to the forward
+   ## strand of chromosome 9.
    ## you can see these probes are distributed all over the array
 }
 \keyword{hplot}% at least one, from doc/KEYWORDS

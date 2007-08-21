@@ -34,22 +34,22 @@
 # ...
 
 # what to use:
-hitResultFile   <- "~/projects/tfchip/DesignFiles/2006-11-15_Sperling_mm8_array1.pos"
-hitResultFile2   <- "~/projects/tfchip/DesignFiles/2006-11-15_Sperling_mm8_array2.pos"
+hitResultFile   <- "MOD_2003-12-05_SUZ12_1in2.pos"
+#hitResultFile2   <- "MOD_2003-12-05_SUZ12_2in2.pos"
 
 # what to build:
-gffFile       <- "~/groupsvn/projects/Sperling/Jenny/chip/data/mm8gff.rda"
-probeAnnoFile <- "ngchip2probeAnno_array2.rda"
-# probeAnnoFile <- "~/projects/tfchip/data/ngchip2probeAnno.rda"
+gffFile       <- "ensembl_gff.rda"
+probeAnnoFile <- "exampleProbeAnno.rda"
 
 # how are the chromosomes referred to?
-allChr <- c(1:19,"X","Y")  # mouse musculus! our arrays have no probes matching mtDNA
+# allChr <- c(1:22,"X","Y")  # homo sapiens
+allChr <- "9" # the example data only contains information concerning reporters mapped to chromosome 9
 
 # what can this script do:
 possibleProducts <- c("probeAnno","gff","probegc")
 
 # IMPORTANT  what do we want to do now:
-what <- possibleProducts[c(1,3)]
+what <- possibleProducts[c(1,2,3)]
 
 ### READ IN ###################################################
 
@@ -97,18 +97,14 @@ if("probeAnno" %in% what) {
 
   if (probegc %in% what) {
     ### add the GC content of each probe on the used arrays to the probeAnno environment
-    ndf.file.name <- "/panfs/panda1/huber/sperling/tfchip/DesignFiles/2006-11-15_Sperling_mm8_array1.ndf"
+    list.files(pattern="\\.ndf")
+    ndf.file.name <- "MOD_2003-12-05_SUZ12_1in2.ndf"
     ndf <- read.delim(ndf.file.name, header=TRUE, as.is=TRUE)
     stopifnot(all(c("PROBE_ID","PROBE_SEQUENCE") %in% names(ndf)))
-    ndf.file.name2 <- "/panfs/panda1/huber/sperling/tfchip/DesignFiles/2006-11-15_Sperling_mm8_array2.ndf"
-    ndf2 <- read.delim(ndf.file.name2, header=TRUE, as.is=TRUE)
-    stopifnot(all(c("PROBE_ID","PROBE_SEQUENCE") %in% names(ndf2)))
-    ndf <- rbind(ndf, ndf2)
     are.unique <- !duplicated(ndf[["PROBE_ID"]])
     probes.gc <- compute.gc(ndf[["PROBE_SEQUENCE"]][are.unique])
-    # takes about 5 minutes for 777000 probes on our system
+    # my take some minutes
     names(probes.gc) <- ndf[["PROBE_ID"]][are.unique]
-
     assign("probes.gc", value=probes.gc, env=probeAnno)
     rm(ndf, ndf2, ndf.file.name1, ndf.file.name2);gc()
   }# if (probegc %in% what)
@@ -123,14 +119,13 @@ if("gff" %in% what) {
   # augment list of transcript details with further info and save as gff
 
   library("biomaRt")
-  ensembl <- useMart("ensembl", dataset="mmusculus_gene_ensembl")
+  ensembl <- useMart("ensembl", dataset="hsapiens_gene_ensembl")
 
-  gene.ids <- unique(unlist(lapply(as.list(c(1:19,"X","Y")), function(this.chr)
-     getFeature(type="ensembl_gene_id", chr=this.chr, mart=ensembl)[,2]), use.names=FALSE))
-  
+  gene.ids <- unique(unlist(lapply(as.list(allChr), function(this.chr) getFeature(type="ensembl_gene_id", chr=this.chr, mart=ensembl)[,2]), use.names=FALSE))
+
   # what information to get for each transcript:
-  sel.attributes=c("ensembl_gene_id", "ensembl_transcript_id", "chromosome_name", "strand", "transcript_start", "transcript_end","markersymbol", "description")
-  # if 'markersymbol' is not a defined attribute for your data species, try to find equivalent, using commands like this one:
+  sel.attributes=c("ensembl_gene_id", "ensembl_transcript_id", "hgnc_symbol", "chromosome_name", "strand", "start_position","end_position", "transcript_start", "transcript_end", "description")
+  # if 'hgnc_symbol' is not a defined attribute for gene symbols in your data species, try to find an equivalent, using commands such as this one:
   grep("symbol",listAttributes(ensembl)[,1], value=TRUE)
 
   # retreive information:
@@ -139,17 +134,48 @@ if("gff" %in% what) {
   martDisconnect(ensembl)
 
   ## replace attribute names by standardized names
+  gff$gene <- gff$"ensembl_gene_id"
   gff$name <- gff$ensembl_transcript_id
   gff$chr <- gff$chromosome_name
-  gff$symbol <- gff$markersymbol
+  gff$symbol <- gff$"hgnc_symbol"
   gff$start <- gff$transcript_start
   gff$end <- gff$transcript_end
+  gff$"gene_start" <- gff$"start_position"
+  gff$"gene_end" <- gff$"end_position"
   gff$feature <- rep("transcript",nrow(gff))
   gff$chromosome_name <- gff$markersymbol <- NULL
   gff$transcript_start <- gff$transcript_end <- NULL
+  gff$start_position <- gff$end_position <- NULL
+  gff$ensembl_transcript_id <- NULL
+  gff$ensembl_gene_id <- NULL
 
+  
+  ### some transcripts names my occurr in multiples, usually this is because an Ensembl transcript can have more than one Symbol defined for it:
+  if (any(duplicated(gff$name))){
+    dupl.trans <- unique(gff$name[duplicated(gff$name)])
+    G <- lapply(as.list(dupl.trans), function(this.trans){
+      this.gff <- subset(gff,name == this.trans)
+      if (nrow(unique(this.gff[,c("gene","name","chr","start","end","description")]))>1) return(this.gff[1,,drop=FALSE])
+      non.zero.gff <- subset(this.gff, nchar(symbol)>0)
+      this.other.sym <- NULL
+      if (nrow(non.zero.gff)> 0){
+        this.new.sym <- non.zero.gff$symbol[which.min(nchar(non.zero.gff$symbol))]
+        if (nrow(non.zero.gff)>1)
+          this.other.sym <- paste("Synonyms",paste(non.zero.gff$symbol[-which.min(nchar(non.zero.gff$symbol))],collapse=","),sep=":")
+      } else { this.new.sym <- "" }
+      this.gff$symbol[1] <- this.new.sym
+      if (!is.null(this.other.sym))
+        this.gff$description[1] <- paste(this.gff$description[1],this.other.sym,sep=";")
+      return(this.gff[1,,drop=FALSE])
+    })
+    gff <- rbind(gff[-which(gff$name %in% dupl.trans),],do.call("rbind",G))
+    rm(G, dupl.trans);gc()
+  }#if (any(duplicated(gff$name)))
+
+  
   # reorder by chromosome and start position
-  gff <- gff[order(gff$chr, gff$start),]
+  gff <- gff[order(gff$chr, gff$gene_start, gff$start),c("name","gene","chr","strand","gene_start","gene_end","start","end","symbol", "description","feature")]
+  rownames(gff) <- NULL
   
   save(gff, file=gffFile, compress=TRUE)
 

@@ -56,11 +56,11 @@ verbose = TRUE)
   load(file.path(exDir,"exampleProbeAnno.rda"))
   load(file.path(exDir,"exampleX.rda"))
   smoothX <- computeRunningMedians(exampleX, probeAnno=exProbeAnno,
-     modColumn = "Cy5", allChr = c("8"), winHalfSize = 400, combineReplicates=TRUE)
+       modColumn = "Cy5", allChr = "9", winHalfSize = 400)
   peaksX <- findPeaksOnSmoothed(smoothX, probeAnno=exProbeAnno,
-thresholds=1.5, allChr = c("8"),distCutOff=600, cellType="HL1")
+       thresholds=0.45, allChr="9", distCutOff=600, cellType="human")
   if (interactive())
-    plot(peaksX[[2]], smoothX, probeAnno=exProbeAnno, gff=exGFF)
+    plot(peaksX[[1]], smoothX, probeAnno=exProbeAnno, gff=exGFF)
   peaksX <- relatePeaks(peaksX, exGFF)
   as.data.frame.peakList(peaksX)
 }

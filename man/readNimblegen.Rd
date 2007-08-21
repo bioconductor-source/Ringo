@@ -33,7 +33,7 @@ readNimblegen(hybesFile, spotTypesFile, path = getwd(), verbose = TRUE, ...)
   \code{\link[limma]{readTargets}}}
 \examples{
   exDir <- system.file("exData",package="Ringo")
-  exRG <- readNimblegen("example_files.txt","spottypes.txt",path=exDir)
+  exRG <- readNimblegen("example_targets.txt","spottypes.txt",path=exDir)
   print(exRG)
 }
 \keyword{file}% at least one, from doc/KEYWORDS

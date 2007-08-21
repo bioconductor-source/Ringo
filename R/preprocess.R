@@ -12,7 +12,7 @@ preprocess <- function(myRG, method="vsn", returnMAList=FALSE,
                  "median"=normalizeWithinArrays(myRG, method="median",...),
                  "vsn"=normalizeBetweenArrays(myRG, method="vsn",...),
                  "Gquantile"=normalizeBetweenArrays(myRG, method="Gquantile",...),
-                 "nimblegen"=nimblegenNorm(myRG,...),
+                 "nimblegen"=nimblegenScale(myRG,...),
                  "none"=normalizeWithinArrays(myRG, method="none",...)
                  )
   if (returnMAList){return(myMA)}
@@ -37,7 +37,7 @@ asExprSet <- function(myMA){
   return(myEset)
 }#asExprSet
 
-nimblegenNorm <- function(myRG, ...){
+nimblegenScale <- function(myRG, ...){
   # function to compute Nimblegen's scaled log ratios
   stopifnot(inherits(myRG, "RGList"), all(c("genes","R","G","targets") %in% names(myRG)))
 
@@ -61,4 +61,4 @@ nimblegenNorm <- function(myRG, ...){
   resList <- list(M=srat, A=(log2(myRG$R)+log2(myRG$G))/2, genes=myRG$genes, targets=myRG$targets)
   resMA <- new("MAList", resList)
   return(resMA)
-}#nimblegenNorm
+}#nimblegenScale

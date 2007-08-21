@@ -4,9 +4,9 @@
 \title{converts MAList into an exprSet}
 \description{
   Function to convert an object of class \code{MAList} into an object of
-  class \code{ExpressionSet}. Note that the optional \code{targets} component
-  is needed in this case to generate the \code{phenoData} of the new
-  \code{ExpressionSet}.
+  class \code{ExpressionSet}. Note that the otherwise optional
+  \code{targets} component is required in this case to generate the
+  \code{phenoData} of the new \code{ExpressionSet}.
 }
 \usage{asExprSet(myMA)}
 \arguments{
@@ -19,7 +19,7 @@
 \seealso{\code{\link[Biobase]{ExpressionSet}}}
 \examples{
   exDir <- system.file("exData",package="Ringo")
-  exRG  <- readNimblegen("example_files.txt","spottypes.txt",path=exDir)
+  exRG  <- readNimblegen("example_targets.txt","spottypes.txt",path=exDir)
   exMA  <- preprocess(exRG, "none", returnMAList=TRUE)
   exX   <- Ringo:::asExprSet(exMA)
 }

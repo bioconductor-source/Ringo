@@ -48,28 +48,17 @@ quant = 0.5, combineReplicates = FALSE, verbose = TRUE)
 \seealso{\code{\link[Biobase]{ExpressionSet}},
   \code{\link{sliding.quantile}}}
 \examples{
-  current.dir <- getwd()
-  setwd(system.file("exData",package="Ringo"))
-  load("exampleProbeAnno.rda")
-  load("exampleX.rda")
-  setwd(current.dir)
-  smoothX = computeRunningMedians(exampleX, probeAnno=exProbeAnno,
-modColumn = "Cy5", allChr = c("8"), winHalfSize = 400, verbose = TRUE)
-  par(mfrow=c(1,1))
-  chipAlongChrom(exampleX, chrom="8", xlim=c(60208000,60216000),
-                 ylim=c(-1,6), probeAnno=exProbeAnno, gff=exGFF)  
-  chipAlongChrom(smoothX, chrom="8", xlim=c(60208000,60216000),
-                 ylim=c(-1,6), probeAnno=exProbeAnno, gff=exGFF,
-                 itype="l", ilwd=3, add=TRUE)
-
-  ## combine over replicates:
-  smoothX2 = computeRunningMedians(exampleX, probeAnno=exProbeAnno,
-       modColumn = "Cy5", allChr = c("8"), winHalfSize = 400,
-       combineReplicates=TRUE, verbose = TRUE)
-  chipAlongChrom(exampleX, chrom="8", xlim=c(60208000,60216000),
-                 ylim=c(-1,6), probeAnno=exProbeAnno, gff=exGFF)  
-  chipAlongChrom(smoothX2, chrom="8", xlim=c(60208000,60216000),
-                 ylim=c(-1,6), probeAnno=exProbeAnno, gff=exGFF,
-                 itype="l", ilwd=3, paletteName="Spectral", add=TRUE)
+  exDir <- system.file("exData",package="Ringo")
+  load(file.path(exDir,"exampleProbeAnno.rda"))
+  load(file.path(exDir,"exampleX.rda"))
+  smoothX <- computeRunningMedians(exampleX, probeAnno=exProbeAnno,
+modColumn = "Cy5", allChr = c("9"), winHalfSize = 400, verbose = TRUE)
+  if (interactive()){
+   par(mfrow=c(1,1))
+   chipAlongChrom(exampleX, chrom="9", xlim=c(34318000,34321000), ylim=c(-2,4), probeAnno=exProbeAnno, gff=exGFF)
+   chipAlongChrom(smoothX, chrom="9", xlim=c(34318000,34321000),
+probeAnno=exProbeAnno, itype="l", ilwd=4, paletteName="Spectral",
+add=TRUE)
+  }
 }
 \keyword{manip}% at least one, from doc/KEYWORDS

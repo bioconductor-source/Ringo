@@ -1,0 +1,2 @@
+SlideNumber	FileNameCy3	FileNameCy5	Species	Cy3	Cy5
+Suz12	MOD_20551_PMT1_pair.txt	MOD_20742_PMT1_pair.txt	Homo sapiens (human)	total	Suz12

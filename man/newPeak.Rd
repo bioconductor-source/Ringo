@@ -37,10 +37,10 @@ newPeak(name, chr, start, end, cellType = NULL, antibody, maxPeak, score = NULL,
 }
 \seealso{\code{\link{peak-class}},  \code{\link{findPeaksOnSmoothed}}}
 \examples{
-  my.peak <- newPeak("H3ac.HAND2.upstream.peak",
-                     chr="8", start=60210400, end=60213000,
-                     antibody="H3ac",cellType="cellLine.HL1",
-                     maxPeak=3.5, score=100)
+  my.peak <- newPeak("Suz12.Nudt2.upstream.peak",
+                     chr="9", start=34318900, end=34320100,
+                     antibody="Suz12",cellType="human",
+                     maxPeak=2, score=99)
   print(my.peak)
 }
 \keyword{internal}

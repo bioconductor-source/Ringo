@@ -34,7 +34,7 @@ preprocess(myRG, method = "vsn", returnMAList=FALSE, verbose=TRUE, ...)
      using \code{limma}'s function \code{backgroundCorrect} with
      \code{method="normexp"} and \code{offset=50}. Then calls
      \code{normalizeWithinArrays} with \code{method="median".}}
-    \item{nimblegen}{Normalization procedure used by Nimblegen. Yields
+    \item{nimblegen}{Scaling procedure used by Nimblegen. Yields
       scaled log-ratios by a two step procedure:
       srat = log2(R) - log2(G)
       srat = srat - tukey.biweight(srat)}
@@ -56,17 +56,17 @@ preprocess(myRG, method = "vsn", returnMAList=FALSE, verbose=TRUE, ...)
   \code{\link[affy]{tukey.biweight}}}
 \examples{
    exDir <- system.file("exData",package="Ringo")
-   exRG <- readNimblegen("example_files.txt","spottypes.txt",path=exDir)
+   exRG <- readNimblegen("example_targets.txt","spottypes.txt",path=exDir)
    exampleX <- preprocess(exRG)
-   sampleNames(exampleX) <- paste(exRG$targets$Cell.line,
-                       exRG$targets$Cy5,exRG$targets$Set,sep=".")
+   sampleNames(exampleX) <- 
+     make.names(paste(exRG$targets$Cy5,"vs",exRG$targets$Cy3,sep="_"))
    print(exampleX)
 
-   ### compare VSN to NimbleGen's tukey-biweight normalization
+   ### compare VSN to NimbleGen's tukey-biweight scaling
    exampleX.NG <- preprocess(exRG, method="nimblegen")
    sampleNames(exampleX.NG) <- sampleNames(exampleX)
    if (interactive())
      corPlot(cbind(exprs(exampleX),exprs(exampleX.NG)),
-       grouping=rep(c("VSN normalized","NimbleGen normalized"),each=2))
+       grouping=rep(c("VSN normalized","Tukey-biweight scaled"),each=2))
 }
 \keyword{manip}% at least one, from doc/KEYWORDS

@@ -52,7 +52,7 @@ channel = c("red","green","logratio"), verbose = TRUE)
   load(file.path(exDir,"exampleProbeAnno.rda"))
   load(file.path(exDir,"exampleX.rda"))
   exAc <- autocor(exampleX, probeAnno=exProbeAnno,
-                  chrom="8",lag.step=250)
+                  chrom="9", lag.max=1000)
   plot(exAc)
 }
 \keyword{manip}

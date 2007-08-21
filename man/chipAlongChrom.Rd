@@ -101,13 +101,7 @@ chipAlongChrom(eSet, chrom, probeAnno, xlim, ylim = NULL,
   load(file.path(ringoExampleDir,"exampleX.rda"))
 
   # show a gene that is well represented on this microarray
-  chipAlongChrom(exampleX, chrom="8", xlim=c(60208500,60216000),
-                 ylim=c(-1,6), colPal=2:3, probeAnno=exProbeAnno,
-                 gff=exGFF)
-
-  # show a less well represented gene:
-  chipAlongChrom(exampleX, chrom="8", xlim=c(60400000,60405000),
-                 ylim=c(-2,4), colPal=2:3, probeAnno=exProbeAnno,
-                 gff=exGFF)
+  chipAlongChrom(exampleX, chrom="9", xlim=c(34318000,34321000),
+                 ylim=c(-2,4), probeAnno=exProbeAnno, gff=exGFF)
 }
 \keyword{hplot}% at least one, from doc/KEYWORDS

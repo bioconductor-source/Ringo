@@ -1,13 +1,13 @@
-\name{nimblegenNorm}
-\alias{nimblegenNorm}
+\name{nimblegenScale}
+\alias{nimblegenScale}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Function to compute scaled log-ratios}
 \description{
   This function compute the scaled log-ratios from raw probe
-  intensities, as done by Nimblegen for normalization.
+  intensities, as done by Nimblegen for scaling of ChIP-chip data.
 }
 \usage{
-nimblegenNorm(myRG, ...)
+nimblegenScale(myRG, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

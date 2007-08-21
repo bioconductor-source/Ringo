@@ -5,7 +5,7 @@ import("graphics")
 export("autocor", "chipAlongChrom","corPlot",
        "computeRunningMedians", "sliding.median","sliding.quantile",
        "findPeaksOnSmoothed", "peakByThreshold","newPeak","relatePeaks",
-       "preprocess","nimblegenNorm","readNimblegen",
+       "preprocess","nimblegenScale","readNimblegen",
        "as.data.frame.peakList","ftr2xys","compute.gc")
 
 S3method("plot", "peak")
