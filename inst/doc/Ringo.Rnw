@@ -106,6 +106,11 @@ tab-delimited text files.
 
 The package comes with (shortened) example scanner output files,
 in NimbleGen's \emph{pair} format.
+These files are excerpts of the ChIP-chip demo data that NimbleGen 
+provide at their FTP site for free download.
+Their biological context, identification of DNA binding sites
+of complexes containing Suz12 in human cells, 
+has been described before \citep{Squazzo2006}.
 
 <<locateData>>=
 exDir <- system.file("exData",package="Ringo")
@@ -113,10 +118,11 @@ list.files(exDir, pattern="pair.txt")
 head(read.delim(file.path(exDir,"MOD_20551_PMT1_pair.txt"), skip=1))[,c(1,4:7,9)]
 @
 
-In addition, there is a file with more details on the samples, including 
-which files belong to which sample\footnote{You will probaby have to
+In addition, there is a text file that holds details on the samples, 
+including which two \emph{pair} files belong to which 
+sample\footnote{You will probably have to
 manually construct such a text file for your own data. 
-The \texttt{scripts} directory of the package contains a script
+The \texttt{scripts} directory of this package contains a script
 \texttt{convertSampleKeyTxt.R} as an inspiration how the file 
 \texttt{SampleKey.txt} provided by NimbleGen could be used for this.}.
 
@@ -217,7 +223,7 @@ from result files of aligning the probe sequences to the genome.
 
 In addition, the data file loaded above also contains a 
 \emph{GFF (General Feature Format)}
-file of all transcripts on human chromose 9 annotated in the 
+file of all transcripts on human chromosome 9 annotated in the 
 \href{http://www.ensembl.org/Mus_musculus/index.html}{Ensembl} database 
 (release 46, August 2007).
 The aforementioned script \texttt{makeProbeAnno.R} also contains
@@ -241,12 +247,13 @@ exAc <- autocor(exRG, probeAnno=exProbeAnno, chrom="9", lag.max=1000)
 plot(exAc)
 @ 
 
-We see some auto-correlation between probe position up to 800 base-pairs
+We see some auto-correlation between probe position up to 800 base pairs
 apart. Since the sonicated fragments that are hybridized to the
 array have an average size in the range of up to 1000 bp, 
 such a degree of auto-correlation up to this distance can be expected, 
 but nevertheless has to be taken into account 
 later on during data analysis.
+
 
 \section{Preprocessing}
 
@@ -433,12 +440,12 @@ peaksXD
 @ 
 
 <<plotPeak0, eval=FALSE, results=hide>>=
-plot(peaksX[[1]], smoothX, probeAnno=exProbeAnno, gff=exGFF)
+plot(peaksX[[1]], smoothX, probeAnno=exProbeAnno, gff=exGFF, paletteName="Spectral")
 @ 
 <<plotPeak, echo=FALSE, results=hide>>=
 jpeg("Ringo-plotPeak.jpg", quality=100, width=960, height=480)
 par(mar=c(2.5,4.2,4,1.5), font.lab=2)
-plot(peaksX[[1]], smoothX, probeAnno=exProbeAnno, gff=exGFF)
+plot(peaksX[[1]], smoothX, probeAnno=exProbeAnno, gff=exGFF, paletteName="Spectral")
 dev.off()
 @ 
 
