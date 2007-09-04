@@ -67,6 +67,6 @@ preprocess(myRG, method = "vsn", returnMAList=FALSE, verbose=TRUE, ...)
    sampleNames(exampleX.NG) <- sampleNames(exampleX)
    if (interactive())
      corPlot(cbind(exprs(exampleX),exprs(exampleX.NG)),
-       grouping=rep(c("VSN normalized","Tukey-biweight scaled"),each=2))
+       grouping=c("VSN normalized","Tukey-biweight scaled"))
 }
 \keyword{manip}% at least one, from doc/KEYWORDS

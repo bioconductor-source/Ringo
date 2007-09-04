@@ -2,7 +2,8 @@
 #setOldClass("peakList")
 
 newPeak <- function(name, chr, start, end, cellType=NULL, antibody, maxPeak, score=NULL, probes=c(), ...) {
-  peak <- list(name=name, chr=chr, start=start, end=end, cellType=cellType, antibody=antibody, typeUpstream=list(), typeDownstream=list(), maxPeak=maxPeak, score=score, probes=probes)
+  ## element 'antibody' was named 'modification' before
+  peak <- list(name=name, chr=chr, start=start, end=end, cellType=cellType, antibody=antibody, typeUpstream=list(), typeDownstream=list(), maxPeak=maxPeak, score=score, probes=probes)  
   ## add any further named arguments in "..."
   peak <- c(peak, lapply(as.list(match.call(expand.dots=FALSE)[["..."]]),eval))
   class(peak) = "peak"

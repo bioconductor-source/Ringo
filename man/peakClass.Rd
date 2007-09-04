@@ -12,6 +12,12 @@
   than a formal \code{S4} class (yet), the presence of certain list
   elements enables a standardized approach to working with enriched
   regions identified from ChIP-chip data.
+  Note that the term "peak", while commonly used in ChIP-chip context,
+  is slightly misleading and the term "ChIP-enriched region" would be
+  more appropriate. Within such regions the actual signal could show two
+  or more actual signal peaks or none at all (long plateau). For
+  succinctness sake, we use the term "peak" for a ChIP-enriched region,
+  though.
 }
 \section{Slots/List Components}{
   \describe{
@@ -75,7 +81,7 @@
   \code{\link{plot.peak}}, \code{\link{findPeaksOnSmoothed}},
   \code{\link{relatePeaks}}
 }
-\author{Tammo Krueger, Joern Toedling}
+\author{Joern Toedling, Tammo Krueger, PT Bote}
 \examples{
   exDir <- system.file("exData",package="Ringo")
   load(file.path(exDir,"exampleProbeAnno.rda"))

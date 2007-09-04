@@ -322,7 +322,7 @@ See the result in figure \ref{Ringo-chipAlongChrom}.
 Since the response of probes to the same amount of hybridized genome material
 varies greatly, due to probe GC content, melting temperature, 
 secondary structure etc., it is suggested to do a smoothing over individual 
-probe intensities before looking for peaks.
+probe intensities before looking for ChIP-enriched regions.
 
 Here, we slide a window of 800 bp width along the chromosome and replace the
 intensity at e genomic position $x_0$ by the median over the intensities
@@ -360,7 +360,13 @@ To identify antibody-enriched genomic regions, we require the following:
 \item the region contains at least three probe match positions
 \item each affected position is less than a defined maximum distance $d_{max}$ 
 apart from another affected position in the region (we require a certain
-probe spacing to have confidence in detected peaks)
+probe spacing to have confidence in detected peaks\footnote{Note
+that the term ''peak'', while commonly used in ChIP-chip context,
+is slightly misleading and the term "ChIP-enriched region" would be
+more appropriate. Within such regions the actual signal could show two
+or more actual signal peaks or none at all (long plateau). For
+succinctness sake, we use the term "peak" for a ChIP-enriched region,
+though.})
 \end{itemize}
 
 For setting the threshold $y_0$, one has to assess the 
@@ -480,11 +486,19 @@ This vignette was generated using the following package versions:
 toLatex(sessionInfo())
 @
 
+\clearpage
+\small
+\section*{Acknowledgments}
+
+We thank Wolfgang Huber Oleg Sklyar, Tammo Kr\"uger, Richard Bourgon,
+Matt Ritchie, and Pos Bote for source code contributions to
+and lots of helpful suggestions on Ringo, 
+Todd Richmond and NimbleGen Systems, Inc. for 
+providing us with the example ChIP-chip data, and Jenny J. Fischer and
+Silke Sperling for various thought-provoking contributions.
+
 
 %%% BIBLIOGRAPHY STARTS HERE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\clearpage
-
 \bibliographystyle{abbrvnat}
 \bibliography{Ringo-Bibliography.bib}
 
