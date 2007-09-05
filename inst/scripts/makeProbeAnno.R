@@ -65,8 +65,9 @@ if (!all(c("SEQ_ID","CHROMOSOME","PROBE_ID","POSITION","LENGTH")%in%names(hits))
   stop(paste("File",hitResultFile,"does not seem to be a POS file, since at least one of the
 required column headers (SEQ_ID,CHROMOSOME,PROBE_ID,POSITION,LENGTH) is missing.\n"))
 
-
-hitOrder <- order(hits$CHROMOSOME, hits$POSITION)
+### if all the probes have the same length, one could do the sorting on the start positions alone and indeed in versions prior to 1.1.18 this was the case; for arrays with varying probe lengths, sorting on the probe's match middle position is preferable
+hits$MIDDLE <- hits$POSITION + round((hits$LENGTH - 1)/2)
+hitOrder <- order(hits$CHROMOSOME, hits$MIDDLE)
 hits <- hits[hitOrder,]
 if (length(grep("chr",hits$CHROMOSOME, ignore.case=TRUE)))
   hits$CHROMOSOME <- gsub("chr(0)?","", hits$CHROMOSOME, ignore.case=TRUE)
