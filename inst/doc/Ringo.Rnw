@@ -120,9 +120,8 @@ head(read.delim(file.path(exDir,"MOD_20551_PMT1_pair.txt"), skip=1))[,c(1,4:7,9)
 
 In addition, there is a text file that holds details on the samples, 
 including which two \emph{pair} files belong to which 
-sample\footnote{You will probably have to
-manually construct such a text file for your own data. 
-The \texttt{scripts} directory of this package contains a script
+sample\footnote{You may have to construct such a targets file for your own 
+data. The \texttt{scripts} directory of this package contains a script
 \texttt{convertSampleKeyTxt.R} as an inspiration how the file 
 \texttt{SampleKey.txt} provided by NimbleGen could be used for this.}.
 
@@ -146,7 +145,7 @@ read.delim(file.path(exDir,"spottypes.txt"), header=TRUE)
 @ 
 
 Reading all these files, we can read in the raw probe intensities
-and obtain an object of \Rclass{RGList}, a class defined
+and obtain an object of class \Rclass{RGList}, a class defined
 in package \Rpackage{limma}.
 
 <<readNimblegen, results=hide>>=
@@ -164,10 +163,10 @@ head(exRG$genes)
 exRG$targets
 @ 
 
-The user can alternatively supply raw two-color microarray readouts
-from other platforms in \Rclass{RGList} format,
-and the other functions of \Rpackage{Ringo} can work equally well on
-that data.
+Users can alternatively supply raw two-color ChIP-chip readouts
+from other platforms in \Rclass{RGList} format and consecutively use
+\Rpackage{Ringo} to analyze that data.
+
 
 \section{Quality assessment}
 
@@ -206,8 +205,13 @@ the single-channel densities. \Rpackage{limma}'s function
 plotDensities(exRG)
 @
  
-A \emph{probeAnno} environment contains the mapping between
-probes and genomic positions.
+\Rpackage{Ringo}, similar to the Bioconductor package \Rpackage{tilingArray},
+employs a \emph{probeAnno} environment to describe the mapping between 
+reporters on the microarray and genomic positions.
+Per chromosome, four vectors of equal length and ordering specify 
+at which genomic positions reporter matches start and end, 
+what identifiers or indices these reporters have in the intensities data,
+and whether these reporters match uniquely to those genomic positions.
 
 <<loadProbeAnno>>=
 load(file.path(exDir,"exampleProbeAnno.rda"))
@@ -455,8 +459,8 @@ plot(peaksX[[1]], smoothX, probeAnno=exProbeAnno, gff=exGFF, paletteName="Spectr
 dev.off()
 @ 
 
-\myincfig{Ringo-plotPeak}{0.98\textwidth}{One of the discovered peaks for H3ac
-  antibody enrichment on chromosome 8.}
+\myincfig{Ringo-plotPeak}{0.98\textwidth}{One of the identified Suz12-antibody
+enriched regions on chromosome 9.}
 
 Figure \ref{Ringo-plotPeak} displays the identified peak, which is the one
 upstream of the \texttt{Nudt2} gene. This peak was obvious in plots of the 
@@ -490,12 +494,12 @@ toLatex(sessionInfo())
 \small
 \section*{Acknowledgments}
 
-We thank Wolfgang Huber Oleg Sklyar, Tammo Kr\"uger, Richard Bourgon,
+I thank Wolfgang Huber Oleg Sklyar, Tammo Kr\"uger, Richard Bourgon,
 Matt Ritchie, and Pos Bote for source code contributions to
 and lots of helpful suggestions on Ringo, 
 Todd Richmond and NimbleGen Systems, Inc. for 
 providing us with the example ChIP-chip data, and Jenny J. Fischer and
-Silke Sperling for various thought-provoking contributions.
+Silke Sperling for their thought-provoking contributions.
 
 
 %%% BIBLIOGRAPHY STARTS HERE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
