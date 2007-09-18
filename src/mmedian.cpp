@@ -13,6 +13,7 @@ extern "C" {
 #include <Rinternals.h>
 #include <R_ext/Error.h>
 #include <R_ext/Rdynload.h>
+#include <R_ext/Utils.h> 
  
   //extern "C" {
   SEXP sliding_median(SEXP, SEXP, SEXP);
@@ -22,7 +23,7 @@ extern "C" {
   /* HEADER: LOGISTICS MOSTLY IMPORTANT FOR WINDOWS DLL */
 
    static R_CallMethodDef Ringo_calls[] = {
-    {"sliding_median", (DL_FUNC) &sliding_median, 3},
+     //{"sliding_median", (DL_FUNC) &sliding_median, 3},
     {"sliding_quantile", (DL_FUNC) &sliding_quantile, 4},
 
     // necessary last entry of R_CallMethodDef:
@@ -43,100 +44,11 @@ extern "C" {
   /* MAIN PART */
 
 
-  /* This function compute the median within a sliding window.
-     Since a irregular spacing of data points is allowed, the number of 
-     data points inside the window varies with the window position.
-     Therefore the number of points inside the window is returned in addition
-     to the median value.
-
-     Written by Oleg Sklyar and Joern Toedling, January 2007.
-  */
-
-  SEXP
-  sliding_median(SEXP ind, SEXP val, SEXP hlfsize) {
-    int * x, nval, hs, is;
-    double * y, * rval;
-    int nprotect = 0;
-
-    /* for the list of values of which we take the median at each position 
-       in 'ind', we use a C++ 'vector' object, since we need to dynamically
-       resize it */
-
-    vector<double> values;
-
-    SEXP res, dim;
-
-    x = INTEGER(ind);
-    y = REAL(val);
-
-    hs = INTEGER(hlfsize)[0];
-    nval = LENGTH(ind);
-
-    PROTECT( res = allocVector( REALSXP, nval * 2) );
-    nprotect++;
-
-    rval = REAL(res);
-
-    int i, j;
-
-    for (i = 0; i < nval * 2; i++)
-      rval[i] = R_NaN;
-
-    int first = 0, last = 0;
-    /* we assume indexes, and therefore x, to be in accending order!
-       iterate over all positions, center the sliding window at position i: */
-    for (i = 0; i < nval; i++ ) {
-
-      /* see if due to moving the window, values at left side are dropped
-	 can be dropped window since they are more than half.width hs distant: */
-      for (; first <= last && x[first] < x[i] - hs; ++first);
-
-      /* see if due to moving window, values at right side should be appended
-	 can be dropped window since they are more than half.width hs distant: */
-      while ( x[last + 1] <= x[i] + hs && last < nval - 1) last++;
-      
-      is = last - first + 1; 
-      // number of positions over which the median is taken
-
-      if ( is == 0 ) continue; // if something went wrong
-      values.resize(is); // 'resize' is a method of vector objects
-
-      for (j = 0; j < is; j++)
-	values[j] = y[first + j]; // get the values considered for median
-
-      sort(values.begin(), values.end()); // sort values
-      
-      /* now median of sorted list of odd length is defined as the element in
-	 in the middle element. If list has even length it's the mean of the
-	 the two elements in the middle */
-      j = is / 2;
-      if ( j * 2 != is )
-	rval[i] = values[j];
-      else
-	rval[i] = (values[j] + values[j-1]) / 2.0;
-      rval[i + nval] = is;
-    }
-    // set the dimensions of the result: it's an array with number of
-    //  positions rows and two columns
-    PROTECT( dim = allocVector(INTSXP, 2));
-    nprotect++;
-    INTEGER(dim)[0] = nval;
-    INTEGER(dim)[1] = 2;
-    SET_DIM(res, dim);
-
-    // do not need to protect objects from R's garbage collector any longer
-    UNPROTECT(nprotect);
-
-    return res;
-  } // end of sliding_median
-
-
- /* This next function is meant to replace the sliding.median function
+ /* This next function replaced the sliding.median function
      above. It uses a different data structure, a linked list, and in 
      most use cases it is faster than the sliding.median function.
      It also allows the computation of any quantile in the window, not
-     only the median.
-     Again, irregular spacing of data points.
+     only the median. Again, irregular spacing of data points.
      The number of points inside the window is returned in addition
      to the quantile value.
 
@@ -255,8 +167,9 @@ extern "C" {
         rval[i] = *yit * prob + rval[i] * (1.0 - prob);
       }
       rval[i + nval] = yy.size();
-    }
-
+      R_CheckUserInterrupt();
+    }/*for i where positions[i] is the middle position of the sliding window*/
+   
     /* set the dimensions of the result: it's an array with number of
      *  positions rows and two columns */
     SEXP dim;

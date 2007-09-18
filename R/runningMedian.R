@@ -1,18 +1,4 @@
 
-sliding.median <- function(positions, scores, half.width, return.counts=TRUE) {
-  stopifnot(!is.unsorted(positions), length(positions) == length(scores), half.width >= 0)
-  res <- .Call(ringoSlidingMedian, as.integer(positions), as.numeric(scores), as.integer(half.width))
-  #res <- .Call("sliding_median", as.integer(positions), as.numeric(scores), as.integer(half.width), PACKAGE="Ringo")
-  if (return.counts){
-    colnames(res) <- c("median","count")
-    rownames(res) <- positions
-  } else {
-    res <- res[,1, drop=TRUE]
-    names(res) <- positions
-  }
-  return(res)
-}#sliding.median
-
 sliding.quantile <- function(positions, scores, half.width, prob=0.5, return.counts=TRUE) {
   stopifnot(!is.unsorted(positions), length(positions) == length(scores), half.width >= 0, prob >= 0, prob <= 1)
   res <- .Call(ringoSlidingQuantile, as.integer(positions), as.numeric(scores), as.integer(half.width), as.numeric(prob))
@@ -52,8 +38,6 @@ computeRunningMedians <- function(xSet, probeAnno, modColumn="Cy5", allChr=c(1:1
       combined.dat <- as.vector(t(exprs(xSet)[chridx,modSamples,drop=FALSE]))
       # as.vector(t(X)) leads to columns (samples) being appended one value by one value into long vector
       combined.pos <- rep(chrmid, each=length(modSamples))
-      ## old version: only median possible
-      #slidingRes <- sliding.median(positions=combined.pos, scores=combined.dat, half.width=winHalfSize, return.counts=TRUE)
       slidingRes <- sliding.quantile(positions=combined.pos, scores=combined.dat, half.width=winHalfSize, prob=quant, return.counts=TRUE)
       slidingRes <- slidingRes[seq(1, nrow(slidingRes)+1-length(modSamples), by=length(modSamples)),,drop=FALSE]
       chrrm <- slidingRes[,"quantile"] #chrrm <- slidingRes[,"median"]

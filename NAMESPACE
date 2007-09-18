@@ -1,9 +1,9 @@
-useDynLib("Ringo", ringoSlidingQuantile=sliding_quantile, ringoSlidingMedian=sliding_median)
+useDynLib("Ringo", ringoSlidingQuantile=sliding_quantile)
 
 import("graphics") 
 
 export("autocor", "chipAlongChrom","corPlot",
-       "computeRunningMedians", "sliding.median","sliding.quantile",
+       "computeRunningMedians", "sliding.quantile",
        "findPeaksOnSmoothed", "peakByThreshold","newPeak","relatePeaks",
        "preprocess","nimblegenScale","readNimblegen",
        "as.data.frame.peakList","ftr2xys","compute.gc")

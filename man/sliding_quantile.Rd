@@ -25,11 +25,6 @@ sliding.quantile(positions, scores, half.width, prob = 0.5,
   that were used for computing the median in each sliding window also
   returned?}
 }
-\details{
-  This function is meant as a more general alternative to the
-  \code{sliding.median} function. In most, but not in all, situations,
-  we found it to outperform \code{sliding.median}.
-}
 \value{
   Matrix with two columns:
   \item{quantile}{medians over running window centered at the
@@ -41,7 +36,7 @@ sliding.quantile(positions, scores, half.width, prob = 0.5,
   of the medians is returned, with the positions as \code{names}.
 }
 \author{Oleg Sklyar and Joern Toedling}
-\seealso{\code{\link[stats]{quantile}},\code{\link{sliding.median}}}
+\seealso{\code{\link[stats]{quantile}}}
 \examples{
   sampleSize <- 1000
   ap <- cumsum(1+round(runif(sampleSize)*10))

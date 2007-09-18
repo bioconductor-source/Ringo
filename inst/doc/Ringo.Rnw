@@ -499,7 +499,9 @@ Matt Ritchie, and Pos Bote for source code contributions to
 and lots of helpful suggestions on Ringo, 
 Todd Richmond and NimbleGen Systems, Inc. for 
 providing us with the example ChIP-chip data, and Jenny J. Fischer and
-Silke Sperling for their thought-provoking contributions.
+Silke Sperling for thought-provoking contributions.\\
+This work was supported by the
+European Union (FP6 HeartRepair, LSHM-CT-2005-018630).
 
 
 %%% BIBLIOGRAPHY STARTS HERE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
