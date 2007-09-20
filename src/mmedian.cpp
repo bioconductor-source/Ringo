@@ -73,7 +73,7 @@ extern "C" {
     PROTECT( res = allocVector( REALSXP, nval * 2) );
     nprotect++;
     double * rval = REAL(res);
-    for (i = 0; i < nval * 2; i++) rval[i] = R_NaN;
+    for (i = 0; i < nval * 2; i++) rval[i] = NA_REAL;
 
     /* we keep two lists, yy always sorted list of y-values currently in
      * the frame and xx - a list of corresponding indexes. Every time the
@@ -167,8 +167,12 @@ extern "C" {
         rval[i] = *yit * prob + rval[i] * (1.0 - prob);
       }
       rval[i + nval] = yy.size();
+      /* all memory allocations were done using R's allocVector,
+       * things are protected, but we assume that errors dropped 
+       * by the following functions unprotect vars (there is no other way
+       * around anyway as to assume this) */
       R_CheckUserInterrupt();
-    }/*for i where positions[i] is the middle position of the sliding window*/
+    } /* for i */
    
     /* set the dimensions of the result: it's an array with number of
      *  positions rows and two columns */
