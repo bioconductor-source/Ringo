@@ -210,7 +210,7 @@ ftr2xys <- function(ftr.file, path=getwd()){
   ftr.data <- read.delim(ftr.file, as.is=TRUE, comment.char="#")
   xys.data <- ftr.data[,c("X","Y","SIGNAL_MEAN","FGD_PIX")]
   names(xys.data) <- c("X","Y","SIGNAL","COUNT")
-  cat(ftr.header,"\n", sep=" ", file=xys.file)
+  cat(ftr.header,"\n", sep=" ", file=file.path(path,xys.file))
   write.table(xys.data, file=file.path(path, xys.file), sep="\t", quote=FALSE, row.names=FALSE, col.names=TRUE, append=TRUE)
   invisible(NULL)
 }#ftr2xys
