@@ -87,7 +87,7 @@ library("Ringo")
 
 If you use Ringo for analyzing your data, please cite: \nocite{Ringo2007}
 \begin{itemize}
-\item{Joern Toedling, Oleg Sklyar, Wolfgang Huber (2007) Ringo - an R/Bioconductor package for analyzing ChIP-chip readouts. \textsl{BMC Bioinformatics}, 8:221.}
+\item{Joern Toedling, Oleg Sklyar, Tammo Krueger, Jenny J Fischer, Silke Sperling, Wolfgang Huber (2007). Ringo - an R/Bioconductor package for analyzing ChIP-chip readouts. \textsl{BMC Bioinformatics}, 8:221.}
 \end{itemize}
 
 \subsection*{Getting help}
@@ -495,11 +495,12 @@ toLatex(sessionInfo())
 \section*{Acknowledgments}
 
 I thank Wolfgang Huber Oleg Sklyar, Tammo Kr\"uger, Richard Bourgon,
-Matt Ritchie, and Pos Bote for source code contributions to
+and Matt Ritchie for source code contributions to
 and lots of helpful suggestions on Ringo, 
 Todd Richmond and NimbleGen Systems, Inc. for 
-providing us with the example ChIP-chip data, and Jenny J. Fischer and
-Silke Sperling for thought-provoking contributions.\\
+providing us with the example ChIP-chip data. 
+Special thanks to Jenny J. Fischer and Silke Sperling
+for their contributions.\\
 This work was supported by the
 European Union (FP6 HeartRepair, LSHM-CT-2005-018630).
 
