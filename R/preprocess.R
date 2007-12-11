@@ -10,7 +10,8 @@ preprocess <- function(myRG, method="vsn", returnMAList=FALSE,
   myMA <- switch(method,
                  "loess"=normalizeWithinArrays(myRG, method="loess",...),
                  "median"=normalizeWithinArrays(myRG, method="median",...),
-                 "vsn"=normalizeBetweenArrays(myRG, method="vsn",...),
+                 #"vsn"=normalizeBetweenArrays(myRG, method="vsn",...),
+                 "vsn"=normalizeBetweenArraysVSN(myRG,...),
                  "Gquantile"=normalizeBetweenArrays(myRG, method="Gquantile",...),
                  "nimblegen"=nimblegenScale(myRG,...),
                  "none"=normalizeWithinArrays(myRG, method="none",...)
@@ -62,3 +63,25 @@ nimblegenScale <- function(myRG, ...){
   resMA <- new("MAList", resList)
   return(resMA)
 }#nimblegenScale
+
+
+### modified version of normalizeBetweenArrays to handle new clases in VSN
+normalizeBetweenArraysVSN <- function(object, targets=NULL, ...) {
+  require("vsn")
+  stopifnot(is(object,"RGList")|is(object,"MAList"))
+  y <- NULL
+  if(!is.null(object$G) && !is.null(object$R)) {
+    y <- cbind(object$G,object$R)
+    object$G <- object$R <- NULL
+  }
+  if(!is.null(object$M) && !is.null(object$A)) y <- 2^cbind(object$A-object$M/2,object$A+object$M/2)
+  if(is.null(y)) stop("object doesn't appear to be RGList or MAList")
+  y <- vsnMatrix(y,...)
+  n2 <- ncol(exprs(y))/2
+  G <- exprs(y)[,1:n2]/log(2)
+  R <- exprs(y)[,n2+(1:n2)]/log(2)
+  object$M <- R-G
+  object$A <- (R+G)/2
+  if(!is(object,"MAList")) object <- new("MAList",unclass(object))
+  return(object)
+}#normalizeBetweenArraysVSN

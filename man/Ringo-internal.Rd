@@ -15,6 +15,7 @@
 \alias{splitAndSimplify}
 \alias{readNimblegenHeader}
 \alias{readNgIntensitiesTxt}
+\alias{normalizeBetweenArraysVSN}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Internal Ringo functions}
 \description{
