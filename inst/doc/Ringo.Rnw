@@ -168,6 +168,71 @@ from other platforms in \Rclass{RGList} format and consecutively use
 \Rpackage{Ringo} to analyze that data.
 
 
+\section{Mapping probes to genomic coordinates}
+
+By \emph{probes}, we mean the oligo-nucleotides or PCR products
+that have been fixated on the array for measuring the abundance of 
+corresponding genomic fragments in the ChIP-chip experiment.
+
+Each probe has a unique identifier and (hopefully) a unique sequence,
+but can, and probably does, appear in multiple copies as \emph{features}
+on the array surface.
+
+A mapping of probes to genomic coordinates is usually provided
+by the array manufacturer, such as in NimbleGen's *.POS files. If the
+probe sequences are provided as well, you may consider to perform a custom
+mapping of probe sequences to the genome of interest, using alignment
+tools such as \emph{Exonerate} \citep{Slater2005}. 
+Such a re-mapping of probes to the genome
+can sometimes be necessary, for example when the array has designed on
+an outdated assembly of the genome.
+Re-mapping also provides the advantage 
+that you can allow non-perfect matches of probes to the genome,
+if desired. There are numerous indications that perfect sequence
+complementarity might not be required for hybridization
+\citep[see, e.g.,][for a recent review on the subject]{Pozhitkov2007}.
+For example, if a probe sequence of 50 nucleotides length matches a
+genomic stretch on one chromosome with 49 out of the 50 nucleotides, one
+may wonder whether immuno-precipitated fragments containing this 
+genomic region will not hybridize to the probe.
+
+Once probes have been mapped to the genome, this mapping needs to
+be made available to the data analysis functions.
+While a \Rclass{data.frame} may be an obvious way of representing such a
+mapping, repeatedly extracting sub-sets of the data frame related to a
+genomic region of interest turns out to be too slow for practical purposes.
+\Rpackage{Ringo}, similar to the Bioconductor package \Rpackage{tilingArray},
+employs a \emph{probeAnno} environment to describe the mapping between 
+reporters on the microarray and genomic positions.
+Per chromosome, four vectors of equal length and ordering specify 
+at which genomic positions reporter matches start and end, 
+what identifiers or indices these reporters have in the intensities data,
+and whether these reporters match uniquely to those genomic positions.
+
+<<loadProbeAnno>>=
+load(file.path(exDir,"exampleProbeAnno.rda"))
+ls(exProbeAnno)
+head(get("9.start",exProbeAnno))
+head(get("9.index",exProbeAnno))
+@ 
+
+Whether a probeAnno environment will work with other \Rpackage{Ringo}
+functions can be checked using the function \Rfunction{validProbeAnno}
+The function \Rfunction{posToProbeAnnoEnvironment} allows generation
+of such a probeAnno environment, 
+either from a file that corresponds to a NimbleGen \texttt{POS} file
+or from a \Rclass{data.frame} objects that holds the same information.
+Furthermore, the package's \texttt{scripts} directory contains 
+a script \texttt{makeProbeAnno.R} that demonstrates how to 
+generate such a mapping object either from a NimbleGen \texttt{POS} file
+and Perl scripts that allow the conversion of multiple output files from
+common alignment tools such as Exonerate into one file that corresponds
+to a POS file.
+The function \Rfunction{validProbeAnno} can be used to perform a
+quick check whether a generated probeAnno environment will probably
+work with  other \Rpackage{Ringo} functions.
+
+
 \section{Quality assessment}
 
 The \Rfunction{image} function allows us to look at the spatial 
@@ -205,25 +270,6 @@ the single-channel densities. \Rpackage{limma}'s function
 plotDensities(exRG)
 @
  
-\Rpackage{Ringo}, similar to the Bioconductor package \Rpackage{tilingArray},
-employs a \emph{probeAnno} environment to describe the mapping between 
-reporters on the microarray and genomic positions.
-Per chromosome, four vectors of equal length and ordering specify 
-at which genomic positions reporter matches start and end, 
-what identifiers or indices these reporters have in the intensities data,
-and whether these reporters match uniquely to those genomic positions.
-
-<<loadProbeAnno>>=
-load(file.path(exDir,"exampleProbeAnno.rda"))
-ls(exProbeAnno)
-head(get("9.start",exProbeAnno))
-head(get("9.index",exProbeAnno))
-@ 
-
-The package's \texttt{scripts} directory contains a script
-\texttt{makeProbeAnno.R} that demonstrates how to generate such a
-mapping object either from a NimbleGen \texttt{POS} file or
-from result files of aligning the probe sequences to the genome.
 
 In addition, the data file loaded above also contains a 
 \emph{GFF (General Feature Format)}
@@ -446,8 +492,18 @@ peaksX <- relatePeaks(peaksX, exGFF)
 peaksXD <- as.data.frame.peakList(peaksX)
 @ 
 <<showPeaks>>=
-peaksXD
+peaksXD[order(peaksXD$maxPeak, decreasing=TRUE),]
 @ 
+ 
+One characteristic of enriched regions that can be used for 
+sorting them is the element \texttt{maxPeak}, that is the highest smoothed
+probe level in the enriched region. 
+Alternatively, one can sort by the \texttt{score},
+that is the sum of smoothed probe levels minus the threshold. It is a 
+discretized version of to the area under the curve with the baseline being the 
+threshold. Another characteristic of enriched regions that can be used for 
+sorting them is the element \texttt{maxPeak}, that is the highest smoothed
+probe level in the enriched region. 
 
 <<plotPeak0, eval=FALSE, results=hide>>=
 plot(peaksX[[1]], smoothX, probeAnno=exProbeAnno, gff=exGFF, paletteName="Spectral")
@@ -462,11 +518,13 @@ dev.off()
 \myincfig{Ringo-plotPeak}{0.98\textwidth}{One of the identified Suz12-antibody
 enriched regions on chromosome 9.}
 
-Figure \ref{Ringo-plotPeak} displays the identified peak, which is the one
-upstream of the \texttt{Nudt2} gene. This peak was obvious in plots of the 
+Figure \ref{Ringo-plotPeak} displays an identified enriched region, 
+which is located upstream of the \texttt{Nudt2} gene. 
+This peak was obvious in plots of the 
 normalized data (see figure \ref{Ringo-smoothAlongChrom}).
 And while it is reassuring that our method recovers it as well, a number
-of other approaches would certainly have reported it as well.
+of other approaches would undoubtedly have reported it as well.
+
 
 \section{Concluding Remarks}
 
