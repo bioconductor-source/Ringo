@@ -1,0 +1,52 @@
+\name{peakOverlap}
+\alias{peakOverlap}
+\alias{peak.overlap}
+\title{Function to compute overlap of genomic regions}
+\description{
+  Given two data frames of genomic regions, this function computes the
+  base-pair overlap, if any, between every pair of regions from the two
+  lists.
+}
+\usage{
+peakOverlap(xdf, ydf, chrColumn = "chr", startColumn = "start", endColumn = "end")
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{xdf}{\code{data.frame} that holds the first set of genomic regions}
+  \item{ydf}{\code{data.frame} that holds the first set of genomic regions}
+  \item{chrColumn}{character; what is the name of the column that holds
+    the chromosome name of the regions in \code{xdf} and \code{ydf}}
+  \item{startColumn}{character; what is the name of the column that holds
+    the start position of the regions in \code{xdf} and \code{ydf}}
+  \item{endColumn}{character; what is the name of the column that holds
+    the start position of the regions in \code{xdf} and \code{ydf}}
+}
+%\details{}
+\value{
+  A matrix with \code{nrow(xdf)} rows and \code{nrow(ydf)} columns, in
+  which entry \code{X[i,j]} specifies the length of the overlap between
+  region \code{i} of the first list (\code{xdf}) and region \code{j} of
+  the second list (\code{ydf}).
+}
+\author{Joern Toedling \email{toedling@ebi.ac.uk}}
+\note{
+  The function only return the absolute length of overlapping regions in
+  base-pairs. It does not return the position of the overlap or the
+  fraction of region 1 and/or region 2 that overlaps the other regions.
+}
+%\seealso{}
+\examples{
+  ## toy example:
+  peaksH3ac <- data.frame(chr=c("chr1","chr7","chr8","chr1","chrX","chr8"), start=c(100,100,100,510,100,60), end=c(200, 200, 200,520,200,80))
+  peaksH4ac <- data.frame(chr=c("chr1","chr2","chr7","chr8","chr9"),
+start=c(500,100,50,80,100), end=c(700, 200, 250, 120,200))
+
+  ## compare the regions first by eye
+  ##  which ones do overlap and by what amount?
+  peaksH3ac
+  peaksH4ac
+
+  ## compare it to the result:
+  peakOverlap(peaksH3ac, peaksH4ac)
+}
+\keyword{manip}
