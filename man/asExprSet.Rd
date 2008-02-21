@@ -1,7 +1,7 @@
 \name{asExprSet}
 \alias{asExprSet}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{converts MAList into an exprSet}
+\title{converts MAList into an ExpressionSet}
 \description{
   Function to convert an object of class \code{MAList} into an object of
   class \code{ExpressionSet}. Note that the otherwise optional
