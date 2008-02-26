@@ -4,10 +4,8 @@
 chipAlongChrom <- function (eSet, chrom, probeAnno, xlim, ylim=NULL, samples=NULL, paletteName="Dark2", colPal=NULL, byStrand = FALSE, ylabel="Intensity", rugCol="#000010", itype="r", ipch=20,icex=1, ilwd=3, ilty=1, useGFF=TRUE, gff=NULL, featCol="darkblue", zero.line=TRUE, putLegend=TRUE, add=FALSE, maxInterDistance=200, verbose=TRUE, ...)
 {
   # 0. check arguments  
-  stopifnot((inherits(eSet,"exprSet")|inherits(eSet,"ExpressionSet")))
-  eSetProbeNames <- switch(class(eSet),
-                           "ExpressionSet"=featureNames(eSet),
-                           "exprSet"=geneNames(eSet))
+  stopifnot(inherits(eSet,"ExpressionSet"))
+  eSetProbeNames <- featureNames(eSet)
   if (is.null(eSetProbeNames))
     stop("Could not determine probe identifiers from expression set.\nCheck 'featureNames' or 'geneNames' of expression set.\n")
   if (is.null(samples)) samples <- 1:ncol(exprs(eSet))
