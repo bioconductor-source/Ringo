@@ -25,7 +25,7 @@ validProbeAnno(probeAnno)
   warning.
 }
 \author{Joern Toedling \email{toedling@ebi.ac.uk}}
-\seealso{\code{\link{posToProbeAnnoEnvironment}}}
+\seealso{\code{\link{posToProbeAnno}}}
 \examples{
  ## first a toy example:
  if (interactive()){

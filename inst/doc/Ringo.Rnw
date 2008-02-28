@@ -218,7 +218,7 @@ head(get("9.index",exProbeAnno))
 
 Whether a probeAnno environment will work with other \Rpackage{Ringo}
 functions can be checked using the function \Rfunction{validProbeAnno}
-The function \Rfunction{posToProbeAnnoEnvironment} allows generation
+The function \Rfunction{posToProbeAnno} allows generation
 of such a probeAnno environment, 
 either from a file that corresponds to a NimbleGen \texttt{POS} file
 or from a \Rclass{data.frame} objects that holds the same information.

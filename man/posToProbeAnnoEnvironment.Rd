@@ -1,6 +1,7 @@
-\name{posToProbeAnnoEnvironment}
+\name{posToProbeAnno}
+\alias{posToProbeAnno}
 \alias{posToProbeAnnoEnvironment}
-\alias{createProbeAnnoEnvironment}
+\alias{createProbeAnno}
 \title{Function for creating a probeAnno environment}
 \description{
   This function allows the user to create a probeAnno environment that
@@ -11,7 +12,7 @@
   b.) a \code{data.frame} holding this information
 }
 \usage{
-posToProbeAnnoEnvironment(pos, chrNameColumn = "CHROMOSOME",
+posToProbeAnno(pos, chrNameColumn = "CHROMOSOME",
    probeColumn = "PROBE_ID", chrPositionColumn = "POSITION",
    lengthColumn = "LENGTH", verbose = TRUE, ...)
 }
@@ -62,10 +63,10 @@ posToProbeAnnoEnvironment(pos, chrNameColumn = "CHROMOSOME",
                      "MOD_2003-12-05_SUZ12_1in2.pos"),
                      header=TRUE,as.is=TRUE)
  str(exPos)
- exProbeAnno <- posToProbeAnnoEnvironment(exPos)
+ exProbeAnno <- posToProbeAnno(exPos)
  ## is equivalent to 
  exProbeAnno2 <-
-posToProbeAnnoEnvironment(file.path(system.file("exData",package="Ringo"),
+ posToProbeAnno(file.path(system.file("exData",package="Ringo"),
                           "MOD_2003-12-05_SUZ12_1in2.pos"))
  ls(exProbeAnno)
 }

@@ -97,10 +97,10 @@ chipAlongChrom <- function (eSet, chrom, probeAnno, xlim, ylim=NULL, samples=NUL
   
   # 4. annotate genomic features as well
   if (all(useGFF,!is.null(gff),!add)){
-    stopifnot(is.data.frame(gff), all(c("gene","chr","strand","start","end")%in%names(gff)))
+    stopifnot(is.data.frame(gff), all(c("name","chr","strand","start","end")%in%names(gff)))
     if (verbose) cat("Obtain genomic features...\n")
-    if (! "symbol" %in% names(gff)){ gff$symbol <- gff$gene}
-    else { gff$symbol[gff$symbol==""] <- gff$gene[gff$symbol==""]}
+    if (! "symbol" %in% names(gff)){ gff$symbol <- gff$name}
+    else { gff$symbol[gff$symbol==""] <- gff$name[gff$symbol==""]}
     mtline <- 0 ; mcex <- 1
     areOnChrom <- (gff$chr==chrom)
     genestrand <- ifelse(gff$strand[areOnChrom]%in%c("+",1),1,-1)
@@ -122,7 +122,6 @@ chipAlongChrom <- function (eSet, chrom, probeAnno, xlim, ylim=NULL, samples=NUL
       for (i in 1:length(genestarts)){
         mtext(transdirection[i], at=seq(abs(genestarts[i]),abs(geneends[i]), by=genestrand[i]*symbolSpacing), line=mtline, col=featCol, cex=mcex, side=1)
         mtext(chrgene[i], at=abs(genestarts[i]), line=mtline+1, adj=0.5, col=featCol, side=1, cex=mcex)
-        #mtext(chrgene[i], at=abs(geneends[i]), line=mtline+1, adj=0.5, col=featCol, side=1, cex=mcex)
       }#for
     }#if (length(chrstarts)<0)
   }#if (useGFF & ("gff" %in% names(chromLocObj)))  

@@ -7,7 +7,7 @@ export("autocor", "chipAlongChrom","corPlot",
        "findPeaksOnSmoothed", "peakByThreshold","newPeak","relatePeaks",
        "preprocess","nimblegenScale","readNimblegen",
        "as.data.frame.peakList","ftr2xys","compute.gc",
-       "posToProbeAnnoEnvironment","validProbeAnno", "peakOverlap")
+       "posToProbeAnno","validProbeAnno", "peakOverlap")
 
 S3method("plot", "peak")
 S3method("plot", "autocor.result")

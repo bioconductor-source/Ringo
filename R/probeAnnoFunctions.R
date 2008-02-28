@@ -32,7 +32,7 @@
 # chr1:4483138-4484138    CHR01   CHR01P004483140 4483140 50      1
 # chr1:4483138-4484138    CHR01   CHR01P004483245 4483245 50      1
 
-posToProbeAnnoEnvironment <- function(pos, chrNameColumn="CHROMOSOME",probeColumn="PROBE_ID", chrPositionColumn="POSITION", lengthColumn="LENGTH", verbose=TRUE, ...){
+posToProbeAnno <- function(pos, chrNameColumn="CHROMOSOME",probeColumn="PROBE_ID", chrPositionColumn="POSITION", lengthColumn="LENGTH", verbose=TRUE, ...){
   if (!exists(deparse(substitute(pos)))){
     stopifnot(is.character(pos), file.exists(pos))
     hits <- read.delim(pos, header=TRUE, as.is=TRUE, ...)
@@ -65,7 +65,7 @@ posToProbeAnnoEnvironment <- function(pos, chrNameColumn="CHROMOSOME",probeColum
   }# for(i in seq(along=sp))
   if (verbose) cat("Done.\n")
   return(probeAnno)
-}#posToProbeAnnoEnvironment
+}#posToProbeAnno
 
 validProbeAnno <- function(probeAnno){
   stopifnot(is.environment(probeAnno))
