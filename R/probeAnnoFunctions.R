@@ -42,7 +42,8 @@ posToProbeAnno <- function(pos, chrNameColumn="CHROMOSOME",probeColumn="PROBE_ID
   columnsAreIn <- c(chrNameColumn, probeColumn, chrPositionColumn, lengthColumn) %in% names(hits)
   if (!all(columnsAreIn))
     stop(paste("\nColumn(s)",paste(c(chrNameColumn, probeColumn, chrPositionColumn, lengthColumn)[!columnsAreIn],sep=", ", collapse=", "),"are not found in file or data.frame",deparse(substitute(pos)),".\n"))
-  hits$MIDDLE <- hits[[chrPositionColumn]] + round((hits[[lengthColumn]] - 1)/2)
+  hits$END    <- hits[[chrPositionColumn]] + hits[[lengthColumn]] - 1
+  hits$MIDDLE <- round((hits[[chrPositionColumn]] + hits$END)/2)
   hitOrder <- order(hits[[chrNameColumn]], hits$MIDDLE)
   hits <- hits[hitOrder,]
   if (length(grep("chr",hits[[chrNameColumn]], ignore.case=TRUE)))
@@ -57,9 +58,9 @@ posToProbeAnno <- function(pos, chrNameColumn="CHROMOSOME",probeColumn="PROBE_ID
     chromprobes = sp[[i]]
     nm  = names(sp)[i]
     cat(nm, "")
-    assign(paste(nm, "start", sep="."),  as.integer(hits[chromprobes, "POSITION"]), envir=probeAnno)
-    assign(paste(nm, "end", sep="."),  as.integer(hits[chromprobes, "POSITION"])+as.integer(hits[chromprobes, "LENGTH"])-1 , envir=probeAnno)
-    assign(paste(nm, "index", sep="."),  hits[chromprobes, "PROBE_ID"],  envir=probeAnno)
+    assign(paste(nm, "start", sep="."),  as.integer(hits[chromprobes, chrPositionColumn]), envir=probeAnno)
+    assign(paste(nm, "end", sep="."),  as.integer(hits[chromprobes,"END"]) , envir=probeAnno)
+    assign(paste(nm, "index", sep="."),  hits[chromprobes, probeColumn],  envir=probeAnno)
     assign(paste(nm, "unique", sep="."), as.integer(probeMultiplicity[hits[[probeColumn]][chromprobes]]>1)*3, envir=probeAnno)
     ## uniqueness codes:  0 = probe has one unique hit;   3= probe has multiple hits
   }# for(i in seq(along=sp))
@@ -98,6 +99,11 @@ validProbeAnno <- function(probeAnno){
       warning(paste("Some match positions end before they actually start.\nPlease check elements",paste(thisName,"start",sep="."),"and",paste(thisName,"end",sep="."),".\n"))
       return(FALSE)
     }# if (!all(theseElements[[2]] >= theseElements[[1]]))
+    mids <- round((theseElements[[1]]+theseElements[[2]])/2)
+    if (is.unsorted(mids)){
+      warning(paste("Probe matches are not sorted (in increasing order) by their middle position on chromosome",thisName,"and possible others.\n"))
+      return(FALSE)
+    }
   }# for (thisName in uniChromNames)
   return(TRUE)
 }# validProbeAnno
