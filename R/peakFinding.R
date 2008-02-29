@@ -29,7 +29,7 @@ peakByThreshold <- function(positions, scores, threshold, distCutOff, minProbesI
 
 
 ### main peak-finding funtion at the moment
-findPeaksOnSmoothed <- function(smoothedX, probeAnno, thresholds, allChr=c(1:19,"X","Y"), distCutOff=600, minProbesInRow=3, cellType=NULL, verbose=TRUE)
+findPeaksOnSmoothed <- function(smoothedX, probeAnno, thresholds, allChr=c(1:19,"X","Y"), distCutOff=600, minProbesInRow=3, cellType=NULL, checkUnique=TRUE, uniqueCodes=c(0), verbose=TRUE)
 {
   stopifnot(is.numeric(thresholds), length(thresholds)==ncol(smoothedX))
   resultPeaks <- vector("list",ncol(smoothedX))
@@ -43,6 +43,11 @@ findPeaksOnSmoothed <- function(smoothedX, probeAnno, thresholds, allChr=c(1:19,
       stopifnot(all(chrend>chrsta))
       chrmid <- round((chrsta+chrend)/2)
       chridx <- get(paste(chr,"index",sep="."), env=probeAnno)
+      if (checkUnique){
+        chruni <- get(paste(chr,"unique",sep="."), env=probeAnno)
+        stopifnot(length(chruni)==length(chridx))
+        chridx <- chridx[chruni %in% uniqueCodes]
+      } #  if (checkUnique)
       chrrm <- exprs(smoothedX)[chridx,i]
       chr.peaks <- peakByThreshold(chrmid, chrrm, threshold=thresholds[i], distCutOff=distCutOff, minProbesInRow=minProbesInRow)
       ## new version: return objects of class peak instead

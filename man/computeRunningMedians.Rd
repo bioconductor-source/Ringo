@@ -7,8 +7,9 @@
 }
 \usage{
 computeRunningMedians(xSet, probeAnno, modColumn = "Cy5",
-allChr = c(1:19, "X", "Y"), winHalfSize = 400, min.probes = 5,
-quant = 0.5, combineReplicates = FALSE, verbose = TRUE)
+ allChr = c(1:19, "X", "Y"), winHalfSize = 400, min.probes = 5,
+ quant = 0.5, combineReplicates = FALSE, checkUnique=TRUE,
+ uniqueCodes=c(0), verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -36,6 +37,12 @@ quant = 0.5, combineReplicates = FALSE, verbose = TRUE)
     levels and samples of the same type in the window. The resulting
     ExpressionSet has so many columns as are there different entries in
     the column \code{modColumn}}
+  \item{checkUnique}{logical; indicates whether the uniqueness
+    indicator of probe matches from the probeAnno environment should be
+    used.}
+  \item{uniqueCodes}{numeric; which numeric codes in the chromosome-wise
+    match-uniqueness elements of the probeAnno environment indicate
+    uniqueness?}
   \item{verbose}{logical; detailed progress output to STDOUT?}
 }
 \value{

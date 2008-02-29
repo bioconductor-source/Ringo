@@ -12,7 +12,7 @@ sliding.quantile <- function(positions, scores, half.width, prob=0.5, return.cou
   return(res)
 }#sliding.quantile
 
-computeRunningMedians <- function(xSet, probeAnno, modColumn="Cy5", allChr=c(1:19,"X","Y"), winHalfSize=400, min.probes=5, quant=0.5, combineReplicates=FALSE, verbose=TRUE)
+computeRunningMedians <- function(xSet, probeAnno, modColumn="Cy5", allChr=c(1:19,"X","Y"), winHalfSize=400, min.probes=5, quant=0.5, combineReplicates=FALSE, checkUnique=TRUE, uniqueCodes=c(0), verbose=TRUE)
 {
   stopifnot(inherits(xSet,"ExpressionSet"), all(is.character(allChr)),
             is.numeric(quant), (quant>=0)&(quant<=1), length(quant)==1)
@@ -29,8 +29,13 @@ computeRunningMedians <- function(xSet, probeAnno, modColumn="Cy5", allChr=c(1:1
     chrsta <- get(paste(chr,"start",sep="."), env=probeAnno)
     chrend <- get(paste(chr,"end",sep="."), env=probeAnno)
     chrmid <- round((chrsta+chrend)/2)
-    chridx <- get(paste(chr,"index",sep="."), env=probeAnno)      
-    
+    chridx <- get(paste(chr,"index",sep="."), env=probeAnno)
+    if (checkUnique){
+      chruni <- get(paste(chr,"unique",sep="."), env=probeAnno)
+      stopifnot(length(chruni)==length(chridx))
+      chridx <- chridx[chruni %in% uniqueCodes]
+    } #  if (checkUnique)
+      
     for (i in 1:nlevels(grouping)){
       modSamples   <- which(grouping == levels(grouping)[i])
       if (verbose) cat(sampleNames(xSet)[modSamples],"... ")

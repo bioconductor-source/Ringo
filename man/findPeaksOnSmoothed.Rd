@@ -10,8 +10,8 @@
 }
 \usage{
 findPeaksOnSmoothed(smoothedX, probeAnno, thresholds, allChr = c(1:19,
-"X", "Y"), distCutOff = 600, minProbesInRow = 3, cellType=NULL,
-verbose = TRUE)
+ "X", "Y"), distCutOff = 600, minProbesInRow = 3, cellType = NULL,
+ checkUnique = TRUE, uniqueCodes = c(0), verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -33,6 +33,12 @@ verbose = TRUE)
     explanation.}
   \item{cellType}{character; name of cell type the data stems from,
     maybe could be taken from \code{pData(smoothedX)}}
+  \item{checkUnique}{logical; indicates whether the uniqueness
+    indicator of probe matches from the probeAnno environment should be
+    used.}
+  \item{uniqueCodes}{numeric; which numeric codes in the chromosome-wise
+    match-uniqueness elements of the probeAnno environment indicate
+    uniqueness?}
   \item{verbose}{logical; extended output to STDOUT?}
 }
 \value{
