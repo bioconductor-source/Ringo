@@ -16,6 +16,7 @@
 \alias{readNimblegenHeader}
 \alias{readNgIntensitiesTxt}
 \alias{normalizeBetweenArraysVSN}
+\alias{relatePeaks2}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Internal Ringo functions}
 \description{

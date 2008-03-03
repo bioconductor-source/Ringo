@@ -34,8 +34,8 @@ computeRunningMedians <- function(xSet, probeAnno, modColumn="Cy5", allChr=c(1:1
       chruni <- get(paste(chr,"unique",sep="."), env=probeAnno)
       stopifnot(length(chruni)==length(chridx))
       chridx <- chridx[chruni %in% uniqueCodes]
+      chrmid <- chrmid[chruni %in% uniqueCodes]
     } #  if (checkUnique)
-      
     for (i in 1:nlevels(grouping)){
       modSamples   <- which(grouping == levels(grouping)[i])
       if (verbose) cat(sampleNames(xSet)[modSamples],"... ")

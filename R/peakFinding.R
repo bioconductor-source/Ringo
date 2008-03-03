@@ -1,4 +1,5 @@
 
+
 peakByThreshold <- function(positions, scores, threshold, distCutOff, minProbesInRow=3){
   # threshold: threshold for scores to be called peak
   # distCutOff: maximal distance between two positions before combining
@@ -47,6 +48,7 @@ findPeaksOnSmoothed <- function(smoothedX, probeAnno, thresholds, allChr=c(1:19,
         chruni <- get(paste(chr,"unique",sep="."), env=probeAnno)
         stopifnot(length(chruni)==length(chridx))
         chridx <- chridx[chruni %in% uniqueCodes]
+        chrmid <- chrmid[chruni %in% uniqueCodes]
       } #  if (checkUnique)
       chrrm <- exprs(smoothedX)[chridx,i]
       chr.peaks <- peakByThreshold(chrmid, chrrm, threshold=thresholds[i], distCutOff=distCutOff, minProbesInRow=minProbesInRow)

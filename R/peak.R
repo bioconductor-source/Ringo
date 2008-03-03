@@ -44,7 +44,7 @@ as.data.frame.peakList <- function(x, row.names=NULL, optional=FALSE,...) {
   p.end <- integer(np)
   p.cellType <- vector("character",np)
   p.antibody <- vector("character",np)
-  p.transcripts <- vector("character",np)
+  p.features <- vector("character",np)
   p.maxPeak <- vector("numeric",np)
   p.score <- vector("numeric",np)
   for (i in 1:np){
@@ -55,14 +55,11 @@ as.data.frame.peakList <- function(x, row.names=NULL, optional=FALSE,...) {
      p.end[i] <-  p$end
      p.cellType[i] <-  ifelse(is.null(p$cellType), NA, p$cellType)
      p.antibody[i] <- ifelse(is.null(p$antibody), p$modification, p$antibody)
-     p.transcripts[i] <- paste(c(p$typeUpstream, p$typeDownstream), collapse=" ")
+     p.features[i] <- paste(c(p$typeUpstream, p$typeInside), collapse=" ")
      p.maxPeak[i] <- ifelse(is.null(p$maxPeak), NA, p$maxPeak)
      p.score[i] <- ifelse(is.null(p$score), NA, p$score)
    }#for i
-   # df <- t(sapply(x, function(p) {c(p$name, p$chr, p$start, p$end, ifelse(is.null(p$cellType), NA, p$cellType), p$modification, length(p$typeUpstream), length(p$typeDownstream), paste(c(p$typeUpstream, p$typeDownstream), collapse=" "), p$maxPeak, p$score)}))
-   #stopifnot(ncol(df)==11)
-  #df <- data.frame(name=I(df[, 1]), chr=I(df[, 2]), start=as.integer(df[, 3]), end=as.integer(df[, 4]), cellType=I(df[, 5]), modification=I(df[, 6]), nUpstream=as.integer(df[, 7]), nDownstream=as.integer(df[, 8]),transcripts=I(df[, 9]), maxPeak=as.double(df[, 10]), score=I(round(as.double(df[, 11]),digits=4)), stringsAsFactors=FALSE, row.names=NULL)
-  df <- data.frame(name=p.name, chr=p.chr, start=p.start, end=p.end, cellType=p.cellType, antibody=p.antibody,  transcripts=p.transcripts, maxPeak=p.maxPeak, score=p.score, stringsAsFactors=FALSE, row.names=row.names)
+  df <- data.frame(name=p.name, chr=p.chr, start=p.start, end=p.end, cellType=p.cellType, antibody=p.antibody, features=p.features, maxPeak=p.maxPeak, score=p.score, stringsAsFactors=FALSE, row.names=row.names)
   return(df)
 }#as.data.frame.peakList
 
@@ -103,8 +100,8 @@ generatePeakList = function(peaks,gff, g2t=NULL, allChr=c(1:19, "X", "Y"), tssCo
   return(peakList)
 }#generatePeakList
 
-
-relatePeaks <- function(pl, gff, upstream=5000, verbose=TRUE){
+## older version of relatePeaks, see newer one below:
+relatePeaks2 <- function(pl, gff, upstream=5000, verbose=TRUE){
   stopifnot(is.list(pl),inherits(pl[[1]],"peak"),
             inherits(gff,"data.frame"),
             all(c("strand","name","start","end","chr") %in% names(gff)),
@@ -121,14 +118,57 @@ relatePeaks <- function(pl, gff, upstream=5000, verbose=TRUE){
     if (verbose & i%%1000==0) cat(i,"...")
     p <- pl[[i]]
     p$typeUpstream <- subset(gff, gff$chr==p$chr & peakMid[i]>=gffUpStart & peakMid[i] <= gffUpEnd, select="name", drop=TRUE)
-    p$typeDownstream <- subset(gff, gff$chr==p$chr & peakMid[i]>=gff$start & peakMid[i] <= gff$end, select="name", drop=TRUE)
-    p$distMid2TSS <- abs(realTSS[c(p$typeUpstream, p$typeDownstream, recursive=TRUE)]-peakMid[i])
+    p$typeInside <- subset(gff, gff$chr==p$chr & peakMid[i]>=gff$start & peakMid[i] <= gff$end, select="name", drop=TRUE)
+    p$distMid2TSS <- abs(realTSS[c(p$typeUpstream, p$typeInside, recursive=TRUE)]-peakMid[i])
     # the c(,recursive) is to prevent (illegal) indexing with 0-row data.frames
     if ("symbol" %in% names(gff)){
       p$upSymbol <-  subset(gff, gff$chr==p$chr & peakMid[i]>=gffUpStart & peakMid[i] <= gffUpEnd, select="symbol", drop=TRUE)
-      p$downSymbol <- subset(gff, gff$chr==p$chr & peakMid[i]>=gff$start & peakMid[i] <= gff$end, select="symbol", drop=TRUE)
+      p$inSymbol <- subset(gff, gff$chr==p$chr & peakMid[i]>=gff$start & peakMid[i] <= gff$end, select="symbol", drop=TRUE)
     }
-    p$type <- paste(c("U","D")[c(length(p$typeUpstream)>0,length(p$typeDownstream)>0)],collapse="/")
+    p$type <- paste(c("U","D")[c(length(p$typeUpstream)>0,length(p$typeInside)>0)],collapse="/")
+    pl[[i]] <- p
+  }#for
+  return(pl)
+}#relatePeaks
+
+
+relatePeaks <- function(pl, gff, upstream=5000, verbose=TRUE){
+  stopifnot(is.list(pl),inherits(pl[[1]],"peak"),
+            inherits(gff,"data.frame"),
+            all(c("strand","name","start","end","chr") %in% names(gff)),
+            all(gff$start<gff$end))
+  peakChr <- sapply(pl, function(x) x$chr)
+  peakMid <- sapply(pl, function(x) round((x$start+x$end)/2))
+  peaksDf <- data.frame(chr=peakChr, start=peakMid, end=peakMid,
+                        stringsAsFactors=FALSE)
+  ## get borders of upstream region:
+  realTSS <- ifelse(gff$strand==1, gff$start, gff$end)
+  names(realTSS) <- gff$name
+
+  gffUpDf <- data.frame(chr=gff$chr,
+     start=ifelse(gff$strand==1, gff$start-upstream, gff$end+1),
+     end=ifelse(gff$strand==1, gff$start-1, gff$end+upstream),
+     stringsAsFactors=FALSE)
+  ## overlap with upstream regions
+  overU <- peakOverlap(peaksDf, gffUpDf)
+  ### inside features:
+  overI <- peakOverlap(peaksDf, gff)
+  ## add information to peaks that have any overlap
+  haveOverlap <- which(rowSums(overU+overI)>0)
+  if (length(haveOverlap)==0) return(pl)
+  if (verbose) cat("Relating",length(pl),"peaks to GFF...\n")
+  for (i in haveOverlap){
+    #if (verbose & i%%1000==0) cat(i,"...")
+    p <- pl[[i]]
+    p$typeUpstream <- gff$name[overU[i,]>0]
+    p$typeInside   <- gff$name[overI[i,]>0]
+    p$distMid2TSS  <- abs(realTSS[c(p$typeUpstream, p$typeInside)]-peakMid[i])
+    # the c(,recursive) is to prevent (illegal) indexing with 0-row data.frames
+    if ("symbol" %in% names(gff)){
+      p$upSymbol   <-  gff$symbol[match(p$typeUpstream, gff$name)]
+      p$inSymbol <-  gff$symbol[match(p$typeInside, gff$name)]
+    }
+    p$type <- paste(c("U","D")[c(length(p$typeUpstream)>0,length(p$typeInside)>0)],collapse="/")
     pl[[i]] <- p
   }#for
   return(pl)

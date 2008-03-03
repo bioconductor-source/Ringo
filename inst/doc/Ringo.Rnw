@@ -501,9 +501,7 @@ probe level in the enriched region.
 Alternatively, one can sort by the \texttt{score},
 that is the sum of smoothed probe levels minus the threshold. It is a 
 discretized version of to the area under the curve with the baseline being the 
-threshold. Another characteristic of enriched regions that can be used for 
-sorting them is the element \texttt{maxPeak}, that is the highest smoothed
-probe level in the enriched region. 
+threshold. 
 
 <<plotPeak0, eval=FALSE, results=hide>>=
 plot(peaksX[[1]], smoothX, probeAnno=exProbeAnno, gff=exGFF, paletteName="Spectral")
@@ -558,7 +556,7 @@ and lots of helpful suggestions on Ringo,
 Todd Richmond and NimbleGen Systems, Inc. for 
 providing us with the example ChIP-chip data. 
 Special thanks to Jenny J. Fischer and Silke Sperling
-for their contributions.\\
+for their contributions to the software package.\\
 This work was supported by the
 European Union (FP6 HeartRepair, LSHM-CT-2005-018630).
 

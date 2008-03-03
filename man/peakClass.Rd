@@ -9,7 +9,7 @@
 \description{
   An object of class \code{peak} is a list holding characteristics of an
   enrichment peak from ChIP chip data. While this is only a S3 rather
-  than a formal \code{S4} class (yet), the presence of certain list
+  than a formal \code{S4} class, the presence of certain list
   elements enables a standardized approach to working with enriched
   regions identified from ChIP-chip data.
   Note that the term "peak", while commonly used in ChIP-chip context,
@@ -39,8 +39,8 @@
     peak is located upstream of,
     e.g. the transcriptional start site of "ENST00000379158".
     See \code{\link{relatePeaks}} for details.}
-    \item{typeDownstream}{ optional character vector of features
-    that this peak is located downstream of }
+    \item{typeInside}{ optional character vector of features
+    that this peak is located inside of }
     \item{maxPeak}{optional numeric of maximal (smoothed) probe level
     in the peak, e.g. 2.00}
     \item{score}{optional numeric of a peak score, currently we use the
@@ -49,18 +49,18 @@
     all probes with match positions in the peak }
     \item{distMid2TSS}{optional named numeric vector of distances of
     the peak middle position to features,
-    e.g. TSSs of transcripts up- and downstream; names are
+    e.g. TSSs of features upstream and inside; names are
     the features to which the distances are given; only
     meaningful in combination with \code{typeUpstream} and
-    \code{typeDownstram}; e.g. 55 with name "ENST00000379158"}
+    \code{typeInside}; e.g. 55 with name "ENST00000379158"}
     \item{upSymbol}{optional character vector of gene symbols of
     features the peak is located upstream of; supplements
     \code{typeUpstream}; e.g. "Nudt2" }
-    \item{downSymbol}{optional character vector of gene symbols of
+    \item{inSymbol}{optional character vector of gene symbols of
     features the peak is located upstream of; supplements
-    \code{typeDownstream}.}
-    \item{\ldots}{further list elements can be added like normal list
-    elements.}
+    \code{typeInside}.}
+    \item{\ldots}{further list elements can be added like normal
+      list elements.}
  }
 }
 \section{Creation}{

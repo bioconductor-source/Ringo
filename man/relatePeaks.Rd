@@ -1,6 +1,5 @@
 \name{relatePeaks}
 \alias{relatePeaks}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Relate found peaks to genomic features}
 \description{
   This function relates found peaks to annotated genomic features,
@@ -34,11 +33,10 @@ relatePeaks(pl, gff, upstream = 5000, verbose = TRUE)
 }
 \value{
   An object of class \code{peakList} with for each peak the elements
-  \code{typeUpstream} and \code{typeDownstream} filled in with the names
+  \code{typeUpstream} and \code{typeInside} filled in with the names
   of the features that have been related to.
 }
 \author{Joern Toedling \email{toedling@ebi.ac.uk}}
-%\seealso{\code{\link{peakList}}}
 \examples{
   # see findPeaksOnSmoothed for an example
 }
