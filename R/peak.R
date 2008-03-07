@@ -101,7 +101,7 @@ generatePeakList = function(peaks,gff, g2t=NULL, allChr=c(1:19, "X", "Y"), tssCo
 }#generatePeakList
 
 ## older version of relatePeaks, see newer one below:
-relatePeaks2 <- function(pl, gff, upstream=5000, verbose=TRUE){
+relatePeaks <- function(pl, gff, upstream=5000, verbose=TRUE){
   stopifnot(is.list(pl),inherits(pl[[1]],"peak"),
             inherits(gff,"data.frame"),
             all(c("strand","name","start","end","chr") %in% names(gff)),
@@ -132,7 +132,7 @@ relatePeaks2 <- function(pl, gff, upstream=5000, verbose=TRUE){
 }#relatePeaks
 
 
-relatePeaks <- function(pl, gff, upstream=5000, verbose=TRUE){
+relatePeaks2 <- function(pl, gff, upstream=5000, verbose=TRUE){
   stopifnot(is.list(pl),inherits(pl[[1]],"peak"),
             inherits(gff,"data.frame"),
             all(c("strand","name","start","end","chr") %in% names(gff)),
@@ -172,4 +172,4 @@ relatePeaks <- function(pl, gff, upstream=5000, verbose=TRUE){
     pl[[i]] <- p
   }#for
   return(pl)
-}#relatePeaks
+}#relatePeaks2

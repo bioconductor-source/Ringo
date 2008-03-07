@@ -266,3 +266,17 @@ compute.gc <- function(probe.sequences, digits=2){
   round(sapply(splitted.seqs, function(x) length(grep("[GC]",x)))/
     listLen(splitted.seqs), digits=digits)
 }#compute.gc
+
+
+whichCsr <- function(X, arr.ind=TRUE){
+  ## function to get a two-column matrix containing the indices of the
+  ### non-zero elements in a "matrix.csr" class matrix
+  stopifnot(inherits(X, "matrix.csr"))
+  if (all(X@ra==0)) return(NULL)
+  res <- cbind(rep(seq(dim(X)[1]),diff(X@ia)), # row indices
+               X@ja )# column indices directly saved in matrix.csr format
+  colnames(res) <- c("row","col")
+  ## remove zero elements
+  res <- res[X@ra != 0,,drop=FALSE]
+  return(res)
+}# whichCsr

@@ -1,8 +1,8 @@
 /* compare two lists of genomic regions, the lists being x and y;
-/* return a matrix of pairwise-overlap of dimensions nx * ny
+   return a matrix of pairwise-overlap of dimensions nx * ny
 
-/* J. Toedling, EMBL EBI, 2008 */
-/* adopted some code from Biobase's "matchpt.c" by O.Sklyar */
+   J. Toedling, EMBL EBI, 2008
+   adopted some code from Biobase's "matchpt.c" by O.Sklyar */
 
 /* chromx, startx and endx are expected to be of same length,
    as are chromy, starty and endy */

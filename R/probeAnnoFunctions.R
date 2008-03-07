@@ -107,3 +107,45 @@ validProbeAnno <- function(probeAnno){
   }# for (thisName in uniChromNames)
   return(TRUE)
 }# validProbeAnno
+
+
+features2Probes <- function(gff, probeAnno, upstream=5000, checkUnique=TRUE, uniqueCodes=c(0), verbose=TRUE){
+  stopifnot(inherits(gff,"data.frame"), validProbeAnno(probeAnno),
+            all(c("strand","name","start","end","chr") %in% names(gff)),
+            all(gff$strand %in% c(-1,1)), all(gff$start<gff$end))
+  ## get borders of upstream region:
+  gff$start2 <- ifelse(gff$strand==1, pmax(gff$start-upstream,1), gff$start)
+  gff$end2   <- ifelse(gff$strand==1, gff$end, gff$end+upstream)
+  realTSS    <- ifelse(gff$strand==1, gff$start, gff$end)
+  names(realTSS) <- gff$name
+  ## prepare result
+  f2p <- vector("list", nrow(gff))
+  names(f2p) <- gff$name
+  allChr <- unique(gff$chr)
+  if (verbose) cat("Chromosome ")
+  for (chr in allChr){
+    if (verbose) cat(chr,"... ")
+    chrsta <- get(paste(chr,"start",sep="."), env=probeAnno)
+    chrend <- get(paste(chr,"end",sep="."), env=probeAnno)
+    chrmid <- round((chrsta+chrend)/2)
+    chridx <- get(paste(chr,"index",sep="."), env=probeAnno)
+    if (checkUnique){
+      chruni <- get(paste(chr,"unique",sep="."), env=probeAnno)
+      stopifnot(length(chruni)==length(chridx))
+      chridx <- chridx[chruni %in% uniqueCodes]
+      chrmid <- chrmid[chruni %in% uniqueCodes]
+    }
+    chrProbeDf <- data.frame(chr=rep(chr, length(chrmid)), start2=chrmid, end2=chrmid, stringsAsFactors=FALSE)
+    chrGff <- subset(gff, chr==chr)
+    chrOverlap <- peakOverlap(chrGff, chrProbeDf, startColumn="start2", endColumn="end2")
+    idxOverlap <- whichCsr(chrOverlap)
+    if (length(idxOverlap)==0) next
+    ## for each overlapping Feature:
+    for (i in unique(idxOverlap[,1])){
+      fprobes <- (chrmid[idxOverlap[idxOverlap[,1]==i,2]]-realTSS[chrGff$name[i]])*chrGff$strand[i]
+      names(fprobes) <- chridx[idxOverlap[idxOverlap[,1]==i,2]]
+      f2p[[chrGff$name[i]]] <- fprobes
+    }
+  }# for (chr in allChr)
+  return(f2p)
+}# features2Probes

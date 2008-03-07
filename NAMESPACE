@@ -2,12 +2,13 @@ useDynLib("Ringo", ringoSlidingQuantile=sliding_quantile, ringoPeakOverlap=overl
 
 import("graphics") 
 
-export("autocor", "chipAlongChrom","corPlot",
+export("autocor", "chipAlongChrom","corPlot", "whichCsr",
        "computeRunningMedians", "sliding.quantile",
        "findPeaksOnSmoothed", "peakByThreshold","newPeak","relatePeaks",
        "preprocess","nimblegenScale","readNimblegen",
        "as.data.frame.peakList","ftr2xys","compute.gc",
-       "posToProbeAnno","validProbeAnno", "peakOverlap")
+       "posToProbeAnno","validProbeAnno", "peakOverlap",
+       "features2Probes")
 
 S3method("plot", "peak")
 S3method("plot", "autocor.result")

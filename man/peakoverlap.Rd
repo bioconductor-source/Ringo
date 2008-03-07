@@ -8,7 +8,8 @@
   lists.
 }
 \usage{
-peakOverlap(xdf, ydf, chrColumn = "chr", startColumn = "start", endColumn = "end")
+peakOverlap(xdf, ydf, chrColumn = "chr", startColumn = "start",
+endColumn = "end", mem.limit=1e8)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,21 +21,31 @@ peakOverlap(xdf, ydf, chrColumn = "chr", startColumn = "start", endColumn = "end
     the start position of the regions in \code{xdf} and \code{ydf}}
   \item{endColumn}{character; what is the name of the column that holds
     the start position of the regions in \code{xdf} and \code{ydf}}
+  \item{mem.limit}{integer value; what is the maximal allowed size of
+    matrices during the computation}
 }
-%\details{}
 \value{
-  A matrix with \code{nrow(xdf)} rows and \code{nrow(ydf)} columns, in
-  which entry \code{X[i,j]} specifies the length of the overlap between
-  region \code{i} of the first list (\code{xdf}) and region \code{j} of
-  the second list (\code{ydf}).
+  Originally, a matrix with \code{nrow(xdf)} rows and
+  \code{nrow(ydf)} columns, in which entry \code{X[i,j]} specifies the
+  length of the overlap between region \code{i} of the first list
+  (\code{xdf}) and region \code{j} of the second list (\code{ydf}).
+  Since this matrix is very sparse, we use the \code{matrix.csr}
+  representation from the \code{SparseM} package for it.
 }
 \author{Joern Toedling \email{toedling@ebi.ac.uk}}
 \note{
   The function only return the absolute length of overlapping regions in
   base-pairs. It does not return the position of the overlap or the
   fraction of region 1 and/or region 2 that overlaps the other regions.
+
+  The argument \code{mem.limit} is not really a limit to used RAM, but
+  rather the maximal size of matrices that should be allowed during the
+  computation. If larger matrices would arise, the second regions list
+  is split into parts and the overlap with the first list is computed
+  for each part. During computation, matrices of size
+  \code{nrow(xdf)} times \code{nrow(ydf)} are created.
 }
-%\seealso{}
+\seealso{\code{\link[SparseM]{matrix.csr-class}}}
 \examples{
   ## toy example:
   peaksH3ac <- data.frame(chr=c("chr1","chr7","chr8","chr1","chrX","chr8"), start=c(100,100,100,510,100,60), end=c(200, 200, 200,520,200,80))
@@ -47,6 +58,7 @@ start=c(500,100,50,80,100), end=c(700, 200, 250, 120,200))
   peaksH4ac
 
   ## compare it to the result:
-  peakOverlap(peaksH3ac, peaksH4ac)
+  as.matrix(peakOverlap(peaksH3ac, peaksH4ac))
+  whichCsr(peakOverlap(peaksH3ac, peaksH4ac))
 }
 \keyword{manip}
