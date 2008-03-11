@@ -7,7 +7,7 @@
   probeAnno environment.
 }
 \usage{
-features2Probes(gff, probeAnno, upstream = 5000, checkUnique = TRUE, uniqueCodes = c(0), verbose = TRUE)
+features2Probes(gff, probeAnno, upstream = 5000, checkUnique = TRUE, uniqueCodes = c(0), mem.limit=1e8, verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -23,6 +23,8 @@ features2Probes(gff, probeAnno, upstream = 5000, checkUnique = TRUE, uniqueCodes
   \item{uniqueCodes}{numeric; which numeric codes in the chromosome-wise
     match-uniqueness elements of the probeAnno environment indicate
     uniqueness?}
+  \item{mem.limit}{integer value; what is the maximal allowed size of
+    matrices during the computation; see \code{peakOverlap}}
   \item{verbose}{logical; detailed progress output to STDOUT?}
 }
 \value{
@@ -49,12 +51,13 @@ features2Probes(gff, probeAnno, upstream = 5000, checkUnique = TRUE, uniqueCodes
   genome. It does NOT refer to oligo-nucleotide or cDNA probes on the
   microarray.
 }
+\seealso{\code{\link{peakOverlap}}}
 \examples{
    ringoExampleDir <- system.file("exData",package="Ringo")
    load(file.path(ringoExampleDir,"exampleProbeAnno.rda"))
    trans2Probe <- features2Probes(exGFF, exProbeAnno)
    trans2Probe[exGFF$name[match("NUDT2", exGFF$symbol)]]
    exGFF[match(names(trans2Probe)[listLen(trans2Probe)>0],exGFF$name),]
-   trans2Probe[listLen(trans2Probe)==2]
+   trans2Probe[listLen(trans2Probe)==1]
 }
 \keyword{manip}

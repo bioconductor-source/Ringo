@@ -109,7 +109,7 @@ validProbeAnno <- function(probeAnno){
 }# validProbeAnno
 
 
-features2Probes <- function(gff, probeAnno, upstream=5000, checkUnique=TRUE, uniqueCodes=c(0), verbose=TRUE){
+features2Probes <- function(gff, probeAnno, upstream=5000, checkUnique=TRUE, uniqueCodes=c(0), mem.limit=1e8, verbose=TRUE){
   stopifnot(inherits(gff,"data.frame"), validProbeAnno(probeAnno),
             all(c("strand","name","start","end","chr") %in% names(gff)),
             all(gff$strand %in% c(-1,1)), all(gff$start<gff$end))
@@ -137,7 +137,7 @@ features2Probes <- function(gff, probeAnno, upstream=5000, checkUnique=TRUE, uni
     }
     chrProbeDf <- data.frame(chr=rep(chr, length(chrmid)), start2=chrmid, end2=chrmid, stringsAsFactors=FALSE)
     chrGff <- subset(gff, chr==chr)
-    chrOverlap <- peakOverlap(chrGff, chrProbeDf, startColumn="start2", endColumn="end2")
+    chrOverlap <- peakOverlap(chrGff, chrProbeDf, startColumn="start2", endColumn="end2", mem.limit=mem.limit)
     idxOverlap <- whichCsr(chrOverlap)
     if (length(idxOverlap)==0) next
     ## for each overlapping Feature:

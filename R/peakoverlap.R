@@ -8,15 +8,15 @@ peakOverlap <- function(xdf, ydf, chrColumn="chr",startColumn="start",endColumn=
   if (!all(ydf[[startColumn]]<=ydf[[endColumn]]))
     stop(paste("Some regions in",deparse(substitute(ydf)),"have end postions that are smaller than their start positions.\n"))
   ### avoid creation of too big matrices here:
-  if (nrow(xdf)*nrow(ydf)<mem.limit){
+  if (log2(nrow(xdf))+log2(nrow(ydf))<log2(mem.limit)){
     res <- .Call(ringoPeakOverlap, as.character(xdf[[chrColumn]]), as.integer(as.character(xdf[[startColumn]])), as.integer(as.character(xdf[[endColumn]])), as.character(ydf[[chrColumn]]), as.integer(as.character(ydf[[startColumn]])), as.integer(as.character(ydf[[endColumn]])))
     ## convert the result to matrix.csr
     res <- as.matrix.csr(res)
   } else {
     ## iterative procedure:
-    if (nrow(xdf)> mem.limit)
+    if (log2(nrow(xdf))> log2(mem.limit))
       stop("Matrix ", deparse(substitute(xdf)), " has too many rows. Work with subsets of this matrix or increase parameter 'mem.limit'.\n") ## maybe implement a workaround that as well later
-    maxYRows <- floor(mem.limit/nrow(xdf))
+    maxYRows <- floor(2^(log2(mem.limit)-log2(nrow(xdf))))
     yRowSeq  <- unique(as.integer(c(seq(maxYRows, nrow(ydf), by=maxYRows), nrow(ydf))))
     partRess <- vector("list", length(yRowSeq))
     firstYCol <- as.integer(1)
