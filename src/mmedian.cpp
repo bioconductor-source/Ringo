@@ -15,37 +15,11 @@ extern "C" {
 #include <R_ext/Rdynload.h>
 #include <R_ext/Utils.h> 
  
-  //extern "C" {
-  SEXP sliding_median(SEXP, SEXP, SEXP);
-  SEXP sliding_quantile(SEXP, SEXP, SEXP, SEXP);
-  //};
-
-  /* HEADER: LOGISTICS MOSTLY IMPORTANT FOR WINDOWS DLL */
-
-   static R_CallMethodDef Ringo_calls[] = {
-     //{"sliding_median", (DL_FUNC) &sliding_median, 3},
-    {"sliding_quantile", (DL_FUNC) &sliding_quantile, 4},
-
-    // necessary last entry of R_CallMethodDef:
-    {NULL, NULL, 0}
-  };
-
-  // register functions 
-  void R_init_Ringo(DllInfo *dll)
-  {
-    R_registerRoutines(dll, NULL, Ringo_calls, NULL, NULL);
-  }
-
-  void R_unload_Ringo(DllInfo *dll) 
-  {
-    // at the moment nothing to do here 
-  }
-
   /* MAIN PART */
 
 
- /* This next function replaced the sliding.median function
-     above. It uses a different data structure, a linked list, and in 
+ /* This next function replaced the sliding.median function. 
+     It uses a different data structure, a linked list, and in 
      most use cases it is faster than the sliding.median function.
      It also allows the computation of any quantile in the window, not
      only the median. Again, irregular spacing of data points.

@@ -43,8 +43,8 @@ features2Probes(gff, probeAnno, upstream = 5000, checkUnique = TRUE, uniqueCodes
 \author{Joern Toedling \email{toedling@ebi.ac.uk}}
 \note{
   This resulting mapping is not used excessively by other Ringo
-  functions, so creating this mapping is optional but may simplify later
-  gene/transcript-based analyses.
+  functions, so creating this mapping is optional at this time,
+  but it may simplify subsequent gene/transcript-based analyses.
   
   Here, the term \emph{feature} describes a genomic entity such as a
   gene, transcript, non-coding RNA or a similar feature annotated to a
