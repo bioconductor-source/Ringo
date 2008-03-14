@@ -24,20 +24,15 @@ extern "C" {
 
 SEXP
 moving_mean_sd(SEXP ind, SEXP val, SEXP hlfsize) {
-    int * x, nval, hs, is;
+    int * x, nval, hs, is, i;
     double * y, * rval;
     int nprotect = 0;
     int valcount = 0;
     double sumval = 0.0;
     double sumsquareval = 0.0;
     double avg = 0; 
-    double avgsquares = 0; 
     double s_dev = 0;
     int first = 0, last = -1;
-
-    /* for the list of values of which we take the median at each position 
-       in 'ind', we use a C++ 'vector' object, since we need to dynamically
-       resize it */
 
     SEXP res, dim;
     x = INTEGER(ind);
@@ -49,8 +44,6 @@ moving_mean_sd(SEXP ind, SEXP val, SEXP hlfsize) {
     nprotect++;
 
     rval = REAL(res);
-
-    int i, j;
 
     for (i = 0; i < nval * 3; i++)
         rval[i] = R_NaN;
@@ -93,7 +86,7 @@ moving_mean_sd(SEXP ind, SEXP val, SEXP hlfsize) {
 
     }
     // set the dimensions of the result: it's an array with number of
-    //  positions rows and two columns
+    //  positions rows and three columns
     PROTECT( dim = allocVector(INTSXP, 2));
     nprotect++;
     INTEGER(dim)[0] = nval;

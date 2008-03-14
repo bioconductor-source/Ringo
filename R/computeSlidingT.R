@@ -13,8 +13,8 @@ computeSlidingT <- function(xSet, probeAnno, allChr=c(1:19,"X","Y"), test="one.s
   probeMeans <- matrix(NA, nrow=nrow(exprs(xSet)), ncol=nlevels(grouping), dimnames=list(x=featureNames(xSet), y=as.character(grouping)))
   probeSds   <- matrix(NA, nrow=nrow(exprs(xSet)), ncol=nlevels(grouping), dimnames=list(x=featureNames(xSet), y=as.character(grouping)))
   probeCounts <- matrix(NA, nrow=nrow(exprs(xSet)), ncol=nlevels(grouping), dimnames=list(x=featureNames(xSet), y=as.character(grouping)))
+  if (verbose) cat("\n computing probe-wise mean and standard deviation in sliding window.\n chr",chr, "...\n")
   for (chr in allChr){
-    if (verbose) cat("\nChromosome",chr, "...\n")
     chrsta <- get(paste(chr,"start",sep="."), env=probeAnno)
     chrend <- get(paste(chr,"end",sep="."), env=probeAnno)
     chrmid <- round((chrsta+chrend)/2)
@@ -41,6 +41,7 @@ computeSlidingT <- function(xSet, probeAnno, allChr=c(1:19,"X","Y"), test="one.s
   } #for (chr in allChr)
 
   ## do the probe-wise (regularized) t-testing:
+  if (verbose) cat("\n computing t-statistics...\n")
   if (test == "one.sample"){
     ## regularization factor
     sampleS0s <- apply(probeSds,2,median, na.rm=TRUE)
@@ -48,14 +49,29 @@ computeSlidingT <- function(xSet, probeAnno, allChr=c(1:19,"X","Y"), test="one.s
     ## one-sample t-statistic if mean is zero,using SE=SD/sqrt(n)
     probeTs <- probeMeans/(probeSds+probeS0s)*sqrt(probeCounts)
   }
-
+  if (test == "two.sample"){
+    ## compute combined SDs
+    n1 <- which(grouping==levels(grouping)[1])
+    n2 <- which(grouping==levels(grouping)[2])
+    combSds <- as.vector(sqrt(probeSds^2 %*% matrix(c(1/n1, 1/n2))))
+    stopifnot(length(combSds)==nrow(probeMeans))
+    ## regularization factor
+    combS0  <- median(combSds, na.rm=TRUE)
+    ## two-sample regularized t-statistic (by Welch,i.e. unequal variances)
+    probeTs <- matrix((probeMeans[,1]-probeMeans[,2])/(combSds+combS0))
+  }
   # cat construct ExpressionSet of results:
+  if (verbose) cat("preparing result...")
   newExprs <- probeTs
   rownames(newExprs) <- featureNames(xSet)
-  sample.labels <- as.character(grouping)
+  if (test == "one.sample")
+    sample.labels <- as.character(grouping)
+  else if (test == "two.sample")
+    sample.labels <- "t-stat"
   newPD <- new("AnnotatedDataFrame", data=data.frame(label=sample.labels, row.names=sample.labels), varMetadata=data.frame("varLabel"=c("label"),row.names=c("label")))
   newEset <- new('ExpressionSet',exprs=newExprs,  phenoData = newPD)
   featureNames(newEset) <- featureNames(xSet)
   sampleNames(newEset)  <- sample.labels
+  if (verbose) cat("done.\n")
   return(newEset)
 }#computeSlidingT

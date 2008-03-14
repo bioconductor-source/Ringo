@@ -52,6 +52,7 @@ findPeaksOnSmoothed <- function(smoothedX, probeAnno, thresholds, allChr=c(1:19,
       } #  if (checkUnique)
       chrrm <- exprs(smoothedX)[chridx,i]
       chr.peaks <- peakByThreshold(chrmid, chrrm, threshold=thresholds[i], distCutOff=distCutOff, minProbesInRow=minProbesInRow)
+      if (length(chr.peaks)==0) return(list())
       ## new version: return objects of class peak instead
       names(chridx) <- chrmid
       chr.peaks <- lapply(as.list(1:length(chr.peaks)), function(z){
