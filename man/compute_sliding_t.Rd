@@ -48,9 +48,10 @@ computeSlidingT(xSet, probeAnno, allChr = c(1:19, "X", "Y"), test = "one.sample"
   load(file.path(exDir,"exampleX.rda"))
   tX <- computeSlidingT(exampleX, probeAnno=exProbeAnno,
              allChr=c("9"), winHalfSize=400)
+  sampleNames(tX) <- "t-Stat_Suz12vsTotal"
   if (interactive()){
     par(mfrow=c(1,1))
-    chipAlongChrom(exampleX, chrom="9", xlim=c(34318000,34321000), ylim=c(-2,4), probeAnno=exProbeAnno, gff=exGFF)
+    chipAlongChrom(exampleX, chrom="9", xlim=c(34318000,34321000), ylim=c(-2,8.5), probeAnno=exProbeAnno, gff=exGFF)
     chipAlongChrom(tX, chrom="9", xlim=c(34318000,34321000),
 probeAnno=exProbeAnno, itype="l", ilwd=4, paletteName="Spectral",
 add=TRUE)
