@@ -13,8 +13,9 @@ computeSlidingT <- function(xSet, probeAnno, allChr=c(1:19,"X","Y"), test="one.s
   probeMeans <- matrix(NA, nrow=nrow(exprs(xSet)), ncol=nlevels(grouping), dimnames=list(x=featureNames(xSet), y=as.character(grouping)))
   probeSds   <- matrix(NA, nrow=nrow(exprs(xSet)), ncol=nlevels(grouping), dimnames=list(x=featureNames(xSet), y=as.character(grouping)))
   probeCounts <- matrix(NA, nrow=nrow(exprs(xSet)), ncol=nlevels(grouping), dimnames=list(x=featureNames(xSet), y=as.character(grouping)))
-  if (verbose) cat("\n computing probe-wise mean and standard deviation in sliding window.\n chr",chr, "...\n")
+  if (verbose) cat("\n computing probe-wise mean and standard deviation in sliding window.\n chr")
   for (chr in allChr){
+    if (verbose) cat(chr," ")
     chrsta <- get(paste(chr,"start",sep="."), env=probeAnno)
     chrend <- get(paste(chr,"end",sep="."), env=probeAnno)
     chrmid <- round((chrsta+chrend)/2)
