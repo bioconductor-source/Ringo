@@ -21,8 +21,8 @@ SEXP overlap_xy(SEXP chromx, SEXP startx, SEXP endx, SEXP chromy, SEXP starty, S
 
     nprotect = 0;
 
-    nptx = length(startx); // number of peaks in list 1
-    npty = length(starty); // number of peaks in list 2
+    nptx = length(startx); // number of regions in list 1
+    npty = length(starty); // number of regions in list 2
 
     PROTECT(res = allocVector(INTSXP, nptx*npty));
     nprotect++;
@@ -48,7 +48,7 @@ SEXP overlap_xy(SEXP chromx, SEXP startx, SEXP endx, SEXP chromy, SEXP starty, S
 	ys = INTEGER(starty)[j];
 	ye = INTEGER(endy)[j];
 	if (ys < xs){ 
-          // if peak y[j] is actually left of x[i], temporarily swap
+          // if region y[j] is actually left of x[i], temporarily swap
 	  ts = xs; te = xe;
           xs = ys; xe = ye;
           ys = ts; ye = te;

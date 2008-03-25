@@ -1,7 +1,7 @@
 ## (c) 2007  Joern Toedling
 
 ###############################################################################
-##  script to visualize enrichment/peaks-to-transcript
+##  script to visualize enrichment/Chers-to-transcript
 ##  (or other genomic features) relations using Rgraphviz
 ###############################################################################
 
@@ -9,7 +9,7 @@ library("Ringo")
 library("Rgraphviz")
 
 doFunctionTest <- FALSE
-analyzeTfPeaks3 <- FALSE
+analyzeTfChers3 <- FALSE
 
 # small function to capitalize 1st letter of each element of character vector
 capit <- function(x){ # capitalize first letter
@@ -19,38 +19,38 @@ capit <- function(x){ # capitalize first letter
          else paste(toupper(y[1]),paste(tolower(y[-1]),collapse=""), sep=""))
 }#capit
 
-## this function converts a peakList into a two-column matrix from a graph
+## this function converts a cherList into a two-column matrix from a graph
 ## can easily be constructed using the Rgraphviz function 'ftM2graphNEL'
-peakList2AssignTable <- function(pl, target.names=c("upSymbol","downSymbol"),
+cherList2AssignTable <- function(pl, target.names=c("upSymbol","downSymbol"),
                                  tableNames=c("antibody","target"), verbose=TRUE)
 {
-  stopifnot(is.list(pl), inherits(pl[[1]],"peak"),
+  stopifnot(is.list(pl), inherits(pl[[1]],"cher"),
             "antibody" %in% names(pl[[1]]), length(tableNames)==2)
   if (!all(target.names %in% names(pl[[1]])))
     stop(paste("Some of the target names", paste(target.names, collapse=", "),
-               "are not specified for the peaks in the list.\n"))
+               "are not specified for the chers in the list.\n"))
   resTable <- matrix(NA, nrow=length(pl)*10, ncol=2)
   nAssigns <- 1
   for (i in 1:length(pl)){
     if (verbose && (i %% 1000 ==0)) cat(i,"... ")
-    this.peak <- pl[[i]]
+    this.cher <- pl[[i]]
     ## put upstream and downstream possible effects together
-    these.targets <- unique(unlist(this.peak[target.names], use.names=FALSE))
+    these.targets <- unique(unlist(this.cher[target.names], use.names=FALSE))
     these.targets <- these.targets[these.targets!=""]
     if (length(these.targets)<1) next
     for (this.target in these.targets){
-      resTable[nAssigns,1:2] <- capit(c(this.peak$antibody, this.target))
+      resTable[nAssigns,1:2] <- capit(c(this.cher$antibody, this.target))
       nAssigns <- nAssigns + 1
     }#for (this.sym)
   }# for i
   resTable <- resTable[complete.cases(resTable),,drop=FALSE]
   if (nrow(resTable)== 0)
-    warning("No peak-target relations found.")
+    warning("No cher-target relations found.")
   resTable <- resTable[!duplicated(resTable),,drop=FALSE]
   resTable <- apply(resTable, 2 , function(x) gsub("[-_]",".",x))
   colnames(resTable) <- tableNames
   return(resTable)
-}#peakList2AssignTable
+}#cherList2AssignTable
 
 ## next function is a wrapper around tfM2graphNEL
 assignTable2Graph <- function(assignTab, weights=NULL, antibody.colors=NULL, target.color="#B0C4DE", edge.color="darkslategrey", by.antibody=TRUE, sel.patterns=NULL, weight.colors=NULL, weight.breaks=NULL){
@@ -102,7 +102,7 @@ assignTable2Graph <- function(assignTab, weights=NULL, antibody.colors=NULL, tar
   attr(myGraph,"graphAttrs") <- myGraphAttrs
   attr(myGraph,"nodeAttrs") <- myNodeAttrs
   attr(myGraph,"edgeAttrs") <- myEdgeAttrs
-  #class(myGraph) <- c("peakAssignGraph",class(myGraph))
+  #class(myGraph) <- c("cherAssignGraph",class(myGraph))
   return(myGraph)
 }# assignTable2Graph
 
@@ -115,8 +115,8 @@ myGraphPlot <- function(x, edge.lwd=2, ...){
 
 ### do testing of functions? might become example code in distant future
 if (doFunctionTest) {
-  example(findPeaksOnSmoothed)
-  assignTabX <- peakList2AssignTable(peaksX,target.name=c("upSymbol","downSymbol"))
+  example(findChersOnSmoothed)
+  assignTabX <- cherList2AssignTable(chersX,target.name=c("upSymbol","downSymbol"))
   print(assignTabX)
   ### convert table into a graph without weights:
   graphX <- assignTable2Graph(assignTabX)
@@ -132,18 +132,18 @@ if (doFunctionTest) {
 ### feel free to modify it to suit your own data
 #############################################################################
 
-if (analyzeTfPeaks3){
+if (analyzeTfChers3){
 ### tell R in which directory the saved binary data resides
 dataDir <- "/panfs/panda1/huber/sperling/tfchip/data"
 
 ### load list of identified enrichments:
-load(file=file.path(dataDir,"peaksV3c.RData"))
-## the loaded object allTFPeaks is a list of lists of peaks
-tfPeaks <- unlist(allTFPeaks,recursive=FALSE, use.names=FALSE)
-if ("modification" %in% names(tfPeaks[[1]]))
-  tfPeaks <- lapply(tfPeaks, function(p){names(p)[names(p)=="modification"] <- "antibody"; p})
+load(file=file.path(dataDir,"chersV3c.RData"))
+## the loaded object allTFChers is a list of lists of chers
+tfChers <- unlist(allTFChers,recursive=FALSE, use.names=FALSE)
+if ("modification" %in% names(tfChers[[1]]))
+  tfChers <- lapply(tfChers, function(p){names(p)[names(p)=="modification"] <- "antibody"; p})
 
-assignTF <- peakList2AssignTable(tfPeaks)
+assignTF <- cherList2AssignTable(tfChers)
 assignTF[,1] <- gsub("H1.cdna.2","Dpf3.1", assignTF[,1])
 assignTF[,1] <- gsub("H1.cdna.3","Dpf3.2", assignTF[,1])
 
@@ -155,4 +155,4 @@ graphTF <- assignTable2Graph(assignTF, sel.patterns=my.patterns, antibody.colors
 #pdf(file.path(dataDir,"graphTF.pdf"),width=12,height=10)
 myGraphPlot(graphTF)
 #dev.off()
-}#if (analyzeTfPeaks3)
+}#if (analyzeTfChers3)

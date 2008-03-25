@@ -1,5 +1,5 @@
 # Function to compute overlaps between (enriched) genomic regions in one list and those in another list
-peakOverlap <- function(xdf, ydf, chrColumn="chr",startColumn="start",endColumn="end", mem.limit=1e8) {
+regionOverlap <- function(xdf, ydf, chrColumn="chr",startColumn="start",endColumn="end", mem.limit=1e8) {
   stopifnot(is.data.frame(xdf), is.data.frame(ydf),
             all(c(chrColumn, startColumn, endColumn) %in% names(xdf)),
             all(c(chrColumn, startColumn, endColumn) %in% names(ydf)))
@@ -9,7 +9,7 @@ peakOverlap <- function(xdf, ydf, chrColumn="chr",startColumn="start",endColumn=
     stop(paste("Some regions in",deparse(substitute(ydf)),"have end postions that are smaller than their start positions.\n"))
   ### avoid creation of too big matrices here:
   if (log2(nrow(xdf))+log2(nrow(ydf))<log2(mem.limit)){
-    res <- .Call(ringoPeakOverlap, as.character(xdf[[chrColumn]]), as.integer(as.character(xdf[[startColumn]])), as.integer(as.character(xdf[[endColumn]])), as.character(ydf[[chrColumn]]), as.integer(as.character(ydf[[startColumn]])), as.integer(as.character(ydf[[endColumn]])))
+    res <- .Call(ringoRegionOverlap, as.character(xdf[[chrColumn]]), as.integer(as.character(xdf[[startColumn]])), as.integer(as.character(xdf[[endColumn]])), as.character(ydf[[chrColumn]]), as.integer(as.character(ydf[[startColumn]])), as.integer(as.character(ydf[[endColumn]])))
     ## convert the result to matrix.csr
     res <- as.matrix.csr(res)
   } else {
@@ -23,7 +23,7 @@ peakOverlap <- function(xdf, ydf, chrColumn="chr",startColumn="start",endColumn=
     for (j in seq(length(yRowSeq))){
       lastYCol <-  yRowSeq[j]
       partYdf <- ydf[firstYCol:lastYCol,,drop=FALSE]
-      thisRes <- .Call(ringoPeakOverlap, as.character(xdf[[chrColumn]]), as.integer(as.character(xdf[[startColumn]])), as.integer(as.character(xdf[[endColumn]])), as.character(partYdf[[chrColumn]]), as.integer(as.character(partYdf[[startColumn]])), as.integer(as.character(partYdf[[endColumn]])))
+      thisRes <- .Call(ringoRegionOverlap, as.character(xdf[[chrColumn]]), as.integer(as.character(xdf[[startColumn]])), as.integer(as.character(xdf[[endColumn]])), as.character(partYdf[[chrColumn]]), as.integer(as.character(partYdf[[startColumn]])), as.integer(as.character(partYdf[[endColumn]])))
       thisRes <- as.matrix.csr(thisRes)
       partRess[[j]] <- thisRes
       firstYCol <-  lastYCol+1
@@ -31,4 +31,4 @@ peakOverlap <- function(xdf, ydf, chrColumn="chr",startColumn="start",endColumn=
     res <- do.call("cbind", partRess)
   }
   return(res)
-}#peakOverlap
+}#regionOverlap

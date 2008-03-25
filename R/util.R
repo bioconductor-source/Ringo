@@ -4,7 +4,7 @@ addTypes = function(curTss, curRegions, tssCover=c(-25, 25), tssUpstream=5000, t
   start = theTSS + tssCover[1]
   end = theTSS + tssCover[2]
   curRegions = lapply(curRegions, function(p) { p$typeTSSCover = c(p$typeTSSCover, curTss$name[(start >= p$start) & (end <= p$end)]); return(p) })
-  # peaks in upstream area
+  # cers in upstream area
   if (useDist2NextUpGene) {
     delta = pmin(curTss$dist2NextUpGene, tssUpstream)
   }
@@ -16,7 +16,7 @@ addTypes = function(curTss, curRegions, tssCover=c(-25, 25), tssUpstream=5000, t
   start = ifelse(curTss$strand==1, curTss$start - delta, curTss$end)
   end = ifelse(curTss$strand==1, curTss$start, curTss$end + delta)
   curRegions = lapply(curRegions, function(p) { p$typeUpstream = c(p$typeUpstream, curTss$name[(start <= p$start) & (end >= p$end)]); return(p) })
-  # peaks in downstream area
+  # cers in downstream area
   strandDelta = ifelse(curTss$strand==1,
     curTss$intron1start - curTss$start + 1,
     curTss$end - curTss$intron1end + 1)
@@ -26,7 +26,7 @@ addTypes = function(curTss, curRegions, tssCover=c(-25, 25), tssUpstream=5000, t
   start = ifelse(curTss$strand==1, curTss$start, curTss$end - delta)
   end = ifelse(curTss$strand==1, curTss$start + delta, curTss$end)
   curRegions = lapply(curRegions, function(p) { p$typeDownstream = c(p$typeDownstream, curTss$name[(start <= p$start) & (end >= p$end)]); return(p) })
-  # peaks in intron area
+  # cers in intron area
   start = curTss$intron1start
   end = curTss$intron1end
   start[is.na(start)] = 0

@@ -137,7 +137,7 @@ features2Probes <- function(gff, probeAnno, upstream=5000, checkUnique=TRUE, uni
     }
     chrProbeDf <- data.frame(chr=rep(chr, length(chrmid)), start2=chrmid, end2=chrmid, stringsAsFactors=FALSE)
     chrGff <- subset(gff, chr==chr)
-    chrOverlap <- peakOverlap(chrGff, chrProbeDf, startColumn="start2", endColumn="end2", mem.limit=mem.limit)
+    chrOverlap <- regionOverlap(chrGff, chrProbeDf, startColumn="start2", endColumn="end2", mem.limit=mem.limit)
     idxOverlap <- whichCsr(chrOverlap)
     if (length(idxOverlap)==0) next
     ## for each overlapping Feature:

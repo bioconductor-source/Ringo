@@ -1,6 +1,6 @@
-\name{peakOverlap}
-\alias{peakOverlap}
-\alias{peak.overlap}
+\name{regionOverlap}
+\alias{regionOverlap}
+\alias{region.overlap}
 \title{Function to compute overlap of genomic regions}
 \description{
   Given two data frames of genomic regions, this function computes the
@@ -8,7 +8,7 @@
   lists.
 }
 \usage{
-peakOverlap(xdf, ydf, chrColumn = "chr", startColumn = "start",
+regionOverlap(xdf, ydf, chrColumn = "chr", startColumn = "start",
 endColumn = "end", mem.limit=1e8)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -48,17 +48,17 @@ endColumn = "end", mem.limit=1e8)
 \seealso{\code{\link[SparseM]{matrix.csr-class}}}
 \examples{
   ## toy example:
-  peaksH3ac <- data.frame(chr=c("chr1","chr7","chr8","chr1","chrX","chr8"), start=c(100,100,100,510,100,60), end=c(200, 200, 200,520,200,80))
-  peaksH4ac <- data.frame(chr=c("chr1","chr2","chr7","chr8","chr9"),
+  regionsH3ac <- data.frame(chr=c("chr1","chr7","chr8","chr1","chrX","chr8"), start=c(100,100,100,510,100,60), end=c(200, 200, 200,520,200,80))
+  regionsH4ac <- data.frame(chr=c("chr1","chr2","chr7","chr8","chr9"),
 start=c(500,100,50,80,100), end=c(700, 200, 250, 120,200))
 
   ## compare the regions first by eye
   ##  which ones do overlap and by what amount?
-  peaksH3ac
-  peaksH4ac
+  regionsH3ac
+  regionsH4ac
 
   ## compare it to the result:
-  as.matrix(peakOverlap(peaksH3ac, peaksH4ac))
-  whichCsr(peakOverlap(peaksH3ac, peaksH4ac))
+  as.matrix(regionOverlap(regionsH3ac, regionsH4ac))
+  whichCsr(regionOverlap(regionsH3ac, regionsH4ac))
 }
 \keyword{manip}

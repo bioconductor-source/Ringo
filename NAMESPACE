@@ -1,16 +1,16 @@
-useDynLib("Ringo", ringoSlidingQuantile=sliding_quantile, ringoPeakOverlap=overlap_xy, ringoMovingMeanSd=moving_mean_sd)
+useDynLib("Ringo", ringoSlidingQuantile=sliding_quantile, ringoRegionOverlap=overlap_xy, ringoMovingMeanSd=moving_mean_sd)
 
 import("graphics") 
 
 export("autocor", "chipAlongChrom","corPlot", "whichCsr",
        "computeRunningMedians", "sliding.quantile",
-       "findPeaksOnSmoothed", "peakByThreshold","newPeak","relatePeaks",
+       "findChersOnSmoothed", "cherByThreshold","newCher","relateChers",
        "preprocess","nimblegenScale","readNimblegen",
-       "as.data.frame.peakList","ftr2xys","compute.gc",
-       "posToProbeAnno","validProbeAnno", "peakOverlap",
+       "as.data.frame.cherList","ftr2xys","compute.gc",
+       "posToProbeAnno","validProbeAnno", "regionOverlap",
        "features2Probes","sliding.meansd", "computeSlidingT")
 
-S3method("plot", "peak")
+S3method("plot", "cher")
 S3method("plot", "autocor.result")
 S3method("image", "RGList")
-S3method("as.data.frame", "peakList")
+S3method("as.data.frame", "cherList")

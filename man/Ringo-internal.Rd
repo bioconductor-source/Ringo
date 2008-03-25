@@ -10,13 +10,13 @@
 \alias{getTranscriptToGeneMap}
 \alias{combine.tables}
 \alias{calcOverlapDfVsDf}
-\alias{as.data.frame.peakList}
-\alias{generatePeakList}
+\alias{as.data.frame.cherList}
+\alias{generateCherList}
 \alias{splitAndSimplify}
 \alias{readNimblegenHeader}
 \alias{readNgIntensitiesTxt}
 \alias{normalizeBetweenArraysVSN}
-\alias{relatePeaks2}
+\alias{relateChers2}
 \alias{whichCsr}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Internal Ringo functions}

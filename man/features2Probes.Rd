@@ -15,7 +15,7 @@ features2Probes(gff, probeAnno, upstream = 5000, checkUnique = TRUE, uniqueCodes
   \item{probeAnno}{Object of class \code{environment} holding the
     genomic positions of probes in the ExpressionSet}
   \item{upstream}{up to how many bases upstream of annotated genomic
-    features should peaks be counted as related to that feature (see
+    features should probes be counted as related to that feature (see
     details)}
   \item{checkUnique}{logical; indicates whether the uniqueness
     indicator of probe matches from the probeAnno environment should be
@@ -24,7 +24,7 @@ features2Probes(gff, probeAnno, upstream = 5000, checkUnique = TRUE, uniqueCodes
     match-uniqueness elements of the probeAnno environment indicate
     uniqueness?}
   \item{mem.limit}{integer value; what is the maximal allowed size of
-    matrices during the computation; see \code{peakOverlap}}
+    matrices during the computation; see \code{regionOverlap}}
   \item{verbose}{logical; detailed progress output to STDOUT?}
 }
 \value{
@@ -51,7 +51,7 @@ features2Probes(gff, probeAnno, upstream = 5000, checkUnique = TRUE, uniqueCodes
   genome. It does NOT refer to oligo-nucleotide or cDNA probes on the
   microarray.
 }
-\seealso{\code{\link{peakOverlap}}}
+\seealso{\code{\link{regionOverlap}}}
 \examples{
    ringoExampleDir <- system.file("exData",package="Ringo")
    load(file.path(ringoExampleDir,"exampleProbeAnno.rda"))

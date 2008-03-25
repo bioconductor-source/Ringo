@@ -311,7 +311,7 @@ Following quality assessment of the raw data,
 we perform normalization of the probe intensities
 and derive fold changes of probes' intensities in the enriched sample
 divided by their intensities in the non-enriched \emph{input} sample
-and take the (generalized) logarithm of this ratios.
+and take the (generalized) logarithm of these ratios.
 
 We use the variance-stabilizing normalization \citep{HuberVSN}
 or probe intensities and generate an \texttt{ExpressionSet} object
@@ -401,7 +401,7 @@ dev.off()
 See the smoothed probe levels in figure \ref{Ringo-smoothAlongChrom}.
 
 
-\section{Peak finding}
+\section{Finding ChIP-enriched regions}
 
 To identify antibody-enriched genomic regions, we require the following:
 
@@ -412,11 +412,10 @@ To identify antibody-enriched genomic regions, we require the following:
 apart from another affected position in the region (we require a certain
 probe spacing to have confidence in detected peaks\footnote{Note
 that the term ''peak'', while commonly used in ChIP-chip context,
-is slightly misleading and the term "ChIP-enriched region" would be
-more appropriate. Within such regions the actual signal could show two
-or more actual signal peaks or none at all (long plateau). For
-succinctness sake, we use the term "peak" for a ChIP-enriched region,
-though.})
+is slightly misleading and the term "ChIP-enriched region", 
+or "Cher" in shorthand,
+is more appropriate. Within such regions the actual signal could show two
+or more actual signal peaks or none at all (long plateau).})
 \end{itemize}
 
 For setting the threshold $y_0$, one has to assess the 
@@ -486,39 +485,42 @@ threshold.
 In particular, it does not take into account the auto-correlation between
 near-by probes.
 
-<<peakFinding, results=hide>>=
-peaksX <- findPeaksOnSmoothed(smoothX, probeAnno=exProbeAnno, thresholds=y0, allChr="9", distCutOff=600, cellType="human")
-peaksX <- relatePeaks(peaksX, exGFF)
-peaksXD <- as.data.frame.peakList(peaksX)
+<<cherFinding, results=hide>>=
+chersX <- findChersOnSmoothed(smoothX, probeAnno=exProbeAnno, thresholds=y0, allChr="9", distCutOff=600, cellType="human")
+chersX <- relateChers(chersX, exGFF)
+chersXD <- as.data.frame.cherList(chersX)
 @ 
-<<showPeaks>>=
-peaksXD[order(peaksXD$maxPeak, decreasing=TRUE),]
+<<showChers>>=
+chersXD[order(chersXD$maxCher, decreasing=TRUE),]
 @ 
+
+Note that in \Rpackage{Ringo} functions, 
+``ChIP-enriched region'' is abbreviated to ``Cher''.
  
 One characteristic of enriched regions that can be used for 
-sorting them is the element \texttt{maxPeak}, that is the highest smoothed
+sorting them is the element \texttt{maxCher}, that is the highest smoothed
 probe level in the enriched region. 
 Alternatively, one can sort by the \texttt{score},
 that is the sum of smoothed probe levels minus the threshold. It is a 
 discretized version of to the area under the curve with the baseline being the 
 threshold. 
 
-<<plotPeak0, eval=FALSE, results=hide>>=
-plot(peaksX[[1]], smoothX, probeAnno=exProbeAnno, gff=exGFF, paletteName="Spectral")
+<<plotCher0, eval=FALSE, results=hide>>=
+plot(chersX[[1]], smoothX, probeAnno=exProbeAnno, gff=exGFF, paletteName="Spectral")
 @ 
-<<plotPeak, echo=FALSE, results=hide>>=
-jpeg("Ringo-plotPeak.jpg", quality=100, width=960, height=480)
+<<plotCher, echo=FALSE, results=hide>>=
+jpeg("Ringo-plotCher.jpg", quality=100, width=960, height=480)
 par(mar=c(2.5,4.2,4,1.5), font.lab=2)
-plot(peaksX[[1]], smoothX, probeAnno=exProbeAnno, gff=exGFF, paletteName="Spectral")
+plot(chersX[[1]], smoothX, probeAnno=exProbeAnno, gff=exGFF, paletteName="Spectral")
 dev.off()
 @ 
 
-\myincfig{Ringo-plotPeak}{0.98\textwidth}{One of the identified Suz12-antibody
+\myincfig{Ringo-plotCher}{0.98\textwidth}{One of the identified Suz12-antibody
 enriched regions on chromosome 9.}
 
-Figure \ref{Ringo-plotPeak} displays an identified enriched region, 
+Figure \ref{Ringo-plotCher} displays an identified enriched region, 
 which is located upstream of the \texttt{Nudt2} gene. 
-This peak was obvious in plots of the 
+This \emph{Cher} was obvious in plots of the 
 normalized data (see figure \ref{Ringo-smoothAlongChrom}).
 And while it is reassuring that our method recovers it as well, a number
 of other approaches would undoubtedly have reported it as well.
