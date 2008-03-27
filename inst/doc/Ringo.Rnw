@@ -491,14 +491,14 @@ chersX <- relateChers(chersX, exGFF)
 chersXD <- as.data.frame.cherList(chersX)
 @ 
 <<showChers>>=
-chersXD[order(chersXD$maxCher, decreasing=TRUE),]
+chersXD[order(chersXD$maxLevel, decreasing=TRUE),]
 @ 
 
 Note that in \Rpackage{Ringo} functions, 
 ``ChIP-enriched region'' is abbreviated to ``Cher''.
  
 One characteristic of enriched regions that can be used for 
-sorting them is the element \texttt{maxCher}, that is the highest smoothed
+sorting them is the element \texttt{maxLevel}, that is the highest smoothed
 probe level in the enriched region. 
 Alternatively, one can sort by the \texttt{score},
 that is the sum of smoothed probe levels minus the threshold. It is a 

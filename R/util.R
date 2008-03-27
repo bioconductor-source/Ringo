@@ -280,3 +280,10 @@ whichCsr <- function(X, arr.ind=TRUE){
   res <- res[X@ra != 0,,drop=FALSE]
   return(res)
 }# whichCsr
+
+getFeats <- function(cl){
+  stopifnot(is.list(cl), inherits(cl[[1]],"cher"))
+  return(unique(unlist(sapply(cl, function(cher) cher[c("typeUpstream", "typeInside", "typeDownstream")]), use.names=FALSE)))
+}# getFeats
+
+          

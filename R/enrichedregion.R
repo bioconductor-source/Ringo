@@ -1,7 +1,7 @@
 
-newCher <- function(name, chr, start, end, cellType=NULL, antibody, maxCher, score=NULL, probes=c(), ...) {
+newCher <- function(name, chr, start, end, cellType=NULL, antibody, maxLevel, score=NULL, probes=c(), ...) {
   ## element 'antibody' was named 'modification' before
-  cher <- list(name=name, chr=chr, start=start, end=end, cellType=cellType, antibody=antibody, typeUpstream=list(), typeDownstream=list(), maxCher=maxCher, score=score, probes=probes)  
+  cher <- list(name=name, chr=chr, start=start, end=end, cellType=cellType, antibody=antibody, typeUpstream=list(), typeDownstream=list(), maxLevel=maxLevel, score=score, probes=probes)  
   ## add any further named arguments in "..."
   cher <- c(cher, lapply(as.list(match.call(expand.dots=FALSE)[["..."]]),eval))
   class(cher) = "cher"
@@ -10,12 +10,12 @@ newCher <- function(name, chr, start, end, cellType=NULL, antibody, maxCher, sco
 
 print.cher <- function(x, ...) {
   nUp = length(x$typeUpstream)
-  nDown = length(x$typeDownstream)
+  nIn = length(x$typeInside)
   cat(x$name, "\nChr",x$chr,":",x$start, "-", x$end, "\n")
   with(x, if (!is.null(antibody)) cat("Antibody :",antibody,"\n"))
   with(x, if (!is.null(score)) cat("Score =",score,"\n"))
   with(x, if (!is.null(probes)) cat("Number of probes =",length(probes),"\n"))
-  cat("nUp =", nUp, "nDown =", nDown, "\n")
+  cat("nUp =", nUp, "nDown =", nIn, "\n")
   invisible(NULL)
 }#print.cher
 
@@ -27,8 +27,8 @@ plot.cher <- function(x, dat, probeAnno, samples=NULL, extent=1000, gff=NULL,...
     stopifnot(all(samples) %in% 1:ncol(dat))
   cherVal <- chipAlongChrom(dat, chrom=x$chr, samples=samples, xlim=c(x$start-extent, x$end+extent), probeAnno=probeAnno, gff=gff, ...)
   rug(x=c(x$start,x$end), side=3, lwd=3, col="gold")
-  if (!is.null(x$maxCher))
-    legend(x="topright", legend=paste("Max.Level:",round(x$maxCher,digits=2)),fill="gold", bty="n")
+  if (!is.null(x$maxLevel))
+    legend(x="topright", legend=paste("Max.Level:",round(x$maxLevel,digits=2)),fill="gold", bty="n")
   invisible(cherVal)
 }#plot.cher
 
@@ -43,7 +43,7 @@ as.data.frame.cherList <- function(x, row.names=NULL, optional=FALSE,...) {
   p.cellType <- vector("character",np)
   p.antibody <- vector("character",np)
   p.features <- vector("character",np)
-  p.maxCher <- vector("numeric",np)
+  p.maxLevel <- vector("numeric",np)
   p.score <- vector("numeric",np)
   for (i in 1:np){
      p <- x[[i]]
@@ -54,10 +54,10 @@ as.data.frame.cherList <- function(x, row.names=NULL, optional=FALSE,...) {
      p.cellType[i] <-  ifelse(is.null(p$cellType), NA, p$cellType)
      p.antibody[i] <- ifelse(is.null(p$antibody), p$modification, p$antibody)
      p.features[i] <- paste(c(p$typeUpstream, p$typeInside), collapse=" ")
-     p.maxCher[i] <- ifelse(is.null(p$maxCher), NA, p$maxCher)
+     p.maxLevel[i] <- ifelse(is.null(p$maxLevel), NA, p$maxLevel)
      p.score[i] <- ifelse(is.null(p$score), NA, p$score)
    }#for i
-  df <- data.frame(name=p.name, chr=p.chr, start=p.start, end=p.end, cellType=p.cellType, antibody=p.antibody, features=p.features, maxCher=p.maxCher, score=p.score, stringsAsFactors=FALSE, row.names=row.names)
+  df <- data.frame(name=p.name, chr=p.chr, start=p.start, end=p.end, cellType=p.cellType, antibody=p.antibody, features=p.features, maxLevel=p.maxLevel, score=p.score, stringsAsFactors=FALSE, row.names=row.names)
   return(df)
 }#as.data.frame.cherList
 
@@ -82,7 +82,7 @@ generateCherList = function(chers,gff, g2t=NULL, allChr=c(1:19, "X", "Y"), tssCo
         p = curChr[[pName]]
         n = names(p)
         this.cher.score = attr(p,"score")
-        return(newCher(cherID=pName, chr, start=as.integer(n[1]), end=as.integer(n[length(n)]), cellType=cellType, antibody=antibody, maxCher=max(p), score=this.cher.score))
+        return(newCher(cherID=pName, chr, start=as.integer(n[1]), end=as.integer(n[length(n)]), cellType=cellType, antibody=antibody, maxLevel=max(p), score=this.cher.score))
       }# generateCher
       curChers = lapply(names(curChr), generateCher)
       curChers = addTypes(curTss, curChers, tssCover, tssUpstream, tssDownstream)
@@ -111,9 +111,9 @@ relateChers <- function(pl, gff, upstream=5000, verbose=TRUE){
   gffUpEnd   <- ifelse(gff$strand==1, gff$start-1, gff$end+upstream)
   realTSS <- ifelse(gff$strand==1, gff$start, gff$end)
   names(realTSS) <- gff$name
-  if (verbose) cat("Relating",length(pl),"ChIP-enriched regions to GFF:\n...")
+  if (verbose) cat("Relating",length(pl),"ChIP-enriched regions to GFF:\n")
   for (i in 1:length(pl)){
-    if (verbose & i%%1000==0) cat(i,"...")
+    if (verbose & i%%1000==0) cat(i," ")
     p <- pl[[i]]
     p$typeUpstream <- subset(gff, gff$chr==p$chr & cherMid[i]>=gffUpStart & cherMid[i] <= gffUpEnd, select="name", drop=TRUE)
     p$typeInside <- subset(gff, gff$chr==p$chr & cherMid[i]>=gff$start & cherMid[i] <= gff$end, select="name", drop=TRUE)

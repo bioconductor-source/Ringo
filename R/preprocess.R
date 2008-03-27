@@ -1,7 +1,7 @@
 preprocess <- function(myRG, method="vsn", returnMAList=FALSE,
                        verbose=TRUE, ...){
   stopifnot(inherits(myRG, "RGList"))
-  method <- match.arg(method, choices=c("vsn","loess","median","Gquantile", "nimblegen","none"))
+  method <- match.arg(method, choices=c("vsn","loess","median","Gquantile", "Rquantile", "nimblegen","none"))
   if (method %in% c("loess","median")){
     if (verbose) cat("Background correction...\n")
     myRG <- backgroundCorrect(myRG, method="normexp", offset=50)
@@ -13,6 +13,7 @@ preprocess <- function(myRG, method="vsn", returnMAList=FALSE,
                  #"vsn"=normalizeBetweenArrays(myRG, method="vsn",...),
                  "vsn"=normalizeBetweenArraysVSN(myRG,...),
                  "Gquantile"=normalizeBetweenArrays(myRG, method="Gquantile",...),
+                 "Rquantile"=normalizeBetweenArrays(myRG, method="Rquantile",...),
                  "nimblegen"=nimblegenScale(myRG,...),
                  "none"=normalizeWithinArrays(myRG, method="none",...)
                  )

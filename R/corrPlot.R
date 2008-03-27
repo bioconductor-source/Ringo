@@ -1,4 +1,4 @@
-corPlot <- function(eset, samples=NULL, grouping=NULL, ref=NULL, ...)
+corPlot <- function(eset, samples=NULL, grouping=NULL, ref=NULL, useSmoothScatter=TRUE, ...)
 {
   #0. assess arguments:
   stopifnot(inherits(eset, "ExpressionSet")|(is.numeric(eset)&is.matrix(eset)))
@@ -38,8 +38,11 @@ corPlot <- function(eset, samples=NULL, grouping=NULL, ref=NULL, ...)
   }
   # compute group-wise means for each probe
   datmat <- eset%*%groupmat
-  colnames(datmat) <- as.character(levels(grouping))    
-  pairs(datmat, lower.panel=panel.scatter, upper.panel=panel.cor)
+  colnames(datmat) <- as.character(levels(grouping))
+  if (useSmoothScatter)
+    pairs(datmat, lower.panel=function(...) {par(new=TRUE); smoothScatter(..., nrpoints=0); abline(0,1,col="red")}, upper.panel=panel.cor)
+  else
+    pairs(datmat, lower.panel=panel.scatter, upper.panel=panel.cor)
   invisible(NULL)
 }#corPlot
 

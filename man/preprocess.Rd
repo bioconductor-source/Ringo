@@ -11,7 +11,8 @@ preprocess(myRG, method = "vsn", returnMAList=FALSE, verbose=TRUE, ...)
 }
 \arguments{
   \item{myRG}{object of class \code{RGList}}
-  \item{method}{string; denoting which normalization method to choose}
+  \item{method}{string; denoting which normalization method to choose,
+    see below for details}
   \item{returnMAList}{logical; should an MAList object be returned?
     Default is to return an ExpressionSet object.}
   \item{verbose}{logical; progress output to STDOUT?}
@@ -30,6 +31,8 @@ preprocess(myRG, method = "vsn", returnMAList=FALSE, verbose=TRUE, ...)
      calls \code{normalizeBetweenArrays} with \code{method="vsn"}.}
   \item{Gquantile}{Does not do any background correction, but rather directly
      calls \code{normalizeBetweenArrays} with \code{method="Gquantile"}.}
+  \item{Rquantile}{Does not do any background correction, but rather directly
+     calls \code{normalizeBetweenArrays} with \code{method="Rquantile"}.}
    \item{median}{First performs background correction of intensity values
      using \code{limma}'s function \code{backgroundCorrect} with
      \code{method="normexp"} and \code{offset=50}. Then calls

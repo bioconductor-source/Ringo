@@ -7,7 +7,8 @@
   expression data between different samples or sample groups.
 }
 \usage{
-corPlot(eset, samples = NULL, grouping = NULL, ref = NULL,...)
+corPlot(eset, samples = NULL, grouping = NULL, ref = NULL,
+   useSmoothScatter = TRUE, ...)
 }
 \arguments{
   \item{eset}{object of class \code{ExpressionSet} holding the array
@@ -25,6 +26,9 @@ corPlot(eset, samples = NULL, grouping = NULL, ref = NULL,...)
   individual samples only.}
   \item{ref}{reference than only applies if argument \code{grouping} is
     given; see \code{\link[stats]{relevel}}}
+  \item{useSmoothScatter}{logical; should the function
+    \code{\link[genePlotter]{smoothScatter}} be used? 
+    given; see \code{\link[stats]{relevel}}}
   \item{\dots}{additional arguments, not used yet}
 }
 \value{
@@ -32,9 +36,12 @@ corPlot(eset, samples = NULL, grouping = NULL, ref = NULL,...)
   produce the pairs plot.
 }
 \author{Joern Toedling}
-\seealso{\code{\link[Biobase]{ExpressionSet}},\code{\link[stats]{relevel}},\code{\link[graphics]{pairs}}}
+\seealso{\code{\link[Biobase]{ExpressionSet}},\code{\link[stats]{relevel}},
+  \code{\link[graphics]{pairs}},
+  \code{\link[genePlotter]{smoothScatter}}}
 \examples{
    data(sample.ExpressionSet)
+   if (interactive()) 
    corPlot(sample.ExpressionSet,
     grouping=paste(sample.ExpressionSet$sex,
     sample.ExpressionSet$type, sep="."))

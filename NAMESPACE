@@ -8,9 +8,11 @@ export("autocor", "chipAlongChrom","corPlot", "whichCsr",
        "preprocess","nimblegenScale","readNimblegen",
        "as.data.frame.cherList","ftr2xys","compute.gc",
        "posToProbeAnno","validProbeAnno", "regionOverlap",
-       "features2Probes","sliding.meansd", "computeSlidingT")
+       "features2Probes","sliding.meansd", "computeSlidingT",
+       "getFeats")
 
 S3method("plot", "cher")
+S3method("print", "cher")
 S3method("plot", "autocor.result")
 S3method("image", "RGList")
 S3method("as.data.frame", "cherList")

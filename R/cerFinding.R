@@ -59,7 +59,7 @@ findChersOnSmoothed <- function(smoothedX, probeAnno, thresholds, allChr=c(1:19,
         x <- chr.chers[[z]];
         cherID <- paste(cellType, this.sample, paste("chr",chr,sep=""), paste("cher",z,sep=""),sep=".")
         cherID <- gsub("(^\\.+)|(\\.+$)","",cherID)#remove any leading and trailing dots
-        return(newCher(cherID, chr=chr, start=as.integer(names(x)[1]), end=as.integer(names(x)[length(x)]), cellType=cellType, antibody=this.sample, maxCher=max(x), score=attr(x,"score"), probes=as.character(chridx[names(x)])))})
+        return(newCher(cherID, chr=chr, start=as.integer(names(x)[1]), end=as.integer(names(x)[length(x)]), cellType=cellType, antibody=this.sample, maxLevel=max(x), score=attr(x,"score"), probes=as.character(chridx[names(x)])))})
       return(chr.chers)
     })
     #names(thisModChers) <- allChr

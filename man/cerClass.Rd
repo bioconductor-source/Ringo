@@ -41,7 +41,7 @@
     See \code{\link{relateChers}} for details.}
     \item{typeInside}{ optional character vector of features
     that this cher is located inside of }
-    \item{maxCher}{optional numeric of maximal (smoothed) probe level
+    \item{maxLevel}{optional numeric of maximal (smoothed) probe level
     in the cher, e.g. 2.00}
     \item{score}{optional numeric of a cher score, currently we use the
     sum of smoothed probe levels (log fold changes), e.g. 69.16}

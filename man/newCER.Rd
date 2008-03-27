@@ -6,7 +6,7 @@
   of class \code{cher} (ChIP-enriched region).
 }
 \usage{
-newCher(name, chr, start, end, cellType = NULL, antibody, maxCher, score = NULL, probes = c(), ...)
+newCher(name, chr, start, end, cellType = NULL, antibody, maxLevel, score = NULL, probes = c(), ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,7 +19,7 @@ newCher(name, chr, start, end, cellType = NULL, antibody, maxCher, score = NULL,
   \item{antibody}{required character vector describing the
     antibody or other characteristic for which fragments were supposedly
     enriched in immuno-precipitation step}
-  \item{maxCher}{numeric; maximal probe level in the cher}
+  \item{maxLevel}{numeric; maximal probe level in the cher}
   \item{score}{optional numeric score of the cher}
   \item{probes}{optional character vector of probe identifiers of probes
   that make up the cher}
@@ -40,7 +40,7 @@ newCher(name, chr, start, end, cellType = NULL, antibody, maxCher, score = NULL,
   cher1 <- newCher("Suz12.Nudt2.upstream.cher",
                      chr="9", start=34318900, end=34320100,
                      antibody="Suz12",cellType="human",
-                     maxCher=2, score=99)
+                     maxLevel=2, score=99)
   print(cher1)
 }
 \keyword{internal}
