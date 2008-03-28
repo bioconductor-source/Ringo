@@ -22,7 +22,7 @@ chipAlongChrom <- function (eSet, chrom, probeAnno, xlim, ylim=NULL, samples=NUL
   names(mid) <- ind
   nProbesOnChr <- length(mid)
   if (!missing(xlim)){
-    stopifnot(length(xlim)==2, xlim[1]>0)#, xlim[2]<= chromLength)
+    stopifnot(length(xlim)==2, xlim[1]>0, xlim[2]>xlim[1])
     areProbesInLimits <- (mid>=xlim[1])&(mid<=xlim[2])
     usedProbes <- mid[areProbesInLimits]
     usedProbesCol <- as.numeric(uni[areProbesInLimits]!=0)+1
@@ -108,9 +108,10 @@ chipAlongChrom <- function (eSet, chrom, probeAnno, xlim, ylim=NULL, samples=NUL
                          gff$end[areOnChrom])
     geneends <- ifelse(genestrand>0,gff$end[areOnChrom],
                        gff$start[areOnChrom])
+    extendBeyond <-  (abs(gff$start[areOnChrom])<=rangeX[1] & abs(gff$end[areOnChrom])>=rangeX[2])
     areIn <- ((abs(genestarts)>=rangeX[1] & abs(genestarts)<=rangeX[2])|
               (abs(geneends)>=rangeX[1] & abs(geneends)<=rangeX[2]) |
-              (abs(gff$start[areOnChrom])<=rangeX[1] & abs(gff$end[areOnChrom])>=rangeX[2])) 
+              extendBeyond)
     genestarts <- genestarts[areIn]
     geneends  <- geneends[areIn]
     genestrand <- genestrand[areIn]
@@ -121,8 +122,23 @@ chipAlongChrom <- function (eSet, chrom, probeAnno, xlim, ylim=NULL, samples=NUL
       symbolSpacing <- round(diff(rangeX)/100)
       for (i in 1:length(genestarts)){
         mtext(transdirection[i], at=seq(abs(genestarts[i]),abs(geneends[i]), by=genestrand[i]*symbolSpacing), line=mtline, col=featCol, cex=mcex, side=1)
-        mtext(chrgene[i], at=abs(genestarts[i]), line=mtline+1, adj=0.5, col=featCol, side=1, cex=mcex)
+        sym.pos <- abs(genestarts[i])
+        sym.label <- chrgene[i]
+        sym.font <- ifelse((sym.pos<rangeX[1])|(sym.pos>rangeX[2]),3,1)
+        sym.adj <- 0.5
+        if (sym.pos < rangeX[1]){
+          sym.pos   <- rangeX[1]
+          sym.label <- paste("->",sym.label)
+          sym.adj <- 0
+        }
+        if (sym.pos > rangeX[2]){
+          sym.pos   <- rangeX[2]
+          sym.label <- paste(sym.label,"<-")
+          sym.adj <- 1
+        }
+        mtext(sym.label, at=sym.pos, line=mtline+1, adj=sym.adj, col=featCol, side=1, cex=mcex, font=sym.font)
       }#for
+        
     }#if (length(chrstarts)<0)
   }#if (useGFF & ("gff" %in% names(chromLocObj)))  
   invisible(chromExprs)  
