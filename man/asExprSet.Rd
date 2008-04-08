@@ -8,9 +8,10 @@
   \code{targets} component is required in this case to generate the
   \code{phenoData} of the new \code{ExpressionSet}.
 }
-\usage{asExprSet(myMA)}
+\usage{asExprSet(from)}
 \arguments{
-  \item{myMA}{object of class \code{MAList}}
+  \item{from}{object of class \code{MAList} to convert into an
+    \code{ExpressionSet}}
 }
 \value{
   an object of class \code{ExpressionSet}

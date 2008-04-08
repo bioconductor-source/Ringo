@@ -9,7 +9,7 @@ export("autocor", "chipAlongChrom","corPlot", "whichCsr",
        "as.data.frame.cherList","ftr2xys","compute.gc",
        "posToProbeAnno","validProbeAnno", "regionOverlap",
        "features2Probes","sliding.meansd", "computeSlidingT",
-       "getFeats")
+       "getFeats", "upperBoundNull")
 
 S3method("plot", "cher")
 S3method("print", "cher")

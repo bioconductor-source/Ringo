@@ -21,21 +21,25 @@ preprocess <- function(myRG, method="vsn", returnMAList=FALSE,
   else {return(asExprSet(myMA))}
 }# preprocess
 
-asExprSet <- function(myMA){
-  stopifnot(inherits(myMA,"MAList"), !is.null(myMA$targets))
-  myMA$M <- as.matrix(myMA$M) # if only one sample, M is a vector
-  stopifnot(nrow(myMA$targets)==ncol(as.matrix(myMA$M)))
-  if (is.null(rownames(myMA$targets)))
-    rownames(myMA$targets) <- as.character(myMA$targets[[1]])
-  ## include some matching between colnames(myMA$M) and
-  ##  rownames of 'targets' here
-  colnames(myMA$M) <- rownames(myMA$targets)
-  myPD <- new("AnnotatedDataFrame", data=myMA$targets,
-              varMetadata=data.frame("varLabel"=colnames(myMA$targets),
-                row.names=colnames(myMA$targets)))
-  myEset <- new("ExpressionSet",  exprs=myMA$M, phenoData=myPD)
-  if (!is.null(myMA$genes$PROBE_ID))
-    featureNames(myEset) <- myMA$genes$PROBE_ID
+asExprSet <- function(from){
+  stopifnot(inherits(from,"MAList"), !is.null(from$targets),
+            !is.null(from$genes))
+  from$M <- as.matrix(from$M) # if only one sample, M is a vector
+  stopifnot(nrow(from$targets)==ncol(as.matrix(from$M)))
+  if (is.null(rownames(from$targets)))
+    rownames(from$targets) <- as.character(from$targets[[1]])
+  colnames(from$M) <- rownames(from$targets)
+  myPD <- new("AnnotatedDataFrame", data=from$targets,
+              varMetadata=data.frame("varLabel"=colnames(from$targets),
+                row.names=colnames(from$targets)))
+  myEset <- new("ExpressionSet",  exprs=from$M, phenoData=myPD)
+  if (!is.null(from$genes$PROBE_ID)) {
+    featureNames(myEset) <- make.names(from$genes$PROBE_ID, unique=TRUE)
+  } else {
+    if (!is.null(from$genes$ID))
+      featureNames(myEset) <- make.names(from$genes$ID, unique=TRUE)
+  }
+  featureData(myEset) <- as(from$genes,"AnnotatedDataFrame")
   return(myEset)
 }#asExprSet
 
