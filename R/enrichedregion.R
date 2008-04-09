@@ -35,7 +35,6 @@ plot.cher <- function(x, dat, probeAnno, samples=NULL, extent=1000, gff=NULL,...
 as.data.frame.cherList <- function(x, row.names=NULL, optional=FALSE,...) {
   stopifnot(is.list(x), inherits(x[[1]],"cher"))
   np <- length(x)
-  cher.slots <- names(x[[1]])
   p.name <- vector("character",np)
   p.chr <- vector("character",np)
   p.start <- integer(np)
@@ -47,15 +46,15 @@ as.data.frame.cherList <- function(x, row.names=NULL, optional=FALSE,...) {
   p.score <- vector("numeric",np)
   for (i in 1:np){
      p <- x[[i]]
-     p.name[i]  <- p$name
-     p.chr[i]   <-  p$chr
-     p.start[i] <-  p$start
-     p.end[i] <-  p$end
-     p.cellType[i] <-  ifelse(is.null(p$cellType), NA, p$cellType)
-     p.antibody[i] <- ifelse(is.null(p$antibody), p$modification, p$antibody)
-     p.features[i] <- paste(c(p$typeUpstream, p$typeInside), collapse=" ")
-     p.maxLevel[i] <- ifelse(is.null(p$maxLevel), NA, p$maxLevel)
-     p.score[i] <- ifelse(is.null(p$score), NA, p$score)
+     p.name[i]  <- p@name
+     p.chr[i]   <-  p@chromosome
+     p.start[i] <-  p@start
+     p.end[i] <-  p@end
+     p.cellType[i] <-  ifelse(is.null(p@cellType), NA, p@cellType)
+     p.antibody[i] <- p@antibody
+     p.features[i] <- paste(c(p@extras$typeUpstream, p@extras$typeInside), collapse=" ")
+     p.maxLevel[i] <- ifelse(is.null(p@maxLevel), NA, p@maxLevel)
+     p.score[i] <- ifelse(is.null(p@score), NA, p@score)
    }#for i
   df <- data.frame(name=p.name, chr=p.chr, start=p.start, end=p.end, cellType=p.cellType, antibody=p.antibody, features=p.features, maxLevel=p.maxLevel, score=p.score, stringsAsFactors=FALSE, row.names=row.names)
   return(df)
@@ -92,20 +91,19 @@ generateCherList = function(chers,gff, g2t=NULL, allChr=c(1:19, "X", "Y"), tssCo
     }
   }
   if (verbose) cat("\n")
-  names(cherList) = sapply(cherList, function(p) p$name)
+  names(cherList) = sapply(cherList, function(p) p@name)
   cherList = typifyList(cherList, gff, g2t)
   class(cherList) = "cherList"
   return(cherList)
 }#generateCherList
 
-## older version of relateChers, see newer one below:
 relateChers <- function(pl, gff, upstream=5000, verbose=TRUE){
   stopifnot(is.list(pl),inherits(pl[[1]],"cher"),
             inherits(gff,"data.frame"),
             all(c("strand","name","start","end","chr") %in% names(gff)),
             all(gff$start<gff$end))
-  cherChr <- sapply(pl, function(x) x$chr)
-  cherMid <- sapply(pl, function(x) round((x$start+x$end)/2))
+  cherChr <- sapply(pl, function(x) x@chromosome)
+  cherMid <- sapply(pl, function(x) round((x@start+x@end)/2))
   ## get borders of upstream region:
   gffUpStart <- ifelse(gff$strand==1, gff$start-upstream, gff$end+1)
   gffUpEnd   <- ifelse(gff$strand==1, gff$start-1, gff$end+upstream)
@@ -115,60 +113,22 @@ relateChers <- function(pl, gff, upstream=5000, verbose=TRUE){
   for (i in 1:length(pl)){
     if (verbose & i%%1000==0) cat(i," ")
     p <- pl[[i]]
-    p$typeUpstream <- subset(gff, gff$chr==p$chr & cherMid[i]>=gffUpStart & cherMid[i] <= gffUpEnd, select="name", drop=TRUE)
-    p$typeInside <- subset(gff, gff$chr==p$chr & cherMid[i]>=gff$start & cherMid[i] <= gff$end, select="name", drop=TRUE)
-    p$distMid2TSS <- abs(realTSS[c(p$typeUpstream, p$typeInside, recursive=TRUE)]-cherMid[i])
+    thisTypeUpstream <- subset(gff, gff$chr==p@chromosome & cherMid[i]>=gffUpStart & cherMid[i] <= gffUpEnd, select="name", drop=TRUE)
+    thisTypeInside <- subset(gff, gff$chr==p@chromosome & cherMid[i]>=gff$start & cherMid[i] <= gff$end, select="name", drop=TRUE)
+    thisDistMid2TSS <- abs(realTSS[c(thisTypeUpstream, thisTypeInside, recursive=TRUE)]-cherMid[i])
+    #p$typeUpstream <- thisTypeUpstream; p$typeInside <- thisTypeInside; p$distMid2TSS <- thisDistMid2TSS
+    p <- update(p, typeUpstream=thisTypeUpstream, typeInside=thisTypeInside, distMid2TSS=thisDistMid2TSS)
     # the c(,recursive) is to prevent (illegal) indexing with 0-row data.frames
     if ("symbol" %in% names(gff)){
-      p$upSymbol <-  subset(gff, gff$chr==p$chr & cherMid[i]>=gffUpStart & cherMid[i] <= gffUpEnd, select="symbol", drop=TRUE)
-      p$inSymbol <- subset(gff, gff$chr==p$chr & cherMid[i]>=gff$start & cherMid[i] <= gff$end, select="symbol", drop=TRUE)
+      upSymbol <-  subset(gff, gff$chr==p@chromosome & cherMid[i]>=gffUpStart & cherMid[i] <= gffUpEnd, select="symbol", drop=TRUE)
+      inSymbol <- subset(gff, gff$chr==p@chromosome & cherMid[i]>=gff$start & cherMid[i] <= gff$end, select="symbol", drop=TRUE)
+      # p$upSymbol <- upSymbol; p$inSymbol <- inSymbol
+      p <- update(p, upSymbol=upSymbol, inSymbol=inSymbol)
     }
-    p$type <- paste(c("U","D")[c(length(p$typeUpstream)>0,length(p$typeInside)>0)],collapse="/")
+    type <- paste(c("U","I")[c(length(thisTypeUpstream)>0,length(thisTypeInside)>0)],collapse="/")
+    #p$type <- type
+    p <- update(p, type=type)
     pl[[i]] <- p
   }#for
   return(pl)
 }#relateChers
-
-
-relateChers2 <- function(pl, gff, upstream=5000, verbose=TRUE){
-  stopifnot(is.list(pl),inherits(pl[[1]],"cher"),
-            inherits(gff,"data.frame"),
-            all(c("strand","name","start","end","chr") %in% names(gff)),
-            all(gff$start<gff$end))
-  cherChr <- sapply(pl, function(x) x$chr)
-  cherMid <- sapply(pl, function(x) round((x$start+x$end)/2))
-  chersDf <- data.frame(chr=cherChr, start=cherMid, end=cherMid,
-                        stringsAsFactors=FALSE)
-  ## get borders of upstream region:
-  realTSS <- ifelse(gff$strand==1, gff$start, gff$end)
-  names(realTSS) <- gff$name
-
-  gffUpDf <- data.frame(chr=gff$chr,
-     start=ifelse(gff$strand==1, gff$start-upstream, gff$end+1),
-     end=ifelse(gff$strand==1, gff$start-1, gff$end+upstream),
-     stringsAsFactors=FALSE)
-  ## overlap with upstream regions
-  overU <- regionOverlap(chersDf, gffUpDf)
-  ### inside features:
-  overI <- regionOverlap(chersDf, gff)
-  ## add information to Chers that have any overlap
-  haveOverlap <- which(rowSums(overU+overI)>0)
-  if (length(haveOverlap)==0) return(pl)
-  if (verbose)
-    cat("Relating",length(pl),"ChIP-enriched regions to GFF...\n")
-  for (i in haveOverlap){
-    #if (verbose & i%%1000==0) cat(i,"...")
-    p <- pl[[i]]
-    p$typeUpstream <- gff$name[overU[i,]>0]
-    p$typeInside   <- gff$name[overI[i,]>0]
-    p$distMid2TSS  <- abs(realTSS[c(p$typeUpstream, p$typeInside)]-cherMid[i])
-    # the c(,recursive) is to prevent (illegal) indexing with 0-row data.frames
-    if ("symbol" %in% names(gff)){
-      p$upSymbol   <-  gff$symbol[match(p$typeUpstream, gff$name)]
-      p$inSymbol <-  gff$symbol[match(p$typeInside, gff$name)]
-    }
-    p$type <- paste(c("U","D")[c(length(p$typeUpstream)>0,length(p$typeInside)>0)],collapse="/")
-    pl[[i]] <- p
-  }#for
-  return(pl)
-}#relateChers2

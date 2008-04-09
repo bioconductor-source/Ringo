@@ -50,67 +50,73 @@ posToProbeAnno <- function(pos, chrNameColumn="CHROMOSOME",probeColumn="PROBE_ID
     hits[[chrNameColumn]] <- gsub("chr(0)?","", hits[[chrNameColumn]], ignore.case=TRUE)
   probeindex <- 1:nrow(hits)
   probeMultiplicity <- table(hits[[probeColumn]])
-  if (verbose) cat("Creating probeAnno environment for chromosome")
-  probeAnno = new.env()
+  if (verbose) cat("Creating probeAnno mapping for chromosome")
+  thisMapping = new.env()
   sp <- split(probeindex, as.factor(hits[[chrNameColumn]]))
   # for every chromosome, assign the hiting probes to the corresponding vector:
   for(i in seq(along=sp)) {
     chromprobes = sp[[i]]
     nm  = names(sp)[i]
     cat(nm, "")
-    assign(paste(nm, "start", sep="."),  as.integer(hits[chromprobes, chrPositionColumn]), envir=probeAnno)
-    assign(paste(nm, "end", sep="."),  as.integer(hits[chromprobes,"END"]) , envir=probeAnno)
-    assign(paste(nm, "index", sep="."),  hits[chromprobes, probeColumn],  envir=probeAnno)
-    assign(paste(nm, "unique", sep="."), as.integer(probeMultiplicity[hits[[probeColumn]][chromprobes]]>1)*3, envir=probeAnno)
+    assign(paste(nm, "start", sep="."),  as.integer(hits[chromprobes, chrPositionColumn]), envir=thisMapping)
+    assign(paste(nm, "end", sep="."),  as.integer(hits[chromprobes,"END"]) , envir=thisMapping)
+    assign(paste(nm, "index", sep="."),  hits[chromprobes, probeColumn],  envir=thisMapping)
+    assign(paste(nm, "unique", sep="."), as.integer(probeMultiplicity[hits[[probeColumn]][chromprobes]]>1)*3, envir=thisMapping)
     ## uniqueness codes:  0 = probe has one unique hit;   3= probe has multiple hits
   }# for(i in seq(along=sp))
   if (verbose) cat("Done.\n")
-  return(probeAnno)
+  myProbeAnno <- new("probeAnno", map=thisMapping)
+  return(myProbeAnno)
 }#posToProbeAnno
 
+
 validProbeAnno <- function(probeAnno){
-  stopifnot(is.environment(probeAnno))
-  envElements <- ls(probeAnno)
-  chromElements <- grep("[[:digit:]]+\\..*",envElements, value=TRUE)
-  if (length(chromElements)==0){
-    warning("Enviroment does not contain any chromosome/strand probe mappings, expecting elements named for example 1.start\n"); return(FALSE)}
-  isStrandSpecific <- length(grep("\\.\\+\\.",chromElements))>0 || length(grep("\\.-\\.",chromElements))>0
-  sp <- strsplit(chromElements,split="\\.")
-  if (isStrandSpecific){
-    uniChromNames <- sapply(sp, function(x) paste(x[1:2],collapse="."))
-  } else {
-    uniChromNames <- sapply(sp, function(x) x[1])
+  stopifnot(inherits(probeAnno, "probeAnno")||is.environment(probeAnno))
+  if (!is.environment(probeAnno))
+    validObject(probeAnno)
+  else {
+    envElements <- ls(probeAnno)
+    chromElements <- grep("[[:digit:]]+\\..*",envElements, value=TRUE)
+    if (length(chromElements)==0){
+      warning("Enviroment does not contain any chromosome/strand probe mappings, expecting elements named for example 1.start\n"); return(FALSE)}
+    isStrandSpecific <- length(grep("\\.\\+\\.",chromElements))>0 || length(grep("\\.-\\.",chromElements))>0
+    sp <- strsplit(chromElements,split="\\.")
+    if (isStrandSpecific){
+      uniChromNames <- sapply(sp, function(x) paste(x[1:2],collapse="."))
+    } else {
+      uniChromNames <- sapply(sp, function(x) x[1])
+    }
+    for (thisName in uniChromNames){
+      theseElemNames <- paste(thisName,c("start","end","index","unique"),sep=".")
+      theseAreIn <- theseElemNames %in% envElements
+      if (!all(theseAreIn)){
+        warning(paste("Environment ",deparse(substitute(probeAnno))," seems to hold information for chromosome/strand '",thisName,"', but does not contain elements '",paste(theseElemNames[!theseAreIn],collapse="', '"),"'.\n",sep=""))
+        return(FALSE)}
+      theseElements <- mget(theseElemNames, env=probeAnno)
+      ## check if the objects related to the same chromosome/strand match up
+      if (length(unique(sapply(theseElements,length)))!=1){
+        print(sapply(theseElements, length))
+        warning("Lengths of per chromosome/strand vectors differ!\n")
+        return(FALSE)
+      }
+      ## check if match positions are correctly coded, end positions >= start position
+      if (!all(theseElements[[2]] >= theseElements[[1]])){
+        warning(paste("Some match positions end before they actually start.\nPlease check elements",paste(thisName,"start",sep="."),"and",paste(thisName,"end",sep="."),".\n"))
+        return(FALSE)
+      }# if (!all(theseElements[[2]] >= theseElements[[1]]))
+      mids <- round((theseElements[[1]]+theseElements[[2]])/2)
+      if (is.unsorted(mids)){
+        warning(paste("Probe matches are not sorted (in increasing order) by their middle position on chromosome",thisName,"and possible others.\n"))
+        return(FALSE)
+      }
+    }# for (thisName in uniChromNames)
+    return(TRUE)
   }
-  for (thisName in uniChromNames){
-    theseElemNames <- paste(thisName,c("start","end","index","unique"),sep=".")
-    theseAreIn <- theseElemNames %in% envElements
-    if (!all(theseAreIn)){
-      warning(paste("Environment ",deparse(substitute(probeAnno))," seems to hold information for chromosome/strand '",thisName,"', but does not contain elements '",paste(theseElemNames[!theseAreIn],collapse="', '"),"'.\n",sep=""))
-      return(FALSE)}
-    theseElements <- mget(theseElemNames, env=probeAnno)
-    ## check if the objects related to the same chromosome/strand match up
-    if (length(unique(sapply(theseElements,length)))!=1){
-      print(sapply(theseElements, length))
-      warning("Lengths of per chromosome/strand vectors differ!\n")
-      return(FALSE)
-    }
-    ## check if match positions are correctly coded, end positions >= start position
-    if (!all(theseElements[[2]] >= theseElements[[1]])){
-      warning(paste("Some match positions end before they actually start.\nPlease check elements",paste(thisName,"start",sep="."),"and",paste(thisName,"end",sep="."),".\n"))
-      return(FALSE)
-    }# if (!all(theseElements[[2]] >= theseElements[[1]]))
-    mids <- round((theseElements[[1]]+theseElements[[2]])/2)
-    if (is.unsorted(mids)){
-      warning(paste("Probe matches are not sorted (in increasing order) by their middle position on chromosome",thisName,"and possible others.\n"))
-      return(FALSE)
-    }
-  }# for (thisName in uniChromNames)
-  return(TRUE)
 }# validProbeAnno
 
 
 features2Probes <- function(gff, probeAnno, upstream=5000, checkUnique=TRUE, uniqueCodes=c(0), mem.limit=1e8, verbose=TRUE){
-  stopifnot(inherits(gff,"data.frame"), validProbeAnno(probeAnno),
+  stopifnot(inherits(gff,"data.frame"), validObject(probeAnno),
             all(c("strand","name","start","end","chr") %in% names(gff)),
             all(gff$strand %in% c(-1,1)), all(gff$start<gff$end))
   ## get borders of upstream region:
@@ -125,12 +131,12 @@ features2Probes <- function(gff, probeAnno, upstream=5000, checkUnique=TRUE, uni
   if (verbose) cat("Chromosome ")
   for (chr in allChr){
     if (verbose) cat(chr,"... ")
-    chrsta <- get(paste(chr,"start",sep="."), env=probeAnno)
-    chrend <- get(paste(chr,"end",sep="."), env=probeAnno)
+    chrsta <- probeAnno[paste(chr,"start",sep=".")]
+    chrend <- probeAnno[paste(chr,"end",sep=".")]
     chrmid <- round((chrsta+chrend)/2)
-    chridx <- get(paste(chr,"index",sep="."), env=probeAnno)
+    chridx <- probeAnno[paste(chr,"index",sep=".")]
     if (checkUnique){
-      chruni <- get(paste(chr,"unique",sep="."), env=probeAnno)
+      chruni <- probeAnno[paste(chr,"unique",sep=".")]
       stopifnot(length(chruni)==length(chridx))
       chridx <- chridx[chruni %in% uniqueCodes]
       chrmid <- chrmid[chruni %in% uniqueCodes]

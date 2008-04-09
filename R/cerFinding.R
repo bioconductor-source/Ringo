@@ -32,20 +32,21 @@ cherByThreshold <- function(positions, scores, threshold, distCutOff, minProbesI
 ### main cher-finding funtion at the moment
 findChersOnSmoothed <- function(smoothedX, probeAnno, thresholds, allChr=c(1:19,"X","Y"), distCutOff=600, minProbesInRow=3, cellType=NULL, checkUnique=TRUE, uniqueCodes=c(0), verbose=TRUE)
 {
-  stopifnot(is.numeric(thresholds), length(thresholds)==ncol(smoothedX))
+  stopifnot(is.numeric(thresholds), length(thresholds)==ncol(smoothedX),
+            validObject(probeAnno))
   resultChers <- vector("list",ncol(smoothedX))
   for (i in 1:ncol(smoothedX)){
     this.sample <- sampleNames(smoothedX)[i]
     if (verbose) cat("\n\nSample: ",this.sample,"...\n\nChr: ")
     thisModChers <- lapply(as.list(allChr), function(chr){
       if (verbose) cat(chr, "...")
-      chrsta <- get(paste(chr,"start",sep="."), env=probeAnno)
-      chrend <- get(paste(chr,"end",sep="."), env=probeAnno)
+      chrsta <- probeAnno[paste(chr,"start",sep=".")]
+      chrend <- probeAnno[paste(chr,"end",sep=".")]
       stopifnot(all(chrend>chrsta))
       chrmid <- round((chrsta+chrend)/2)
-      chridx <- get(paste(chr,"index",sep="."), env=probeAnno)
+      chridx <- probeAnno[paste(chr,"index",sep=".")]
       if (checkUnique){
-        chruni <- get(paste(chr,"unique",sep="."), env=probeAnno)
+        chruni <- probeAnno[paste(chr,"unique",sep=".")]
         stopifnot(length(chruni)==length(chridx))
         chridx <- chridx[chruni %in% uniqueCodes]
         chrmid <- chrmid[chruni %in% uniqueCodes]
@@ -59,13 +60,13 @@ findChersOnSmoothed <- function(smoothedX, probeAnno, thresholds, allChr=c(1:19,
         x <- chr.chers[[z]];
         cherID <- paste(cellType, this.sample, paste("chr",chr,sep=""), paste("cher",z,sep=""),sep=".")
         cherID <- gsub("(^\\.+)|(\\.+$)","",cherID)#remove any leading and trailing dots
-        return(newCher(cherID, chr=chr, start=as.integer(names(x)[1]), end=as.integer(names(x)[length(x)]), cellType=cellType, antibody=this.sample, maxLevel=max(x), score=attr(x,"score"), probes=as.character(chridx[names(x)])))})
+        #thisCher <- newCher(cherID, chr=chr, start=as.integer(names(x)[1]), end=as.integer(names(x)[length(x)]), cellType=cellType, antibody=this.sample, maxLevel=max(x), score=attr(x,"score"), probes=as.character(chridx[names(x)]))
+        thisCher <- new("cher", name=cherID, chromosome=chr, start=as.integer(names(x)[1]), end=as.integer(names(x)[length(x)]), cellType=as.character(cellType), antibody=as.character(this.sample), maxLevel=max(x), score=attr(x,"score"), probes=as.character(chridx[names(x)]))
+        return(thisCher)})
       return(chr.chers)
     })
-    #names(thisModChers) <- allChr
     resultChers[[i]] <- thisModChers
   }#for
-  #names(resultChers) <- sampleNames(smoothedX)
   resultChers <- unlist(resultChers, recursive=FALSE, use.names=FALSE)
   resultChers <- unlist(resultChers, recursive=FALSE)
   class(resultChers) <- "cherList"

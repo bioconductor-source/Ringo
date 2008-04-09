@@ -4,7 +4,7 @@
 chipAlongChrom <- function (eSet, chrom, probeAnno, xlim, ylim=NULL, samples=NULL, paletteName="Dark2", colPal=NULL, byStrand = FALSE, ylabel="Intensity", rugCol="#000010", itype="r", ipch=20,icex=1, ilwd=3, ilty=1, useGFF=TRUE, gff=NULL, featCol="darkblue", zero.line=TRUE, putLegend=TRUE, add=FALSE, maxInterDistance=200, verbose=TRUE, ...)
 {
   # 0. check arguments  
-  stopifnot(inherits(eSet,"ExpressionSet"))
+  stopifnot(inherits(eSet,"ExpressionSet"), inherits(probeAnno, "probeAnno"), validObject(probeAnno))
   eSetProbeNames <- featureNames(eSet)
   if (is.null(eSetProbeNames))
     stop("Could not determine probe identifiers from expression set.\nCheck 'featureNames' or 'geneNames' of expression set.\n")
@@ -14,11 +14,11 @@ chipAlongChrom <- function (eSet, chrom, probeAnno, xlim, ylim=NULL, samples=NUL
   if (verbose) cat("Getting probe intensities in selected regions..,\n")
 
   # get probes on chromosome:
-  sta = get(paste(chrom, "start", sep="."), envir=probeAnno)
-  end = get(paste(chrom, "end",   sep="."), envir=probeAnno)
+  sta = probeAnno[paste(chrom, "start", sep=".")]
+  end = probeAnno[paste(chrom, "end",   sep=".")]
   mid <- round((sta+end)/2)
-  ind = get(paste(chrom, "index", sep="."), envir=probeAnno)
-  uni = get(paste(chrom, "unique",   sep="."), envir=probeAnno)
+  ind = probeAnno[paste(chrom, "index", sep=".")]
+  uni = probeAnno[paste(chrom, "unique",   sep=".")]
   names(mid) <- ind
   nProbesOnChr <- length(mid)
   if (!missing(xlim)){

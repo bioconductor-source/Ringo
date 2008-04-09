@@ -3,17 +3,15 @@
 autocor <- function(x, probeAnno, chrom="1",samples=NULL, lag.max= 2000, lag.step=100, cor.method="pearson", channel=c("red","green","logratio"), verbose=TRUE)
 {
   stopifnot(inherits(x,"ExpressionSet")|inherits(x,"RGList"),
-            all(c(paste(chrom,"index",sep="."),
-                  paste(chrom,"start",sep="."))%in%ls(probeAnno)))
+            inherits(probeAnno, "probeAnno"), validObject(probeAnno))
   
   ## extract chromosomal information from probeAnno:
-  probepos <- get(paste(chrom,"start",sep="."),env=probeAnno)
-  probeidx <- get(paste(chrom,"index",sep="."),env=probeAnno)
+  probepos <- probeAnno[paste(chrom,"start",sep=".")]
+  probeidx <- probeAnno[paste(chrom,"index",sep=".")]
 
   ## interpret arguments:
   lags=seq(0, lag.max, by=lag.step)
   match.winSize=round(lag.step/2)-1
-  
 
   ## a. handle ExpressionSets (normalized data)
   if (inherits(x,"ExpressionSet")){

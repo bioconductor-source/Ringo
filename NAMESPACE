@@ -1,5 +1,6 @@
 useDynLib("Ringo", ringoSlidingQuantile=sliding_quantile, ringoRegionOverlap=overlap_xy, ringoMovingMeanSd=moving_mean_sd)
 
+import("methods")
 import("graphics") 
 
 export("autocor", "chipAlongChrom","corPlot", "whichCsr",
@@ -11,8 +12,14 @@ export("autocor", "chipAlongChrom","corPlot", "whichCsr",
        "features2Probes","sliding.meansd", "computeSlidingT",
        "getFeats", "upperBoundNull")
 
-S3method("plot", "cher")
-S3method("print", "cher")
+# S3method("plot", "cher")
+# S3method("print", "cher")
 S3method("plot", "autocor.result")
 S3method("image", "RGList")
 S3method("as.data.frame", "cherList")
+
+exportClasses("probeAnno", "cher")
+
+exportMethods("get", "ls","initialize", "plot", "show",
+              "arrayName", "chromosomeNames", "genome",
+              "arrayName<-", "genome<-", "update")

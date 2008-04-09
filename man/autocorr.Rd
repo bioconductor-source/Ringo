@@ -18,8 +18,8 @@ channel = c("red","green","logratio"), verbose = TRUE)
   \item{x}{an object either of class \code{ExpressionSet} containing the
     normalized probe intensities or of class \code{RGList} containing
     the raw intensities.}
-  \item{probeAnno}{Environment holding chromosomal start positions and
-    indices of probes in data matrix.}
+  \item{probeAnno}{Object of class \code{probeAnno} holding chromosomal
+    match positions and indices of reporters in data matrix.}
   \item{chrom}{character; chromosome to compute the autocorrelation for}
   \item{samples}{which samples of the data to use; if more than 1 for
     each probe the mean intensity over these samples is taken.}

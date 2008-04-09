@@ -1,6 +1,7 @@
 computeSlidingT <- function(xSet, probeAnno, allChr=c(1:19,"X","Y"), test="one.sample", grouping=NULL, winHalfSize=400, min.probes=5, checkUnique=TRUE, uniqueCodes=c(0), verbose=TRUE)
 {
-  stopifnot(inherits(xSet,"ExpressionSet"), all(is.character(allChr)))
+  stopifnot(inherits(xSet,"ExpressionSet"), all(is.character(allChr)),
+            inherits(probeAnno, "probeAnno"), validObject(probeAnno))
   test <- match.arg(test, c("one.sample","two.sample"))
   if (test == "two.sample"){
     grouping <- factor(grouping)
@@ -16,12 +17,12 @@ computeSlidingT <- function(xSet, probeAnno, allChr=c(1:19,"X","Y"), test="one.s
   if (verbose) cat("\n computing probe-wise mean and standard deviation in sliding window.\n chr")
   for (chr in allChr){
     if (verbose) cat(chr," ")
-    chrsta <- get(paste(chr,"start",sep="."), env=probeAnno)
-    chrend <- get(paste(chr,"end",sep="."), env=probeAnno)
+    chrsta <- probeAnno[paste(chr,"start",sep=".")]
+    chrend <- probeAnno[paste(chr,"end",sep=".")]
     chrmid <- round((chrsta+chrend)/2)
-    chridx <- get(paste(chr,"index",sep="."), env=probeAnno)
+    chridx <- probeAnno[paste(chr,"index",sep=".")]
     if (checkUnique){
-      chruni <- get(paste(chr,"unique",sep="."), env=probeAnno)
+      chruni <- probeAnno[paste(chr,"unique",sep=".")]
       stopifnot(length(chruni)==length(chridx))
       chridx <- chridx[chruni %in% uniqueCodes]
       chrmid <- chrmid[chruni %in% uniqueCodes]

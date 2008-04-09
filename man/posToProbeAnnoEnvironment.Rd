@@ -41,23 +41,10 @@ posToProbeAnno(pos, chrNameColumn = "CHROMOSOME",
   a POS file from the respective output files.
 }
 \value{
-  The results is an environment that holds four vectors for each
-  chromosome/strand, namely, say for chromosome 1:
-  \item{1.start}{genomic start coordinates of probe matches on
-    chromosome 1}
-  \item{1.end}{genomic start coordinates of probe matches on
-    chromosome 1}
-  \item{1.index}{identifier of probes matching at these coordinates}
-  \item{1.unique}{vector of the same length as the three before; encoding
-    how many matches the corresponding probe has in the given file or
-    \code{data.frame}. An entry of '0' indicates that the probe matching
-    at this position has only this one match.}
+  The results is an object of class \code{probeAnno}.
 }
-\note{Users do not have to use this function but can generate such an
-  environment any way they like. We recommend to check the result using
-  the function \code{validProbeAnno}.}
 \author{Joern Toedling \email{toedling@ebi.ac.uk}}
-\seealso{\code{\link{validProbeAnno}},\code{\link{read.delim}}}
+\seealso{\code{\link{probeAnno-class}}, \code{\link{read.delim}}}
 \examples{
  exPos <- read.delim(file.path(system.file("exData",package="Ringo"),
                      "MOD_2003-12-05_SUZ12_1in2.pos"),

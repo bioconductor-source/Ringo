@@ -202,7 +202,7 @@ While a \Rclass{data.frame} may be an obvious way of representing such a
 mapping, repeatedly extracting sub-sets of the data frame related to a
 genomic region of interest turns out to be too slow for practical purposes.
 \Rpackage{Ringo}, similar to the Bioconductor package \Rpackage{tilingArray},
-employs a \emph{probeAnno} environment to describe the mapping between 
+employs an object of class \Rclass{probeAnno} to store the mapping between 
 reporters on the microarray and genomic positions.
 Per chromosome, four vectors of equal length and ordering specify 
 at which genomic positions reporter matches start and end, 
@@ -212,14 +212,13 @@ and whether these reporters match uniquely to those genomic positions.
 <<loadProbeAnno>>=
 load(file.path(exDir,"exampleProbeAnno.rda"))
 ls(exProbeAnno)
-head(get("9.start",exProbeAnno))
-head(get("9.index",exProbeAnno))
+show(exProbeAnno)
+head(exProbeAnno["9.start"])
+head(exProbeAnno["9.index"])
 @ 
 
-Whether a probeAnno environment will work with other \Rpackage{Ringo}
-functions can be checked using the function \Rfunction{validProbeAnno}
 The function \Rfunction{posToProbeAnno} allows generation
-of such a probeAnno environment, 
+of a valide \Rclass{probeAnno} object, 
 either from a file that corresponds to a NimbleGen \texttt{POS} file
 or from a \Rclass{data.frame} objects that holds the same information.
 Furthermore, the package's \texttt{scripts} directory contains 
@@ -228,8 +227,8 @@ generate such a mapping object either from a NimbleGen \texttt{POS} file
 and Perl scripts that allow the conversion of multiple output files from
 common alignment tools such as Exonerate into one file that corresponds
 to a POS file.
-The function \Rfunction{validProbeAnno} can be used to perform a
-quick check whether a generated probeAnno environment will probably
+The function \Rfunction{validObject} can be used to perform a
+quick check whether a generated \Rclass{probeAnno} object will probably
 work with  other \Rpackage{Ringo} functions.
 
 
@@ -413,7 +412,7 @@ apart from another affected position in the region (we require a certain
 probe spacing to have confidence in detected peaks\footnote{Note
 that the term ''peak'', while commonly used in ChIP-chip context,
 is slightly misleading and the term "ChIP-enriched region", 
-or "Cher" in shorthand,
+or "cher" in shorthand,
 is more appropriate. Within such regions the actual signal could show two
 or more actual signal peaks or none at all (long plateau).})
 \end{itemize}
@@ -495,7 +494,7 @@ chersXD[order(chersXD$maxLevel, decreasing=TRUE),]
 @ 
 
 Note that in \Rpackage{Ringo} functions, 
-``ChIP-enriched region'' is abbreviated to ``Cher''.
+``ChIP-enriched region'' is abbreviated to ``cher''.
  
 One characteristic of enriched regions that can be used for 
 sorting them is the element \texttt{maxLevel}, that is the highest smoothed

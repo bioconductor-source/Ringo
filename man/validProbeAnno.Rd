@@ -45,4 +45,4 @@ validProbeAnno(probeAnno)
  load(file.path(system.file("exData",package="Ringo"),"exampleProbeAnno.rda"))
  validProbeAnno(exProbeAnno)
 }
-\keyword{manip}
+\keyword{internal}
