@@ -18,6 +18,7 @@ pagebackref,bookmarks,colorlinks,linkcolor=darkblue,citecolor=darkblue,%
 filecolor=darkblue,urlcolor=darkblue,pagecolor=darkblue,%
 raiselinks,plainpages,pdftex]{hyperref}
 
+\usepackage{verbatim} % for multi-line comments
 \usepackage{amsmath,a4,t1enc, graphicx}
 \usepackage{natbib}
 \bibpunct{(}{)}{;}{a}{,}{,}
@@ -449,7 +450,7 @@ say, regions containing binding sites for a certain transcription factor.
 In that case one cannot assume that the large majority of probes does not
 show enrichment. 
 In the example data case, however, we look for enriched 
-transcription-factor-bound regions. For this setup a number of alternative,
+transcription-factor-bound regi\citet{BourgonPhD} ons. For this setup a number of alternative,
 and likely superior, algorithms for detecting enriched regions
 have been suggested, 
 some being available in other Bioconductor packages, too.
@@ -457,6 +458,45 @@ some being available in other Bioconductor packages, too.
 The aforementioned issues make it difficult to come up with a reasonable 
 estimate for the null distribution of smoothed probe levels 
 in non-enriched genomic regions. 
+See Figure \ref{Ringo-histogramSmoothed} for the two histograms.
+We present one way (out of many) for objectively choosing the cutoff $y_0$.
+The histograms suggest the smoothed reporter levels follow a mixture of two 
+distributions, one being the null distribution of non-affected reporters and
+the other one the alternative one for the smoothed reporter values in
+H3K4me3-ChIP enriched regions.
+We assume the null distribution is symmetric and its mode is the one close to
+zero in the histogram. By mirroring its part left of the mode over the
+mode, we end up with an estimated null distribution.
+For the alternative distribution, we only assume that it is stochastically
+larger than the null distribution.
+We estimate an upper bound $y_0$ for values arising from the null
+distribution and conclude that smoothed probe levels $y > y_0$ 
+are more likely to arise from the H3K4me3 enrichment distribution
+than from the null distribution.
+These estimates are indicated by red vertical lines in the histograms.
+
+<<setY0>>=
+(y0 <- apply(exprs(smoothX),2,upperBoundNull))
+@ 
+<<histogramSmoothed0, eval=FALSE, results=hide>>=
+par(font.lab=2, mar=c(4,4,1,1))
+hist(exprs(smoothX)[,1], n=20, xlab="Smoothed reporter intensities [log]", xlim=c(-3,5), main=NA, col=brewer.pal(8,"Set2")[1], yaxt="n")
+axis(side=2, at=seq(0,75000,by=25000))
+abline(v=y0[,1], col="red")
+@ 
+
+<<histogramsSmoothed, echo=FALSE, results=hide>>=
+pdf(file="Ringo-histogramSmoothed.pdf", width=7, height=5)
+par(font.lab=2, mar=c(4,4,1,1))
+h1 <- hist(exprs(smoothX)[,1], n=20, xlab="Smoothed reporter intensities [log]", xlim=c(-3,5), main=NA, col=brewer.pal(8,"Set2")[1])
+abline(v=y0[1], col="red")
+dev.off()
+@ 
+
+\myincfig{Ringo-histogramSmoothed}{0.7\textwidth}{Histograms of reporter intensities after smoothing of reporter level. The red vertical line is the cutoff values suggested by the histogram.}
+
+
+\begin{comment}
 We simulate such a distribution by permuting the probe match positions 
 on the chromosome. 
 We take the 99\% quantile of these smoothed intensities 
@@ -465,7 +505,7 @@ as the threshold $y_0$
 one should shuffle all chromosomes' positions and repeat the whole process
 many times.}.
 
-<<permutedSmoothing>>=
+<<permutedSmoothing, eval=FALSE, echo=FALSE>>=
 permProbeAnno <- copyEnv(exProbeAnno)
 sampled.index <- sample(get("9.index",env=exProbeAnno))
 assign("9.index", sampled.index, env=permProbeAnno)
@@ -473,6 +513,7 @@ sampledX <- computeRunningMedians(exampleX, probeAnno=permProbeAnno,
 modColumn = "Cy5", allChr = c("9"), winHalfSize = 400, verbose=FALSE)
 (y0 <- quantile(exprs(sampledX), 0.99, na.rm=TRUE))
 @ 
+\end{comment}
 
 Since antibodies vary in their efficiency to bind to their target epitope,
 we suggest to obtain a different threshold for each antibody. In the example
@@ -482,7 +523,8 @@ While this threshold worked well for us,
 we do not claim this way to be a gold standard for determining the
 threshold. 
 In particular, it does not take into account the auto-correlation between
-near-by probes.
+near-by probes. See \citet{BourgonPhD} for a more sophisticated algorithm
+that does take it into account.
 
 <<cherFinding, results=hide>>=
 chersX <- findChersOnSmoothed(smoothX, probeAnno=exProbeAnno, thresholds=y0, allChr="9", distCutOff=600, cellType="human")

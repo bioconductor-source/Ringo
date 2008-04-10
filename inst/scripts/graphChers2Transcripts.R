@@ -25,8 +25,8 @@ cherList2AssignTable <- function(pl, target.names=c("upSymbol","downSymbol"),
                                  tableNames=c("antibody","target"), verbose=TRUE)
 {
   stopifnot(is.list(pl), inherits(pl[[1]],"cher"),
-            "antibody" %in% names(pl[[1]]), length(tableNames)==2)
-  if (!all(target.names %in% names(pl[[1]])))
+            "antibody" %in% slotNames(pl[[1]]), length(tableNames)==2)
+  if (!all(target.names %in% names(pl[[1]]@extras)))
     stop(paste("Some of the target names", paste(target.names, collapse=", "),
                "are not specified for the chers in the list.\n"))
   resTable <- matrix(NA, nrow=length(pl)*10, ncol=2)
@@ -35,11 +35,11 @@ cherList2AssignTable <- function(pl, target.names=c("upSymbol","downSymbol"),
     if (verbose && (i %% 1000 ==0)) cat(i,"... ")
     this.cher <- pl[[i]]
     ## put upstream and downstream possible effects together
-    these.targets <- unique(unlist(this.cher[target.names], use.names=FALSE))
+    these.targets <- unique(unlist(this.cher@extras[target.names], use.names=FALSE))
     these.targets <- these.targets[these.targets!=""]
     if (length(these.targets)<1) next
     for (this.target in these.targets){
-      resTable[nAssigns,1:2] <- capit(c(this.cher$antibody, this.target))
+      resTable[nAssigns,1:2] <- capit(c(this.cher@antibody, this.target))
       nAssigns <- nAssigns + 1
     }#for (this.sym)
   }# for i
