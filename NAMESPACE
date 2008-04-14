@@ -22,4 +22,5 @@ exportClasses("probeAnno", "cher")
 
 exportMethods("get", "ls","initialize", "plot", "show",
               "arrayName", "chromosomeNames", "genome",
-              "arrayName<-", "genome<-", "update")
+              "arrayName<-", "genome<-", "update",
+              "cellType", "cellType<-")

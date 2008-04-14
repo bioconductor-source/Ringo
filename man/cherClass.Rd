@@ -8,6 +8,11 @@
 \alias{Cher}
 \alias{cherList}
 \alias{cherList-class}
+\alias{cellType<-,cher,character-method}
+\alias{cellType,cher-method}
+\alias{cellType}
+\alias{cellType<-}
+
 \title{Class "cher" - ChIP-enriched region}
 \description{
   An object of class \code{cher} (ChIP-enriched region) holds
@@ -87,6 +92,8 @@
       current \code{extras} list and the argument names make up the list
       names of the appended arguments. See section
       \code{examples} below for an example how to use this method.}
+    \item{cellType}{obtain or replace the description of the cell type,
+      the ChIP-enriched regions was found in with this antibody}
   }
 }
 \author{Joern Toedling, Tammo Krueger}

@@ -61,42 +61,6 @@ as.data.frame.cherList <- function(x, row.names=NULL, optional=FALSE,...) {
 }#as.data.frame.cherList
 
 
-generateCherList = function(chers,gff, g2t=NULL, allChr=c(1:19, "X", "Y"), tssCover=c(-25, 25), tssUpstream=5000, tssDownstream=20000, cellType="HL1", verbose=TRUE) {
-  if (is.null(g2t)) {
-    if (verbose) cat("generating GeneToTranscriptMap\n")
-    g2t = getGeneToTranscriptMap(gff)
-  }
-  nChers = sum(sapply(chers, listLen))
-  cherList = vector("list", nChers)
-  index = 1
-  for (antibody in names(chers)) {
-    if (verbose) cat("\n| Processing antibody", antibody, "\n+-- chr")
-    curMod = chers[[antibody]]
-    for (chr in allChr) {
-      if (verbose) cat("", chr)
-      curChr = curMod[[chr]]
-      if (length(curChr)==0) {next} # no chers on that chromosome
-      curTss = gff[gff$chr == chr, ]
-      generateCher = function(pName) {
-        p = curChr[[pName]]
-        n = names(p)
-        this.cher.score = attr(p,"score")
-        return(newCher(cherID=pName, chr, start=as.integer(n[1]), end=as.integer(n[length(n)]), cellType=cellType, antibody=antibody, maxLevel=max(p), score=this.cher.score))
-      }# generateCher
-      curChers = lapply(names(curChr), generateCher)
-      curChers = addTypes(curTss, curChers, tssCover, tssUpstream, tssDownstream)
-      # save the Chers
-      cherList[index:(index+length(curChers)-1)] = curChers
-      index = index + length(curChers)
-    }
-  }
-  if (verbose) cat("\n")
-  names(cherList) = sapply(cherList, function(p) p@name)
-  cherList = typifyList(cherList, gff, g2t)
-  class(cherList) = "cherList"
-  return(cherList)
-}#generateCherList
-
 relateChers <- function(pl, gff, upstream=5000, verbose=TRUE){
   stopifnot(is.list(pl),inherits(pl[[1]],"cher"),
             inherits(gff,"data.frame"),

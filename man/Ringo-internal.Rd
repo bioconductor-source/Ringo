@@ -4,14 +4,7 @@
 \alias{panel.cor}
 \alias{merge.RGList}
 \alias{takeMeanOverGroups}
-\alias{addTypes}
-\alias{typifyList}
-\alias{getGeneToTranscriptMap}
-\alias{getTranscriptToGeneMap}
-\alias{combine.tables}
-\alias{calcOverlapDfVsDf}
 \alias{as.data.frame.cherList}
-\alias{generateCherList}
 \alias{splitAndSimplify}
 \alias{readNimblegenHeader}
 \alias{readNgIntensitiesTxt}
