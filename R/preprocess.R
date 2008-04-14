@@ -90,3 +90,18 @@ normalizeBetweenArraysVSN <- function(object, targets=NULL, ...) {
   if(!is(object,"MAList")) object <- new("MAList",unclass(object))
   return(object)
 }#normalizeBetweenArraysVSN
+
+### do VSN normalization based on one channel only:
+oneChannelVSN <- function(object, channel="G", ...) {
+  stopifnot(is(object,"RGList"))
+  channel <- match.arg(channel, c("G","R"))
+  y <- object[[channel]]
+  yfit <- vsnMatrix(y,...)
+  n2 <- ncol(exprs(y))/2
+  G <- predict(yfit, newdata=object[["G"]])/log(2)
+  R <- predict(yfit, newdata=object[["R"]])/log(2)
+  object$M <- R-G
+  object$A <- (R+G)/2
+  if(!is(object,"MAList")) object <- new("MAList",unclass(object))
+  return(object)
+}#oneChannelVSN

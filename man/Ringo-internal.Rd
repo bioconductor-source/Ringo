@@ -18,6 +18,7 @@
 \alias{normalizeBetweenArraysVSN}
 \alias{relateChers2}
 \alias{whichCsr}
+\alias{oneChannelVSN}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Internal Ringo functions}
 \description{
