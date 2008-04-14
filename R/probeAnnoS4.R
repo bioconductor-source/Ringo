@@ -14,7 +14,7 @@ setValidity("probeAnno", function(object){
   envElements <- ls(map)
   if (length(envElements)==0){
     return(TRUE)}
-  chromElements <- grep("[[:digit:]]+\\..*",envElements, value=TRUE)
+  chromElements <- grep("^.+\\.start$",envElements, value=TRUE)
   if (length(chromElements)==0){
     warning("Enviroment does not contain any chromosome/strand probe mappings, expecting elements named for example 1.start\n"); return(FALSE)}
   isStrandSpecific <- length(grep("\\.\\+\\.",chromElements))>0 || length(grep("\\.-\\.",chromElements))>0
@@ -80,7 +80,7 @@ setGeneric("chromosomeNames", function(x) standardGeneric("chromosomeNames"))
 
 setMethod("chromosomeNames", signature(x="probeAnno"), function(x){
   envElements <- ls(x@map)
-  chromElements <- grep("[[:digit:]]+\\..*",envElements, value=TRUE)
+  chromElements <- grep("^.+\\.start$",envElements, value=TRUE)
   if (length(chromElements)==0){
     warning("Enviroment does not contain any chromosome/strand probe mappings,\n  expecting elements named, e.g., '1.start'\n"); return(vector("character",0))}
   sp <- strsplit(chromElements,split="\\.")

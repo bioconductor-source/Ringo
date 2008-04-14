@@ -205,10 +205,10 @@ genomic region of interest turns out to be too slow for practical purposes.
 \Rpackage{Ringo}, similar to the Bioconductor package \Rpackage{tilingArray},
 employs an object of class \Rclass{probeAnno} to store the mapping between 
 reporters on the microarray and genomic positions.
-Per chromosome, four vectors of equal length and ordering specify 
-at which genomic positions reporter matches start and end, 
+Per chromosome, the object holds four vectors of equal length and ordering
+that specify at which genomic positions reporter matches start and end, 
 what identifiers or indices these reporters have in the intensities data,
-and whether these reporters match uniquely to those genomic positions.
+and whether these reporters match uniquely to the genomic positions.
 
 <<loadProbeAnno>>=
 load(file.path(exDir,"exampleProbeAnno.rda"))
@@ -219,13 +219,11 @@ head(exProbeAnno["9.index"])
 @ 
 
 The function \Rfunction{posToProbeAnno} allows generation
-of a valide \Rclass{probeAnno} object, 
+of a valid \Rclass{probeAnno} object, 
 either from a file that corresponds to a NimbleGen \texttt{POS} file
 or from a \Rclass{data.frame} objects that holds the same information.
-Furthermore, the package's \texttt{scripts} directory contains 
-a script \texttt{makeProbeAnno.R} that demonstrates how to 
-generate such a mapping object either from a NimbleGen \texttt{POS} file
-and Perl scripts that allow the conversion of multiple output files from
+The package's \texttt{scripts} directory also contains 
+Perl scripts that allow the conversion of multiple output files from
 common alignment tools such as Exonerate into one file that corresponds
 to a POS file.
 The function \Rfunction{validObject} can be used to perform a
@@ -276,9 +274,11 @@ In addition, the data file loaded above also contains a
 file of all transcripts on human chromosome 9 annotated in the 
 \href{http://www.ensembl.org/Mus_musculus/index.html}{Ensembl} database 
 (release 46, August 2007).
-The aforementioned script \texttt{makeProbeAnno.R} also contains
-some example source code showing how the Bioconductor package
-\Rpackage{biomaRt} can be used to generate such a GFF data frame.
+The script \texttt{retrieveGenomicFeatureAnnotation.R} in the 
+package's scripts directory contains
+example source code showing how the Bioconductor package
+\Rpackage{biomaRt} can be used to generate such an annotated
+genome features \Rclass{data.frame}.
 
 <<showGFF>>=
 head(exGFF[,c("name","symbol","chr","strand","start","end")])
@@ -300,9 +300,7 @@ plot(exAc)
 We see some auto-correlation between probe position up to 800 base pairs
 apart. Since the sonicated fragments that are hybridized to the
 array have an average size in the range of up to 1000 bp, 
-such a degree of auto-correlation up to this distance can be expected, 
-but nevertheless has to be taken into account 
-later on during data analysis.
+such a degree of auto-correlation up to this distance can be expected.
 
 
 \section{Preprocessing}
@@ -320,7 +318,7 @@ of the normalized probe levels.
 <<preprocess, eval=FALSE>>=
 exampleX <- preprocess(exRG)
 sampleNames(exampleX) <- 
- paste(exRG$targets$Cell.line,exRG$targets$Cy5,exRG$targets$Set,sep=".")
+ with(exRG$targets, paste(Cy5,"vs",Cy3,sep="_"))
 print(exampleX)
 @ 
 <<loadExampleX, echo=FALSE>>=
@@ -442,19 +440,6 @@ sequence properties of the probe, varying quality of the synthesis of
 probes on the array and other reasons.
 To ameliorate this fact, we employ the sliding-window smoothing approach.
 
-Please note that this procedure was developed to identify genomic regions
-enriched for histone modifications rather than transcription factor binding 
-sites. The frequency and extent of
-genomic regions with modified histones is expected to be much larger than,
-say, regions containing binding sites for a certain transcription factor.
-In that case one cannot assume that the large majority of probes does not
-show enrichment. 
-In the example data case, however, we look for enriched 
-transcription-factor-bound regi\citet{BourgonPhD} ons. For this setup a number of alternative,
-and likely superior, algorithms for detecting enriched regions
-have been suggested, 
-some being available in other Bioconductor packages, too.
-
 The aforementioned issues make it difficult to come up with a reasonable 
 estimate for the null distribution of smoothed probe levels 
 in non-enriched genomic regions. 
@@ -561,9 +546,9 @@ enriched regions on chromosome 9.}
 
 Figure \ref{Ringo-plotCher} displays an identified enriched region, 
 which is located upstream of the \texttt{Nudt2} gene. 
-This \emph{Cher} was obvious in plots of the 
-normalized data (see figure \ref{Ringo-smoothAlongChrom}).
-And while it is reassuring that our method recovers it as well, a number
+This ChIP-enriched region was already obvious in plots of the 
+normalized data (see Figure \ref{Ringo-smoothAlongChrom}).
+While it is reassuring that our method recovers it as well, a number
 of other approaches would undoubtedly have reported it as well.
 
 
