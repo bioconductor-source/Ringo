@@ -1,7 +1,9 @@
 preprocess <- function(myRG, method="vsn", returnMAList=FALSE,
-                       verbose=TRUE, ...){
+                       idColumn="PROBE_ID", verbose=TRUE, ...){
   stopifnot(inherits(myRG, "RGList"))
-  method <- match.arg(method, choices=c("vsn","loess","median","Gquantile", "Rquantile", "nimblegen","none"))
+  if (!returnMAList)
+    stopifnot(is.data.frame(myRG$genes), idColumn %in% names(myRG$genes))
+  method <- match.arg(method, choices=c("vsn","loess","median","Gquantile", "Rquantile", "nimblegen", "Gvsn", "Rvsn", "none"))
   if (method %in% c("loess","median")){
     if (verbose) cat("Background correction...\n")
     myRG <- backgroundCorrect(myRG, method="normexp", offset=50)
@@ -10,20 +12,21 @@ preprocess <- function(myRG, method="vsn", returnMAList=FALSE,
   myMA <- switch(method,
                  "loess"=normalizeWithinArrays(myRG, method="loess",...),
                  "median"=normalizeWithinArrays(myRG, method="median",...),
-                 #"vsn"=normalizeBetweenArrays(myRG, method="vsn",...),
                  "vsn"=normalizeBetweenArraysVSN(myRG,...),
                  "Gquantile"=normalizeBetweenArrays(myRG, method="Gquantile",...),
                  "Rquantile"=normalizeBetweenArrays(myRG, method="Rquantile",...),
                  "nimblegen"=nimblegenScale(myRG,...),
+                 "Gvsn"=oneChannelVSN(myRG, "G", ...),
+                 "Rvsn"=oneChannelVSN(myRG, "R", ...),
                  "none"=normalizeWithinArrays(myRG, method="none",...)
                  )
   if (returnMAList){return(myMA)}
-  else {return(asExprSet(myMA))}
+  else {return(asExprSet(myMA, idColumn=idColumn))}
 }# preprocess
 
-asExprSet <- function(from){
+asExprSet <- function(from, idColumn="PROBE_ID"){
   stopifnot(inherits(from,"MAList"), !is.null(from$targets),
-            !is.null(from$genes))
+            is.data.frame(from$genes), idColumn %in% names(from$genes))
   from$M <- as.matrix(from$M) # if only one sample, M is a vector
   stopifnot(nrow(from$targets)==ncol(as.matrix(from$M)))
   if (is.null(rownames(from$targets)))
@@ -33,12 +36,7 @@ asExprSet <- function(from){
               varMetadata=data.frame("varLabel"=colnames(from$targets),
                 row.names=colnames(from$targets)))
   myEset <- new("ExpressionSet",  exprs=from$M, phenoData=myPD)
-  if (!is.null(from$genes$PROBE_ID)) {
-    featureNames(myEset) <- make.names(from$genes$PROBE_ID, unique=TRUE)
-  } else {
-    if (!is.null(from$genes$ID))
-      featureNames(myEset) <- make.names(from$genes$ID, unique=TRUE)
-  }
+  featureNames(myEset) <- make.names(from$genes[[idColumn]], unique=TRUE)
   featureData(myEset) <- as(from$genes,"AnnotatedDataFrame")
   return(myEset)
 }#asExprSet
@@ -83,8 +81,8 @@ normalizeBetweenArraysVSN <- function(object, targets=NULL, ...) {
   if(is.null(y)) stop("object doesn't appear to be RGList or MAList")
   y <- vsnMatrix(y,...)
   n2 <- ncol(exprs(y))/2
-  G <- exprs(y)[,1:n2]/log(2)
-  R <- exprs(y)[,n2+(1:n2)]/log(2)
+  G <- exprs(y)[,1:n2]
+  R <- exprs(y)[,n2+(1:n2)]
   object$M <- R-G
   object$A <- (R+G)/2
   if(!is(object,"MAList")) object <- new("MAList",unclass(object))
@@ -98,8 +96,8 @@ oneChannelVSN <- function(object, channel="G", ...) {
   y <- object[[channel]]
   yfit <- vsnMatrix(y,...)
   n2 <- ncol(exprs(y))/2
-  G <- predict(yfit, newdata=object[["G"]])/log(2)
-  R <- predict(yfit, newdata=object[["R"]])/log(2)
+  G <- exprs(predict(yfit, newdata=object[["G"]]))
+  R <- exprs(predict(yfit, newdata=object[["R"]]))
   object$M <- R-G
   object$A <- (R+G)/2
   if(!is(object,"MAList")) object <- new("MAList",unclass(object))

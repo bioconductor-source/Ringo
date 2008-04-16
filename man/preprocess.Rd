@@ -7,7 +7,8 @@
   (M-values). 
 }
 \usage{
-preprocess(myRG, method = "vsn", returnMAList=FALSE, verbose=TRUE, ...)
+preprocess(myRG, method = "vsn", returnMAList=FALSE,
+           idColumn="PROBE_ID", verbose=TRUE, ...)
 }
 \arguments{
   \item{myRG}{object of class \code{RGList}}
@@ -15,6 +16,13 @@ preprocess(myRG, method = "vsn", returnMAList=FALSE, verbose=TRUE, ...)
     see below for details}
   \item{returnMAList}{logical; should an MAList object be returned?
     Default is to return an ExpressionSet object.}
+  \item{idColumn}{string; indicating which column of the \code{genes}
+    data.frame of the RGList holds the identifier for reporters on the
+    microarray. This column, after calling
+    \code{\link[base]{make.names}} on it, will make up the unique
+    \code{featureNames} of the resulting \code{ExpressionSet}.
+    If argument \code{returnMAList} is \code{TRUE}, this argument is
+    ignored.}
   \item{verbose}{logical; progress output to STDOUT?}
   \item{\dots}{further arguments to be passed on
     \code{normalizeWithinArrays} and \code{normalizeBetweenArrays}}

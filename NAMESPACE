@@ -6,14 +6,12 @@ import("graphics")
 export("autocor", "chipAlongChrom","corPlot", "whichCsr",
        "computeRunningMedians", "sliding.quantile",
        "findChersOnSmoothed", "cherByThreshold","newCher","relateChers",
-       "preprocess","nimblegenScale","readNimblegen",
+       "preprocess","nimblegenScale","readNimblegen", "asExprSet",
        "as.data.frame.cherList","ftr2xys","compute.gc",
        "posToProbeAnno","validProbeAnno", "regionOverlap",
        "features2Probes","sliding.meansd", "computeSlidingT",
        "getFeats", "upperBoundNull")
 
-# S3method("plot", "cher")
-# S3method("print", "cher")
 S3method("plot", "autocor.result")
 S3method("image", "RGList")
 S3method("as.data.frame", "cherList")
