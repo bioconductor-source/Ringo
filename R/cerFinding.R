@@ -33,10 +33,27 @@ cherByThreshold <- function(positions, scores, threshold, distCutOff, minProbesI
 findChersOnSmoothed <- function(smoothedX, probeAnno, thresholds, allChr=c(1:19,"X","Y"), distCutOff=600, minProbesInRow=3, cellType=NULL, checkUnique=TRUE, uniqueCodes=c(0), verbose=TRUE)
 {
   stopifnot(is.numeric(thresholds), length(thresholds)==ncol(smoothedX),
-            validObject(probeAnno))
+            validObject(probeAnno), inherits(smoothedX,"ExpressionSet"))
+  # look at the cellType definition
+  if (!is.null(cellType)){
+    stopifnot(is.character(cellType))
+    if (length(cellType)==1){
+      if (cellType %in% names(pData(smoothedX)))
+        allCellTypes <- pData(smoothedX)[[cellType]]
+      else
+        allCellTypes <- rep(cellType, ncol(smoothedX))
+    } else {
+      if (length(cellType)!=ncol(smoothedX))
+        stop("Argument 'cellType' must either be of length one or of length equal to the number of samples in the supplied ExpressionSet.\n")
+      allCellTypes <- cellType
+    }
+  } else {
+    allCellTypes <- vector("character", ncol(smoothedX))
+  }
   resultChers <- vector("list",ncol(smoothedX))
   for (i in 1:ncol(smoothedX)){
     this.sample <- sampleNames(smoothedX)[i]
+    thisCellType <- allCellTypes[i]
     if (verbose) cat("\n\nSample: ",this.sample,"...\n\nChr: ")
     thisModChers <- lapply(as.list(allChr), function(chr){
       if (verbose) cat(chr, "...")
@@ -58,10 +75,9 @@ findChersOnSmoothed <- function(smoothedX, probeAnno, thresholds, allChr=c(1:19,
       names(chridx) <- chrmid
       chr.chers <- lapply(as.list(1:length(chr.chers)), function(z){
         x <- chr.chers[[z]];
-        cherID <- paste(cellType, this.sample, paste("chr",chr,sep=""), paste("cher",z,sep=""),sep=".")
+        cherID <- paste(thisCellType, this.sample, paste("chr",chr,sep=""), paste("cher",z,sep=""),sep=".")
         cherID <- gsub("(^\\.+)|(\\.+$)","",cherID)#remove any leading and trailing dots
-        #thisCher <- newCher(cherID, chr=chr, start=as.integer(names(x)[1]), end=as.integer(names(x)[length(x)]), cellType=cellType, antibody=this.sample, maxLevel=max(x), score=attr(x,"score"), probes=as.character(chridx[names(x)]))
-        thisCher <- new("cher", name=cherID, chromosome=chr, start=as.integer(names(x)[1]), end=as.integer(names(x)[length(x)]), cellType=as.character(cellType), antibody=as.character(this.sample), maxLevel=max(x), score=attr(x,"score"), probes=as.character(chridx[names(x)]))
+        thisCher <- new("cher", name=cherID, chromosome=chr, start=as.integer(names(x)[1]), end=as.integer(names(x)[length(x)]), cellType=as.character(thisCellType), antibody=as.character(this.sample), maxLevel=max(x), score=attr(x,"score"), probes=as.character(chridx[names(x)]))
         return(thisCher)})
       return(chr.chers)
     })
@@ -69,6 +85,6 @@ findChersOnSmoothed <- function(smoothedX, probeAnno, thresholds, allChr=c(1:19,
   }#for
   resultChers <- unlist(resultChers, recursive=FALSE, use.names=FALSE)
   resultChers <- unlist(resultChers, recursive=FALSE)
-  class(resultChers) <- "cherList"
+  class(resultChers) <- c("cherList",class(resultChers))
   return(resultChers)
 }# findChersOnSmoothed

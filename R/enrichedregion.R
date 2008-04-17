@@ -94,5 +94,6 @@ relateChers <- function(pl, gff, upstream=5000, verbose=TRUE){
     p <- update(p, type=type)
     pl[[i]] <- p
   }#for
+  class(pl) <- unique(c("cherList", class(pl)))
   return(pl)
 }#relateChers

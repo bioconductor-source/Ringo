@@ -5,7 +5,7 @@
   Given an ExpressionSet of smoothed probe intensities, an environment
   with the mapping of probes to chromosomes, and a vector of thresholds
   for calling genomic sites enriched, this function finds the
-  'Chers' (ChIP-enriche regions)
+  'chers' (ChIP-enriched regions)
   consisting of enriched genomic positions, with probes mapped to them.
   'Adjacent' enriched positions are condensed into a single Cher.
 }
@@ -32,8 +32,12 @@ findChersOnSmoothed(smoothedX, probeAnno, thresholds, allChr = c(1:19,
   \item{minProbesInRow}{integer; minimum number of enriched
     probes required for a Cher; see \code{details} for further
     explanation.}
-  \item{cellType}{character; name of cell type the data stems from,
-    maybe could be taken from \code{pData(smoothedX)}}
+  \item{cellType}{character; name of cell type the data comes from, is
+    either a. of length one indicating the column of
+    \code{pData(smoothedX)} that holds the cell type OR b. of length one
+    indicating the common cell type for all samples in the
+    \code{ExpressionSet} OR c. of length equal to \code{ncol(smoothedX)}
+    specifying the cell type of each sample individually.}
   \item{checkUnique}{logical; indicates whether the uniqueness
     indicator of probe matches from the probeAnno environment should be
     used.}
