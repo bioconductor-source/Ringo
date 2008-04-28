@@ -24,7 +24,7 @@
 \note{
   There is a more general function for converting MALists to
   ExpressionSets in the package \code{convert}. This function here is
-  solely intended fo converting Ringo-generated \code{MAList}s into
+  solely intended for converting Ringo-generated \code{MAList}s into
   \code{ExpressionSet}s.
 }
 \author{Joern Toedling}

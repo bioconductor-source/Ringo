@@ -14,7 +14,7 @@ validProbeAnno(probeAnno)
     coordinates}
 }
 \details{
-  This function checks ceratin properties of the mapping environment
+  This function checks certain properties of the mapping environment
   that are used by other Ringo functions. It can indicate potential
   problems in the environment.
 }

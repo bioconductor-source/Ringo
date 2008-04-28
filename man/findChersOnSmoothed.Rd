@@ -1,6 +1,6 @@
 \name{findChersOnSmoothed}
 \alias{findChersOnSmoothed}
-\title{Find Chers on smoothed ExpressionSet}
+\title{Find ChIP-enriched regions on smoothed ExpressionSet}
 \description{
   Given an ExpressionSet of smoothed probe intensities, an environment
   with the mapping of probes to chromosomes, and a vector of thresholds

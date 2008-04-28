@@ -75,7 +75,7 @@
   }
 }
 \author{Joern Toedling \email{toedling@ebi.ac.uk}; Wolfgang Huber}
-\note{'probeAnno' objects used to be environemnts and are still in
+\note{'probeAnno' objects used to be environments and are still in
   package \code{tilingArray}}
 \seealso{posToProbeAnno}
 \examples{

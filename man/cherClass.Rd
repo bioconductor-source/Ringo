@@ -85,7 +85,7 @@
       \code{cher} object; The further arguments in '...' are
       interpreted. Arguments corresponding to defined slot names of the
       \code{cher} result in the value by that slot being replaced by the
-      specified value for the argument; Argment names that do not
+      specified value for the argument; argument names that do not
       correspond to slot names of the object result in list elements of
       the \code{extras} list of the \code{cher} being replaced by the
       given values for these arguments or the values are appended to the
