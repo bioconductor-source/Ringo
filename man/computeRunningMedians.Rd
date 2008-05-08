@@ -7,7 +7,7 @@
 }
 \usage{
 computeRunningMedians(xSet, probeAnno, modColumn = "Cy5",
- allChr = c(1:19, "X", "Y"), winHalfSize = 400, min.probes = 5,
+ allChr, winHalfSize = 400, min.probes = 5,
  quant = 0.5, combineReplicates = FALSE, checkUnique=TRUE,
  uniqueCodes=c(0), verbose = TRUE)
 }
@@ -19,7 +19,9 @@ computeRunningMedians(xSet, probeAnno, modColumn = "Cy5",
     in the ExpressionSet}
   \item{modColumn}{Column of the ExpressionSet's \code{phenoData}
     holding the samples' difference of interest}
-  \item{allChr}{Character vector of all chromosomes in genome}
+  \item{allChr}{Character vector of all chromosomes in genome; if not
+    specified (defaul) all chromosomes annotated in the supplied
+    \code{probeAnno} are used.}
   \item{winHalfSize}{Half the size of the window centered at a probe
   position, in which all other probes contribute to the calculation of
   the median.}
@@ -53,7 +55,7 @@ computeRunningMedians(xSet, probeAnno, modColumn = "Cy5",
 }
 \author{Joern Toedling \email{toedling@ebi.ac.uk}}
 \seealso{\code{\link[Biobase]{ExpressionSet}},
-  \code{\link{sliding.quantile}}}
+  \code{\link{sliding.quantile}}, \code{\link{probeAnno-class}}}
 \examples{
   exDir <- system.file("exData",package="Ringo")
   load(file.path(exDir,"exampleProbeAnno.rda"))

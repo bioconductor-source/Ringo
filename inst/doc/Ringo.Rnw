@@ -465,15 +465,14 @@ These estimates are indicated by red vertical lines in the histograms.
 @ 
 <<histogramSmoothed0, eval=FALSE, results=hide>>=
 par(font.lab=2, mar=c(4,4,1,1))
-hist(exprs(smoothX)[,1], n=20, xlab="Smoothed reporter intensities [log]", xlim=c(-3,5), main=NA, col=brewer.pal(8,"Set2")[1], yaxt="n")
-axis(side=2, at=seq(0,75000,by=25000))
+hist(exprs(smoothX)[,1], n=25, xlab="Smoothed reporter intensities [log]", xlim=c(-2,2), main=NA, col=brewer.pal(8,"Set2")[1])
 abline(v=y0[,1], col="red")
 @ 
 
 <<histogramsSmoothed, echo=FALSE, results=hide>>=
 pdf(file="Ringo-histogramSmoothed.pdf", width=7, height=5)
 par(font.lab=2, mar=c(4,4,1,1))
-h1 <- hist(exprs(smoothX)[,1], n=20, xlab="Smoothed reporter intensities [log]", xlim=c(-3,5), main=NA, col=brewer.pal(8,"Set2")[1])
+h1 <- hist(exprs(smoothX)[,1], n=25, xlab="Smoothed reporter intensities [log]", xlim=c(-3,5), main=NA, col=brewer.pal(8,"Set2")[1])
 abline(v=y0[1], col="red")
 dev.off()
 @ 

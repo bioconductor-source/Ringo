@@ -1,9 +1,21 @@
-preprocess <- function(myRG, method="vsn", returnMAList=FALSE,
-                       idColumn="PROBE_ID", verbose=TRUE, ...){
-  stopifnot(inherits(myRG, "RGList"))
+preprocess <- function(myRG, method="vsn", ChIPChannel="R", inputChannel="G",
+                       returnMAList=FALSE, idColumn="PROBE_ID",
+                       verbose=TRUE, ...)
+{
+  stopifnot(inherits(myRG, "RGList"),
+            all(is.element(c(ChIPChannel, inputChannel),names(myRG))))
   if (!returnMAList)
     stopifnot(is.data.frame(myRG$genes), idColumn %in% names(myRG$genes))
   method <- match.arg(method, choices=c("vsn","loess","median","Gquantile", "Rquantile", "nimblegen", "Gvsn", "Rvsn", "none"))
+  ## make sure the ChIP sample is the Red channel of the RGList, and the input sample is the Green channel of the RGList, because limma always gives fold-changes R/G and usually one wants ChIP/input fold-changes
+  myRG$ChIPData   <- myRG[[ChIPChannel]]
+  myRG$ChIPDataBg <- myRG[[paste(ChIPChannel,"b",sep="")]]
+  myRG$inputData   <- myRG[[inputChannel]]
+  myRG$inputDataBg <- myRG[[paste(inputChannel,"b",sep="")]]
+  myRG$R  <- myRG$ChIPData
+  myRG$Rb <- myRG$ChIPDataBg
+  myRG$G  <- myRG$inputData
+  myRG$Gb <- myRG$inputDataBg
   if (method %in% c("loess","median")){
     if (verbose) cat("Background correction...\n")
     myRG <- backgroundCorrect(myRG, method="normexp", offset=50)

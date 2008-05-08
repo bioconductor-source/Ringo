@@ -12,11 +12,14 @@ sliding.quantile <- function(positions, scores, half.width, prob=0.5, return.cou
   return(res)
 }#sliding.quantile
 
-computeRunningMedians <- function(xSet, probeAnno, modColumn="Cy5", allChr=c(1:19,"X","Y"), winHalfSize=400, min.probes=5, quant=0.5, combineReplicates=FALSE, checkUnique=TRUE, uniqueCodes=c(0), verbose=TRUE)
+computeRunningMedians <- function(xSet, probeAnno, modColumn="Cy5", allChr, winHalfSize=400, min.probes=5, quant=0.5, combineReplicates=FALSE, checkUnique=TRUE, uniqueCodes=c(0), verbose=TRUE)
 {
   stopifnot(inherits(xSet,"ExpressionSet"),inherits(probeAnno,"probeAnno"),
-            validObject(probeAnno), all(is.character(allChr)),
+            validObject(probeAnno),
             is.numeric(quant), (quant>=0)&(quant<=1), length(quant)==1)
+  ## which chromosomes to do the smoothing for:
+  if (missing(allChr)) allChr <- chromosomeNames(probeAnno)
+  stopifnot(is.character(allChr))
   # initialize result matrix:
   if (combineReplicates)
     grouping <- factor(pData(xSet)[[modColumn]])

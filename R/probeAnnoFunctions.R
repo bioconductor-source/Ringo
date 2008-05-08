@@ -32,8 +32,8 @@
 # chr1:4483138-4484138    CHR01   CHR01P004483140 4483140 50      1
 # chr1:4483138-4484138    CHR01   CHR01P004483245 4483245 50      1
 
-posToProbeAnno <- function(pos, chrNameColumn="CHROMOSOME",probeColumn="PROBE_ID", chrPositionColumn="POSITION", lengthColumn="LENGTH", verbose=TRUE, ...){
-  if (!exists(deparse(substitute(pos)))){
+posToProbeAnno <- function(pos, chrNameColumn="CHROMOSOME",probeColumn="PROBE_ID", chrPositionColumn="POSITION", lengthColumn="LENGTH", genome="unknown", microarrayPlatform="unknown", verbose=TRUE, ...){
+  if (!is.data.frame(pos) && !is.matrix(pos)){
     stopifnot(is.character(pos), file.exists(pos))
     hits <- read.delim(pos, header=TRUE, as.is=TRUE, ...)
   } else {
@@ -50,7 +50,7 @@ posToProbeAnno <- function(pos, chrNameColumn="CHROMOSOME",probeColumn="PROBE_ID
     hits[[chrNameColumn]] <- gsub("chr(0)?","", hits[[chrNameColumn]], ignore.case=TRUE)
   probeindex <- 1:nrow(hits)
   probeMultiplicity <- table(hits[[probeColumn]])
-  if (verbose) cat("Creating probeAnno mapping for chromosome")
+  if (verbose) cat("Creating probeAnno mapping for chromosome ")
   thisMapping = new.env()
   sp <- split(probeindex, as.factor(hits[[chrNameColumn]]))
   # for every chromosome, assign the hiting probes to the corresponding vector:
@@ -66,9 +66,10 @@ posToProbeAnno <- function(pos, chrNameColumn="CHROMOSOME",probeColumn="PROBE_ID
   }# for(i in seq(along=sp))
   if (verbose) cat("Done.\n")
   myProbeAnno <- new("probeAnno", map=thisMapping)
+  genome(myProbeAnno) <- genome
+  arrayName(myProbeAnno) <- microarrayPlatform
   return(myProbeAnno)
 }#posToProbeAnno
-
 
 validProbeAnno <- function(probeAnno){
   stopifnot(inherits(probeAnno, "probeAnno")||is.environment(probeAnno))
@@ -155,3 +156,33 @@ features2Probes <- function(gff, probeAnno, upstream=5000, checkUnique=TRUE, uni
   }# for (chr in allChr)
   return(f2p)
 }# features2Probes
+
+## function to extract the probe match positions from the 'genes' slot of an
+##  RGList as is the case with some ChIP-chip microarray platforms, e.g.
+##  with Agilent after reading in the data with read.maimages(...,"agilent")
+extractProbeAnno <- function(object, format="agilent", ...){
+  stopifnot(inherits(object, "RGList"), "genes" %in% names(object))
+  format <- match.arg(format, c("agilent"))
+  G <- object$genes
+  if (format=="agilent"){
+    idColumn <- "ProbeName"
+    positionColumn <- "SystematicName"
+    stopifnot(all(c(idColumn, positionColumn) %in% names(G)))
+    idxWithPos <- grep("^chr.+\\:[[:digit:]]+\\-[[:digit:]]+$",G[[positionColumn]])
+    if (!all(seq(nrow(G)) %in% idxWithPos))
+      warning(paste("Some reporters had no or an unrecognized genome position in ",deparse(substitute(object)),"$genes$", positionColumn,".\n", sep=""))
+    G <- G[idxWithPos, , drop=FALSE]
+    splitted <- do.call("rbind", strsplit(G[[positionColumn]], split="[:-]"))
+    ## TO DO:make G[[idColumn]] unique
+    probePos <- data.frame("PROBE_ID" = G[[idColumn]],
+                           CHROMOSOME = as.character(splitted[,1]),
+                           COORD1 = as.integer(splitted[,2]),
+                           COORD2 = as.integer(splitted[,3]),
+                           stringsAsFactors=FALSE)
+    probePos$POSITION <- with(probePos, pmin(COORD1, COORD2))
+    probePos$LENGTH   <- with(probePos, abs(COORD2 - COORD1)+1)
+    thisProbeAnno <- posToProbeAnno(probePos, ...)
+  }
+  return(thisProbeAnno)
+}#extractProbeAnno
+

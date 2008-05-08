@@ -14,7 +14,8 @@
 \usage{
 posToProbeAnno(pos, chrNameColumn = "CHROMOSOME",
    probeColumn = "PROBE_ID", chrPositionColumn = "POSITION",
-   lengthColumn = "LENGTH", verbose = TRUE, ...)
+   lengthColumn = "LENGTH", genome="unknown",
+   microarrayPlatform="unknown", verbose = TRUE, ...)
 }
 \arguments{
   \item{pos}{either a file-name that specifies the path to the POS or
@@ -28,6 +29,11 @@ posToProbeAnno(pos, chrNameColumn = "CHROMOSOME",
   \item{lengthColumn}{name of the column that holds the length of the 
     match position, in case of perfect match should correspond to the
     sequence length of the probe}
+ \item{genome}{string; denotes genome (and assembly) the reporters have
+   been mapped to for this probeAnno object, e.g. "M. musculus (mm9)"}
+ \item{microarrayPlatform}{string; denotes the commercial or custom
+   microarray platform/design that holds the reporters whose mapping is
+   stored in this probeAnno object, e.g. "NimbleGen MOD SUZ12"}
   \item{verbose}{logical; should progress be written to STDOUT?}
   \item{\dots}{further arguments passed on to function \code{read.delim}
     if \code{pos} is a file path.}
@@ -50,11 +56,15 @@ posToProbeAnno(pos, chrNameColumn = "CHROMOSOME",
                      "MOD_2003-12-05_SUZ12_1in2.pos"),
                      header=TRUE,as.is=TRUE)
  str(exPos)
- exProbeAnno <- posToProbeAnno(exPos)
+ exProbeAnno <- posToProbeAnno(exPos,
+     genome="M. musculus (assembly mm8)",
+     microarrayPlatform="NimbleGen 2005-06-17_Ren_MM5Tiling_Set1")
  ## is equivalent to 
- exProbeAnno2 <-
- posToProbeAnno(file.path(system.file("exData",package="Ringo"),
-                          "MOD_2003-12-05_SUZ12_1in2.pos"))
+ exProbeAnno2 <- posToProbeAnno(file.path(
+    system.file("exData",package="Ringo"),"MOD_2003-12-05_SUZ12_1in2.pos"),
+    genome="M. musculus (assembly mm8)",
+    microarrayPlatform="NimbleGen 2005-06-17_Ren_MM5Tiling_Set1")
  ls(exProbeAnno)
+ chromosomeNames(exProbeAnno2)
 }
 \keyword{manip}

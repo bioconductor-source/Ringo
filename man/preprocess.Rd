@@ -7,13 +7,17 @@
   (M-values). 
 }
 \usage{
-preprocess(myRG, method = "vsn", returnMAList=FALSE,
-           idColumn="PROBE_ID", verbose=TRUE, ...)
+preprocess(myRG, method="vsn", ChIPChannel="R", inputChannel="G",
+           returnMAList=FALSE, idColumn="PROBE_ID", verbose=TRUE, ...)
 }
 \arguments{
   \item{myRG}{object of class \code{RGList}}
   \item{method}{string; denoting which normalization method to choose,
     see below for details}
+  \item{ChIPChannel}{string; which element of the \code{RGList} holds
+    the  ChIP result, see details}
+  \item{inputChannel}{string; which element of the \code{RGList} holds
+    the  untreated \emph{input} sample; see details}
   \item{returnMAList}{logical; should an MAList object be returned?
     Default is to return an ExpressionSet object.}
   \item{idColumn}{string; indicating which column of the \code{genes}
@@ -54,6 +58,14 @@ preprocess(myRG, method = "vsn", returnMAList=FALSE,
       and \code{(log2(R)+log2(G))/2} as component \code{A};
       uses \code{normalizeWithinArrays} with \code{method="none"}.}
   }
+
+  Mostly with two-color ChIP-chip, the ChIP sample is marked with the
+  red Cy5 dye and for the untreated \emph{input} sample the green Cy3
+  dye is used. In that case the RGList\code{myRG}'s element \code{R}
+  holds the ChIP data, and element \code{G} holds the input data.
+  If this is not the case with your data, use the  arguments
+  \code{ChIPChannel} and \code{inputChannel} to specify the respective
+  elements of \code{myRG}.
 }
 \value{
   Returns normalized, transformed values as an object of class
