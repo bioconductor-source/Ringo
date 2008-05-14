@@ -12,7 +12,7 @@
 }
 \usage{
 \method{image}{RGList}(x,arrayno,channel=c("red","green","logratio"),
-         mycols=NULL, mybreaks=NULL,...)
+         mycols=NULL, mybreaks=NULL, dim1="X", dim2="Y", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -26,6 +26,16 @@
   \item{mybreaks}{optional numeric vector of breaks to use as argument
     \code{breaks} in \code{image.default}; default \code{NULL} means take
     \code{length(mycols)+1} quantiles of the data as breaks.}
+  \item{dim1}{string; which column of the 'genes' element of the
+    supplied \code{RGList} indicates the first dimension of the reporter
+    position on the microarray surface; for example this column is
+    called 'X' with some NimbleGen arrays and 'Row' with some Agilent
+    arrays.}
+  \item{dim2}{string; which column of the 'genes' element of the
+    supplied \code{RGList} indicates the second dimension of the
+    reporter position on the microarray surface; for example this column
+    is called 'Y' with some NimbleGen arrays and 'Col' with some Agilent
+    arrays.}
   \item{\dots}{further arguments passed on to \code{image.default}}
 }
 \value{

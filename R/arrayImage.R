@@ -1,8 +1,12 @@
 "image.RGList" <-
 function(x, arrayno, channel=c("red","green","logratio"),
-         mycols=NULL, mybreaks=NULL,...){
+         mycols=NULL, mybreaks=NULL, dim1="X", dim2="Y", ...){
+  stopifnot(inherits(x, "RGList"), "genes" %in% names(x),
+            is.character(dim1), length(dim1)==1,
+            is.character(dim2), length(dim2)==1,
+            all(c(dim1, dim2) %in% names(x$genes)))
   myRG <- x
-  maxX <- max(myRG$genes$X); maxY <- max(myRG$genes$Y)
+  maxX <- max(myRG$genes[[dim1]]); maxY <- max(myRG$genes[[dim2]])
   channel <- match.arg(channel, c("red","green","logratio"))
   arrayMat <- matrix(0, nrow=maxX, ncol=maxY)
   myDat <- switch(channel,
@@ -11,7 +15,7 @@ function(x, arrayno, channel=c("red","green","logratio"),
                   "logratio"=log2(myRG$R[,arrayno])-log2(myRG$G[,arrayno]))
   stopifnot(length(myDat)==nrow(myRG$genes))
   for (i in 1:nrow(myRG$genes))
-    arrayMat[myRG$genes$X[i], myRG$genes$Y[i]] <- myDat[i]
+    arrayMat[myRG$genes[[dim1]][i], myRG$genes[[dim2]][i]] <- myDat[i]
   imageTitle <- switch(channel,
                   "red"=colnames(myRG$R)[arrayno],
                   "green"=colnames(myRG$G)[arrayno],

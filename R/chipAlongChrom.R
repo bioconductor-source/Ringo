@@ -28,12 +28,14 @@ chipAlongChrom <- function (eSet, chrom, probeAnno, xlim, ylim=NULL, samples=NUL
     usedProbesCol <- as.numeric(uni[areProbesInLimits]!=0)+1
   } else {usedProbes <- mid}
 
-  if ((length(usedProbes) < 1) & verbose)
-    cat("No feature-mapped positions in specified region!\n")
+  if (length(usedProbes) < 1)
+    stop("No reporter-mapped positions in specified region!\n")
   nSamples <- length(samples)
   usedProbesIdx <- match(names(usedProbes),eSetProbeNames)
   chromExprs <- exprs(eSet)[usedProbesIdx, samples, drop=FALSE]
-
+  if (all(is.na(as.vector(chromExprs))))
+    warning("Only NA values in specified region.\n")
+  
   # 2. select colors for plotting
   if (verbose) cat("Preparing color scheme...\n")
   if (is.null(colPal)){
