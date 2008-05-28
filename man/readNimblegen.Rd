@@ -10,7 +10,8 @@
   for single-color data.
 }
 \usage{
-readNimblegen(hybesFile, spotTypesFile, path = getwd(), verbose = TRUE, ...)
+readNimblegen(hybesFile, spotTypesFile, path = getwd(),
+ headerPattern="# software=NimbleScan",verbose = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -22,6 +23,8 @@ readNimblegen(hybesFile, spotTypesFile, path = getwd(), verbose = TRUE, ...)
     \code{NULL} if you prefer the arguments \code{hybesFile},
     \code{spotTypesFile} and the file-name entries of the hybes file to 
     be treated as absolute or relative file paths themselves.}
+  \item{headerPattern}{string; pattern used to identify explantory
+    header lines in the supplied pair-format files}
   \item{verbose}{logical; progress output to STDOUT?}
   \item{\dots}{further arguments passed on the \code{readNgIntensitiesTxt}}
 }

@@ -1,5 +1,5 @@
 
-readNimblegen <- function(hybesFile, spotTypesFile, path=getwd(), verbose=TRUE, ...)
+readNimblegen <- function(hybesFile, spotTypesFile, path=getwd(), headerPattern="# software=NimbleScan", verbose=TRUE, ...)
 {
   # 0. check arguments:
   if (!is.null(path)){
@@ -7,6 +7,7 @@ readNimblegen <- function(hybesFile, spotTypesFile, path=getwd(), verbose=TRUE, 
     spotTypesFile <- file.path(path, spotTypesFile)
   }# if (!is.null(path))
   stopifnot(file.exists(hybesFile), file.exists(spotTypesFile))
+  stopifnot(is.character(headerPattern), length(headerPattern)==1)
 
   # 1. read in raw intensities:
   if (verbose) cat("Reading targets file...\n")
@@ -23,7 +24,7 @@ readNimblegen <- function(hybesFile, spotTypesFile, path=getwd(), verbose=TRUE, 
     }# while
   } # if (length(cy3FileColum)==0 | length(cy5FileColumn)==0)  
   if (verbose) cat("Reading raw intensities...\n")
-  RG <- readNgIntensitiesTxt(hybes[,c(cy3FileColumn,cy5FileColumn),drop=FALSE], verbose=verbose, path=path,...)
+  RG <- readNgIntensitiesTxt(hybes[,c(cy3FileColumn,cy5FileColumn),drop=FALSE], verbose=verbose, path=path, headerPattern=headerPattern, ...)
   if (verbose) cat("Determining probe categories...\n")
   spottypes <- readSpotTypes(spotTypesFile)
   RG$genes$Status <- controlStatus(spottypes, RG$genes)
@@ -34,7 +35,7 @@ readNimblegen <- function(hybesFile, spotTypesFile, path=getwd(), verbose=TRUE, 
 }# readNimblegen
   
 
-readNgIntensitiesTxt <- function(files, path=NULL, ext=NULL, names=NULL, columns=NULL, wt.fun=NULL, verbose=TRUE, sep="\t", quote="\"",...)
+readNgIntensitiesTxt <- function(files, path=NULL, ext=NULL, names=NULL, columns=NULL, wt.fun=NULL, verbose=TRUE, sep="\t", quote="\"", headerPattern="# software=NimbleScan", ...)
 {
     if (is.null(dim(files))) {
         if (length(files)%%2 == 0)
@@ -56,7 +57,7 @@ readNgIntensitiesTxt <- function(files, path=NULL, ext=NULL, names=NULL, columns
     fullname <- files[1, 1]
     if (!is.null(path))
         fullname <- file.path(path, fullname)
-    headers <- readNimblegenHeader(fullname)
+    headers <- readNimblegenHeader(fullname, headerPattern=headerPattern)
     if (verbose)
         cat("Read header information\n")
     skip <- headers$NHeaderRecords
@@ -80,7 +81,7 @@ readNgIntensitiesTxt <- function(files, path=NULL, ext=NULL, names=NULL, columns
       if (!is.null(path))
             fullname <- file.path(path, fullname)
         if (i > 1) {
-            headers <- readNimblegenHeader(fullname)
+            headers <- readNimblegenHeader(fullname, headerPattern=headerPattern)
         }
         obj <- read.table(fullname, skip = skip, header = TRUE,
             sep = sep, quote = quote, check.names = FALSE, comment.char = "",
@@ -94,6 +95,8 @@ readNgIntensitiesTxt <- function(files, path=NULL, ext=NULL, names=NULL, columns
         fullname <- files[i, 2]
         if (!is.null(path))
             fullname <- file.path(path, fullname)
+        headers <- readNimblegenHeader(fullname, headerPattern=headerPattern)
+        skip <- headers$NHeaderRecords
         obj <- read.table(fullname, skip = skip, header = TRUE,
             sep = sep, quote = quote, check.names = FALSE, comment.char = "",
             fill = TRUE, nrows = nspots, ...)
@@ -103,22 +106,27 @@ readNgIntensitiesTxt <- function(files, path=NULL, ext=NULL, names=NULL, columns
         RG$Rb[, i] <- obj[, columns$b]
         if (!is.null(wt.fun))
             RG$weights[, i] <- wt.fun(obj)
-    }
+    }#for (i in 1:narrays)
     new("RGList", RG)
 }#readNgIntensitiesTxt
 
-readNimblegenHeader <- function (file)
+readNimblegenHeader <- function (file, headerPattern="# software=NimbleScan")
 {
     firstfield <- scan(file, what = "", sep = "\t", quote = "\"",
-        nlines = 100, flush = TRUE, quiet = TRUE, blank.lines.skip = FALSE,
+        nlines = 50, flush = TRUE, quiet = TRUE, blank.lines.skip = FALSE,
         multi.line = FALSE, allowEscape = FALSE)
-    NHeaderRecords <- grep("# software=", firstfield)
-    txt <- scan(file, what = "", sep = "\t", quote = "\"", nlines = NHeaderRecords -
-        1, quiet = TRUE, allowEscape = FALSE)
-    out <- list(NHeaderRecords = NHeaderRecords, BeginRawData = NHeaderRecords)
-    out$Version <- txt[grep("version=", txt) + 1]
-    out$Date <- txt[grep("date=", txt) + 1]
-    out$ImageFile <- txt[grep("^Image File$", txt) + 1]
+    NHeaderRecords <- grep(headerPattern, firstfield)
+    if (length(NHeaderRecords)==0){
+      warning(paste("File ",file, " did not contain expected header line starting with '",headerPattern,"'\n.", sep=""))
+      out <- list(NHeaderRecords = 0, BeginRawData = 1)
+    } else {
+      txt <- scan(file, what = "", sep = "\t", quote = "\"", nlines = NHeaderRecords -
+                  1, quiet = TRUE, allowEscape = FALSE)
+      out <- list(NHeaderRecords = NHeaderRecords, BeginRawData = NHeaderRecords)
+      out$Version <- txt[grep("version=", txt) + 1]
+      out$Date <- txt[grep("date=", txt) + 1]
+      out$ImageFile <- txt[grep("^Image File$", txt) + 1]
+    }
     out
 }#readNimblegenHeader
 
