@@ -1,7 +1,7 @@
 ## function to plot ChIP-chip intensities along chromosome, inspired by
 ##  tilingArray's plotAlongChrom
 
-chipAlongChrom <- function (eSet, chrom, probeAnno, xlim, ylim=NULL, samples=NULL, paletteName="Dark2", colPal=NULL, byStrand = FALSE, ylabel="Intensity", rugCol="#000010", itype="r", ipch=20,icex=1, ilwd=3, ilty=1, useGFF=TRUE, gff=NULL, featCol="darkblue", zero.line=TRUE, putLegend=TRUE, add=FALSE, maxInterDistance=200, verbose=TRUE, ...)
+chipAlongChrom <- function (eSet, chrom, probeAnno, xlim, ylim=NULL, samples=NULL, paletteName="Dark2", colPal=NULL, byStrand = FALSE, ylabel="fold change [log]", rugCol="#000010", itype="r", ipch=20,icex=1, ilwd=3, ilty=1, useGFF=TRUE, gff=NULL, featCol="darkblue", zero.line=TRUE, putLegend=TRUE, add=FALSE, maxInterDistance=200, verbose=TRUE, ...)
 {
   # 0. check arguments  
   stopifnot(inherits(eSet,"ExpressionSet"), inherits(probeAnno, "probeAnno"), validObject(probeAnno))
