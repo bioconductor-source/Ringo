@@ -76,8 +76,6 @@ setMethod("get", signature(x="character", pos="missing", envir="probeAnno", mode
 
 setMethod("ls", signature(name="probeAnno", pos="missing", envir="missing", all.names="missing", pattern="missing"), function(name, pos="missing", envir="missing", all.names="missing", pattern="missing") ls(name@map))
 
-setGeneric("chromosomeNames", function(x) standardGeneric("chromosomeNames"))
-
 setMethod("chromosomeNames", signature(x="probeAnno"), function(x){
   envElements <- ls(x@map)
   chromElements <- grep("^.+\\.start$",envElements, value=TRUE)
@@ -88,22 +86,14 @@ setMethod("chromosomeNames", signature(x="probeAnno"), function(x){
   return(uniChromNames)
 })
 
-setGeneric("arrayName", function(x) standardGeneric("arrayName"))
-
 setMethod("arrayName", signature(x="probeAnno"), function(x){
   x@arrayName})
-
-setGeneric("arrayName<-", function(x, value) standardGeneric("arrayName<-"))
 
 setReplaceMethod("arrayName", signature(x="probeAnno", value="character"),
   function(x, value){x@arrayName <- value; return(x)})
 
-setGeneric("genome", function(x) standardGeneric("genome"))
-
 setMethod("genome", signature(x="probeAnno"), function(x){
   x@genome})
-
-setGeneric("genome<-", function(x, value) standardGeneric("genome<-"))
 
 setReplaceMethod("genome", signature(x="probeAnno", value="character"),
   function(x, value){x@genome <- value; return(x)})

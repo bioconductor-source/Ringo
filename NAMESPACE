@@ -2,6 +2,7 @@ useDynLib("Ringo", ringoSlidingQuantile=sliding_quantile, ringoRegionOverlap=ove
 
 import("methods")
 import("graphics") 
+importFrom("stats", "update") 
 
 export("autocor", "chipAlongChrom","corPlot", "whichCsr",
        "computeRunningMedians", "sliding.quantile",

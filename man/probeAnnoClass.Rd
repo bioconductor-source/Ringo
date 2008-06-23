@@ -84,8 +84,8 @@
   if (interactive()) show(pa)
   pa2 <- posToProbeAnno(file.path(system.file("exData",package="Ringo"),
                                   "MOD_2003-12-05_SUZ12_1in2.pos"))
-  arrayName(pa2) <- "2005-06-17_Ren_MM5Tiling_Set1"
-  genome(pa2) <- "M. musculus (assembly mm8)"
+  arrayName(pa2) <- "NimbleGen MOD_2003-12-05_SUZ12_1in2"
+  genome(pa2) <- "H. sapiens (hg18)"
   show(pa2)
   head(pa2["9.start"])
 }

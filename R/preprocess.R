@@ -98,6 +98,8 @@ normalizeBetweenArraysVSN <- function(object, targets=NULL, ...) {
   object$M <- R-G
   object$A <- (R+G)/2
   if(!is(object,"MAList")) object <- new("MAList",unclass(object))
+  object$G <- G
+  object$R <- R
   return(object)
 }#normalizeBetweenArraysVSN
 

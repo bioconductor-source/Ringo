@@ -69,12 +69,8 @@ setMethod("update", signature=c("cher"), function(object, ...){
   return(object)
 })
 
-setGeneric("cellType", function(x) standardGeneric("cellType"))
-
 setMethod("cellType", signature(x="cher"), function(x){
   x@cellType})
-
-setGeneric("cellType<-", function(x, value) standardGeneric("cellType<-"))
 
 setReplaceMethod("cellType", signature(x="cher", value="character"),
   function(x, value){x@cellType <- value; return(x)})
