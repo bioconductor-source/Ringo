@@ -1,6 +1,5 @@
 \name{nimblegenScale}
 \alias{nimblegenScale}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Function to compute scaled log-ratios}
 \description{
   This function compute the scaled log-ratios from raw probe
@@ -9,7 +8,6 @@
 \usage{
 nimblegenScale(myRG, ...)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{myRG}{Object of class \code{RGList}}
   \item{\dots}{further arguments passed on to \code{tukey.biweight}}
@@ -24,10 +22,12 @@ nimblegenScale(myRG, ...)
   Return an \code{MAList}, with the M slot of the list holding the
   scaled log ratios.
 }
-%\references{ ~put references to the literature/web site here ~ }
+\references{for more details on the Tukey biweight estimator:
+  Statistical Algorithms Description Document, 2002,
+  Affymetrix. }
 \author{Joern Toedling \email{toedling@ebi.ac.uk}}
 %\note{ ~~further notes~~ }
-\seealso{\code{\link[affy]{tukey.biweight}}}
+%\seealso{}
 %\examples{}
 \keyword{manip}% at least one, from doc/KEYWORDS
 \keyword{internal}% __ONLY ONE__ keyword per line

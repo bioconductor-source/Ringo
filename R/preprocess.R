@@ -16,10 +16,6 @@ preprocess <- function(myRG, method="vsn", ChIPChannel="R", inputChannel="G",
   myRG$Rb <- myRG$ChIPDataBg
   myRG$G  <- myRG$inputData
   myRG$Gb <- myRG$inputDataBg
-  if (method %in% c("loess","median")){
-    if (verbose) cat("Background correction...\n")
-    myRG <- backgroundCorrect(myRG, method="normexp", offset=50)
-  }
   if (verbose) cat("Normalizing...\n")
   myMA <- switch(method,
                  "loess"=normalizeWithinArrays(myRG, method="loess",...),
@@ -78,7 +74,6 @@ nimblegenScale <- function(myRG, ...){
   resMA <- new("MAList", resList)
   return(resMA)
 }#nimblegenScale
-
 
 ### modified version of normalizeBetweenArrays to handle new clases in VSN
 normalizeBetweenArraysVSN <- function(object, targets=NULL, ...) {

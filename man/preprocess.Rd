@@ -29,35 +29,38 @@ preprocess(myRG, method="vsn", ChIPChannel="R", inputChannel="G",
     ignored.}
   \item{verbose}{logical; progress output to STDOUT?}
   \item{\dots}{further arguments to be passed on
-    \code{normalizeWithinArrays} and \code{normalizeBetweenArrays}}
+    \code{normalizeWithinArrays}
+    and \code{normalizeBetweenArrays}}
 }
 \details{
  The procedure and called \code{limma} functions depend on the choice of
  method.
  \describe{
-   \item{loess}{First performs background correction of intensity values
-     using \code{limma}'s function \code{backgroundCorrect} with
-     \code{method="normexp"} and \code{offset=50}. Then calls
-     \code{normalizeWithinArrays}.}
-   \item{vsn}{Does not do any background correction, but rather directly
-     calls \code{normalizeBetweenArrays} with \code{method="vsn"}.}
-  \item{Gquantile}{Does not do any background correction, but rather directly
-     calls \code{normalizeBetweenArrays} with \code{method="Gquantile"}.}
-  \item{Rquantile}{Does not do any background correction, but rather directly
-     calls \code{normalizeBetweenArrays} with \code{method="Rquantile"}.}
-   \item{median}{First performs background correction of intensity values
-     using \code{limma}'s function \code{backgroundCorrect} with
-     \code{method="normexp"} and \code{offset=50}. Then calls
-     \code{normalizeWithinArrays} with \code{method="median".}}
-    \item{nimblegen}{Scaling procedure used by Nimblegen. Yields
-      scaled log-ratios by a two step procedure:
-      srat = log2(R) - log2(G)
-      srat = srat - tukey.biweight(srat)}
-    \item{none}{No normalization of probe intensities,
-      takes raw \code{log2(R)-log2(G)} as component \code{M}
-      and \code{(log2(R)+log2(G))/2} as component \code{A};
-      uses \code{normalizeWithinArrays} with \code{method="none"}.}
-  }
+   \item{loess}{Calls \code{normalizeWithinArrays} with
+     \code{method="loess"}.}
+   \item{vsn}{Calls \code{normalizeBetweenArrays} with
+     \code{method="vsn"}.}
+   \item{Gquantile}{Calls \code{normalizeBetweenArrays} with
+     \code{method="Gquantile"}.}
+   \item{Rquantile}{Calls \code{normalizeBetweenArrays} with
+     \code{method="Rquantile"}.}
+   \item{median}{Calls \code{normalizeWithinArrays} with
+     \code{method="median".}}
+   \item{nimblegen}{Scaling procedure used by Nimblegen. Yields
+     scaled log-ratios by a two step procedure:
+     srat = log2(R) - log2(G)
+     srat = srat - tukey.biweight(srat)}
+   \item{Gvsn}{Learns \code{vsn} model on green channel intensities
+     only and applies that transformation to both channels before
+     computing fold changes.}
+   \item{Rvsn}{Learns \code{vsn} model on red channel intensities
+     only and applies that transformation to both channels before
+     computing fold changes.}
+   \item{none}{No normalization of probe intensities,
+     takes raw \code{log2(R)-log2(G)} as component \code{M}
+     and \code{(log2(R)+log2(G))/2} as component \code{A};
+     uses \code{normalizeWithinArrays} with \code{method="none"}.}
+ }
 
   Mostly with two-color ChIP-chip, the ChIP sample is marked with the
   red Cy5 dye and for the untreated \emph{input} sample the green Cy3
@@ -71,20 +74,29 @@ preprocess(myRG, method="vsn", ChIPChannel="R", inputChannel="G",
   Returns normalized, transformed values as an object of class
   \code{ExpressionList} or \code{MAList}.
 }
+\note{
+  Since Ringo version 1.5.6, this function does not call limma's
+  function \code{\link[limma]{backgroundCorrect}} directly any
+  longer. If wanted by the user, background correction should be
+  indicated as additional arguments passed on to
+  \code{\link[limma]{normalizeWithinArrays}} or
+  \code{\link[limma]{normalizeBetweenArrays}}, or alternatively call
+  \code{\link[limma]{backgroundCorrect}} on the \code{RGList} before
+  \code{preprocess}ing.
+}
 \author{Joern Toedling \email{toedling@ebi.ac.uk}}
-\seealso{\code{\link[limma]{backgroundCorrect}},
-  \code{\link[limma]{normalizeWithinArrays}},
+\seealso{\code{\link[limma]{normalizeWithinArrays}},
   \code{\link[limma]{normalizeBetweenArrays}},
   \code{\link[limma]{malist}},\code{\link[Biobase]{ExpressionSet}},
-  \code{\link[affy]{tukey.biweight}}}
+  \code{\link[vsn]{vsnMatrix}}}
 \examples{
    exDir <- system.file("exData",package="Ringo")
-   exRG <- readNimblegen("example_targets.txt","spottypes.txt",path=exDir)
+   exRG <- readNimblegen("example_targets.txt","spottypes.txt",
+                         path=exDir)
    exampleX <- preprocess(exRG)
-   sampleNames(exampleX) <- 
-     make.names(paste(exRG$targets$Cy5,"vs",exRG$targets$Cy3,sep="_"))
+   sampleNames(exampleX) <- make.names(paste(exRG$targets$Cy5,"vs",
+                                        exRG$targets$Cy3,sep="_"))
    print(exampleX)
-
    ### compare VSN to NimbleGen's tukey-biweight scaling
    exampleX.NG <- preprocess(exRG, method="nimblegen")
    sampleNames(exampleX.NG) <- sampleNames(exampleX)
