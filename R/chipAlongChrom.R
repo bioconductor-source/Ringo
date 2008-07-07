@@ -32,6 +32,11 @@ chipAlongChrom <- function (eSet, chrom, probeAnno, xlim, ylim=NULL, samples=NUL
     stop("No reporter-mapped positions in specified region!\n")
   nSamples <- length(samples)
   usedProbesIdx <- match(names(usedProbes),eSetProbeNames)
+  if (any(is.na(usedProbesIdx)))
+    warning(paste("The identifiers of", sum(is.na(usedProbesIdx)),
+       "reporters in the region to plot are not found as",
+       "'featureNames' of", deparse(substitute(eSet)),"\n"))
+  
   chromExprs <- exprs(eSet)[usedProbesIdx, samples, drop=FALSE]
   if (all(is.na(as.vector(chromExprs))))
     warning("Only NA values in specified region.\n")
