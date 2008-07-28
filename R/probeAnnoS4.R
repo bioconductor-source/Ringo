@@ -5,6 +5,8 @@ setMethod("initialize", "probeAnno", function(.Object, map=new.env(), arrayName=
   if (missing(map)) map <- new.env()
   stopifnot(is.environment(map))
   .Object@map <- map
+  .Object@arrayName <- arrayName
+  .Object@genome <- genome
   stopifnot(validObject(.Object))
   .Object
 })# initialize probeAnno
