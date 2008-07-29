@@ -240,12 +240,13 @@ spots, finger prints etc. that might render parts or all of the
 readouts useless. 
 
 <<imageRG0, eval=FALSE>>=
+par(mar=c(0.01,0.01,0.01,0.01), bg="black")
 image(exRG, 1, channel="green", mycols=c("black","green4","springgreen"))
 @ 
 
 <<imageRG,eval=TRUE,results=hide,echo=FALSE>>=
 jpeg("Ringo-imageRG.jpg", quality=100, height=400, width=360)
-par(mar=c(1,1,4,1))
+par(mar=c(0.01,0.01,0.01,0.01), bg="black")
 image(exRG, 1, channel="green", mycols=c("black","green4","springgreen"))
 dev.off()
 @

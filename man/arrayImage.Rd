@@ -12,7 +12,8 @@
 }
 \usage{
 \method{image}{RGList}(x,arrayno,channel=c("red","green","logratio"),
-         mycols=NULL, mybreaks=NULL, dim1="X", dim2="Y", ...)
+         mycols=NULL, mybreaks=NULL, dim1="X", dim2="Y",
+         ppch=20, pcex=0.3, verbose=TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -36,20 +37,26 @@
     reporter position on the microarray surface; for example this column
     is called 'Y' with some NimbleGen arrays and 'Col' with some Agilent
     arrays.}
-  \item{\dots}{further arguments passed on to \code{image.default}}
+  \item{ppch}{which symbol to use for intensities; passed on as
+    \code{pch} to \code{points.default}}
+  \item{pcex}{enlargement factor for intensity symbols; passed on as
+    \code{cex} to \code{points.default}}
+  \item{verbose}{logical; extended output to STDOUT?}
+  \item{\dots}{further arguments passed on to \code{plot.default} and
+    \code{points.default}}
 }
 \value{
-  invisibly returns matrix of raw intensities, in which rows and columns
-  correspond to X and Y coordinates on arrays. Can be directly plotted
-  with function \code{image.default}.
+  invisibly returns NULL; function is called for its side effect, this
+  is producing the plot
 }
 %\references{ ~put references to the literature/web site here ~ }
 \author{Joern Toedling \email{toedling@ebi.ac.uk}}
-\seealso{\code{\link{readNimblegen}},\code{\link[graphics]{image}}}
+\seealso{\code{\link{readNimblegen}},\code{\link[graphics]{plot.default}},
+  \code{\link[graphics]{points.default}}}
 \examples{
    exDir <- system.file("exData",package="Ringo")
    exRG <- readNimblegen("example_targets.txt","spottypes.txt",path=exDir)
-   image(exRG,arrayno=1,channel="red")
+   image(exRG, 1, channel="red", mycols=c("black","darkred","red"))
    ## this example looks strange because the example data files only
    ## includes the probe intensities of probes mapped to the forward
    ## strand of chromosome 9.
