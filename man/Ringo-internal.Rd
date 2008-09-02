@@ -12,6 +12,7 @@
 \alias{relateChers2}
 \alias{whichCsr}
 \alias{oneChannelVSN}
+\alias{exportCCData}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Internal Ringo functions}
 \description{

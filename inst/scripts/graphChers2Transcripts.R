@@ -137,7 +137,7 @@ if (analyzeTfChers3){
 dataDir <- "/panfs/panda1/huber/sperling/tfchip/data"
 
 ### load list of identified enrichments:
-load(file=file.path(dataDir,"chersV3c.RData"))
+load(file=file.path(dataDir,"chersV3d.RData"))
 ## the loaded object allTFChers is a list of lists of chers
 tfChers <- unlist(allTFChers,recursive=FALSE, use.names=FALSE)
 if ("modification" %in% names(tfChers[[1]]))

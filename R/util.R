@@ -83,7 +83,6 @@ compute.gc <- function(probe.sequences, digits=2){
     listLen(splitted.seqs), digits=digits)
 }#compute.gc
 
-
 whichCsr <- function(X, arr.ind=TRUE){
   ## function to get a two-column matrix containing the indices of the
   ### non-zero elements in a "matrix.csr" class matrix
@@ -101,3 +100,62 @@ getFeats <- function(cl){
   stopifnot(is.list(cl), inherits(cl[[1]],"cher"))
   return(unique(unlist(sapply(cl, function(cher) cher@extras[c("typeUpstream", "typeInside", "typeDownstream")]), use.names=FALSE)))
 }# getFeats
+
+
+exportCCData <- function(X, pA, method="GFF", outfile="myCCData.gff", samples, chrs, checkUnique=TRUE, uniqueCodes=c(0), verbose=TRUE)
+{
+  stopifnot(inherits(X, "ExpressionSet"), inherits(pA, "probeAnno"),
+            validObject(pA))
+  if (missing(chrs))  chrs <- chromosomeNames(pA)
+  if (missing(samples)) samples <- 1:ncol(X)
+  ## take mean over selected samples
+  exprs(X)[,1] <- rowMeans(exprs(X)[,samples, drop=FALSE])
+      
+  method <- match.arg(method, c("GFF"))
+
+  if (method=="GFF"){
+    if (verbose) cat("Preparing GFF...\n")
+    # init gff file
+    cat("##gff-version 2",
+        paste("## source-version","Ringo",package.version("Ringo")),
+        paste("## date",Sys.Date()),
+        "## format:",
+        paste("## seqname", "source", "feature", "start", "end", "score", "strand", "frame", "attribute", sep="\t"),
+        sep="\n", #collapse="\n",
+        file=outfile, append=FALSE)
+     
+    for (chr in chrs){
+      if (verbose) cat("Chromosome",chr, "...\n")
+      chrsta <- pA[paste(chr,"start",sep=".")]
+      chrend <- pA[paste(chr,"end",sep=".")]
+      chridx <- pA[paste(chr,"index",sep=".")]
+      if (checkUnique){
+        chruni <- pA[paste(chr,"unique",sep=".")]
+        stopifnot(length(chruni)==length(chridx))
+        chridx <- chridx[chruni %in% uniqueCodes]
+        chrsta <- chrsta[chruni %in% uniqueCodes]
+        chrend <- chrend[chruni %in% uniqueCodes]
+        if (length(chridx)==0){
+          warning(paste("No reporters with unique hits",
+                        "on chromosome",chr,".\n")); next}
+      } #  if (checkUnique)
+      stopifnot(all(chrend >= chrsta))
+      #GFF format: <seqname>\t<source>\t<feature>\t<start>\t<end>\t<score>\t<strand>\t<frame>\t<attribute>
+      n <- length(chridx)
+      dat <- round(exprs(X)[chridx, 1], digits=3)
+      chrdat <- data.frame(
+            "seqname"=rep(paste("chr",gsub("^chr","",chr),sep=""), n),
+            "source"=rep("ChIP", n), #as.character(chridx),
+            "feature"=rep("reporter level", n),
+            "start"=as.integer(chrsta), "end"=as.integer(chrend),
+            "score"=dat,
+            "strand"=rep(".", n), "frame"=rep(".", n),
+            "attribute"=paste(chridx,";","chr",chr,":",
+              chrsta,"-",chrend,sep=""),stringsAsFactors=FALSE)
+      write.table(chrdat, sep="\t", append=TRUE, row.names=FALSE,
+                  col.names=FALSE, file=outfile, quote=FALSE)
+    }# for chr in chrs
+  }# if method=="GFF"
+  if (verbose)
+    cat("Written to file '", outfile, "'.\n", sep="")
+}# exportCCData
