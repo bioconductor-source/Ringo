@@ -104,8 +104,8 @@ oneChannelVSN <- function(object, channel="G", ...) {
   channel <- match.arg(channel, c("G","R"))
   y <- object[[channel]]
   yfit <- vsnMatrix(y,...)
-  G <- exprs(predict(yfit, newdata=object[["G"]]))
-  R <- exprs(predict(yfit, newdata=object[["R"]]))
+  G <- predict(yfit, newdata=object[["G"]])
+  R <- predict(yfit, newdata=object[["R"]])
   object$M <- R-G
   object$A <- (R+G)/2
   if(!is(object,"MAList")) object <- new("MAList",unclass(object))
