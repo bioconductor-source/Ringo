@@ -47,9 +47,12 @@ setMethod("plot",signature=c("cher","ExpressionSet"), function(x, y, probeAnno, 
   if (!is.null(samples)&is.numeric(samples))
     stopifnot(all(samples) %in% 1:ncol(y))
   cherVal <- chipAlongChrom(y, chrom=x@chromosome, samples=samples, xlim=c(x@start-extent, x@end+extent), probeAnno=probeAnno, gff=gff, ...)
+  axis(at=c(x@start,x@end), labels=FALSE, col="gold",
+       lwd=3, lwd.ticks=0, side=3)
   rug(x=c(x@start,x@end), side=3, lwd=3, col="gold")
   if (!is.null(x@maxLevel))
-    legend(x="topright", legend=paste("Max.Level:",round(x@maxLevel,digits=2)),fill="gold", bty="n")
+    legend(x="topright", fill="gold", bty="n",
+           legend=paste("Max.Level:",round(x@maxLevel,digits=2)))
   invisible(cherVal)
 })
 
