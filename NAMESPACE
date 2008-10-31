@@ -11,7 +11,8 @@ export("autocor", "chipAlongChrom","corPlot", "whichCsr",
        "as.data.frame.cherList","ftr2xys","compute.gc",
        "posToProbeAnno","validProbeAnno", "regionOverlap",
        "features2Probes","sliding.meansd", "computeSlidingT",
-       "getFeats", "upperBoundNull", "extractProbeAnno")
+       "getFeats", "upperBoundNull", "extractProbeAnno",
+       "exportCherList")
 
 S3method("plot", "autocor.result")
 S3method("image", "RGList")
