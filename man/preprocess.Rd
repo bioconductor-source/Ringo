@@ -1,10 +1,10 @@
 \name{preprocess}
 \alias{preprocess}
-\title{Preprocess Nimblegen Raw Intensities}
+\title{Preprocess Raw ChIP-chip Intensities}
 \description{
-  Calls one of various \code{limma} functions to transform raw probe
+  Calls one of various (\code{limma}) functions to transform raw probe
   intensities into (background-corrected) normalized log ratios
-  (M-values). 
+  (M-values).
 }
 \usage{
 preprocess(myRG, method="vsn", ChIPChannel="R", inputChannel="G",

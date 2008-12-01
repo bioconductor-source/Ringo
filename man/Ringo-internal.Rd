@@ -13,6 +13,7 @@
 \alias{whichCsr}
 \alias{oneChannelVSN}
 \alias{exportCCData}
+\alias{pair2xys}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Internal Ringo functions}
 \description{

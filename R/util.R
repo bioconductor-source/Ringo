@@ -17,7 +17,21 @@ splitAndSimplify <- function(toSplit, bySplit, collapse.by="/", nameSep="[[:spac
   return(splitted)
 }# splitAndSimplify
 
-## Auxiliary function to convert NimbleGen's feature report file into
+### Auxiliary function to convert NimbleGen's pair file format into
+### .xys file. Only use this function, if actual xys-file is not available
+pair2xys <- function(pair.file, path=getwd()){  
+  stopifnot(length(pair.file)==1, is.character(pair.file), grep(".pair.*$",pair.file)==1, file.exists(pair.file))
+  pair.header <- scan(pair.file,nlines=1,quiet=TRUE, what=character(0))
+  xys.file <- gsub("_?pair.*$",".xys",pair.file)
+  pair.data <- read.delim(pair.file, as.is=TRUE, comment.char="#")
+  xys.data <- pair.data[,c("X", "Y", "PM", "PROBE_ID")]
+  names(xys.data) <- c("X", "Y", "SIGNAL", "PROBE_ID")
+  cat(pair.header,"\n", sep=" ", file=file.path(path,xys.file))
+  write.table(xys.data, file=file.path(path, xys.file), sep="\t", quote=FALSE, row.names=FALSE, col.names=TRUE, append=TRUE)
+  invisible(NULL)
+}#pair2xys
+
+### Auxiliary function to convert NimbleGen's feature report file into
 ### .xys file. Only use this function, if actual xys-file is not available
 ftr2xys <- function(ftr.file, path=getwd()){  
   stopifnot(length(ftr.file)==1, is.character(ftr.file), grep(".ftr$",ftr.file)==1, file.exists(ftr.file))
