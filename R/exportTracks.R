@@ -15,7 +15,7 @@ exportCherList <- function(object, filename="chers.gff", format="gff3",...)
              strand = "DNA strand, sense (+) or antisense (-)")
   md <- data.frame(labelDescription = descs, stringsAsFactors = FALSE)
   varMetadata(chersAdf)[rownames(md),] <- md
-  chersTS <- trackSet(chersAdf, ...)
+  chersTS <- rtracklayer:::trackSet(chersAdf, ...)
   export(chersTS, filename, format=format)
   invisible(NULL)
-}
+}# exportCherList

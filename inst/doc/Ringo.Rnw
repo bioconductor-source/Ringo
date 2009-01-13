@@ -32,6 +32,7 @@ raiselinks,plainpages,pdftex]{hyperref}
 \newcommand{\Rclass}[1]{{\textit{#1}}}
 \newcommand{\Rmethod}[1]{{\textit{#1}}}
 \newcommand{\Rfunarg}[1]{{\texttt{#1}}}
+\newcommand{\phead}[1]{{\flushleft \sf \small \textbf{#1} \quad}}
 
 \newcommand{\myincfig}[3]{%
   \begin{figure}[h!tb]
@@ -48,7 +49,6 @@ raiselinks,plainpages,pdftex]{hyperref}
 \addtolength{\textheight}{2cm}
 \addtolength{\topmargin}{-1cm}
 \addtolength{\skip\footins}{1cm}
-
 
 %%%%%%% START EDITING HERE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
@@ -477,7 +477,7 @@ abline(v=y0[1], col="red")
 #dev.off()
 @ 
 %
-\myincfig{Ringo-histogramSmoothed}{0.7\textwidth}{Histograms of reporter intensities after smoothing of reporter level. The red vertical line is the cutoff values suggested by the histogram.}
+\myincfig{Ringo-histogramSmoothed}{0.65\textwidth}{Histograms of reporter intensities after smoothing of reporter level. The red vertical line is the cutoff values suggested by the histogram.}
 %
 Since antibodies vary in their efficiency to bind to their target epitope,
 we suggest to obtain a different threshold for each antibody. In the example
@@ -520,7 +520,7 @@ plot(chersX[[1]], smoothX, probeAnno=exProbeAnno, gff=exGFF, paletteName="Spectr
 #dev.off()
 @ 
 %
-\myincfig{Ringo-plotCher}{0.98\textwidth}{One of the identified Suz12-antibody
+\myincfig{Ringo-plotCher}{0.9\textwidth}{One of the identified Suz12-antibody
 enriched regions on chromosome 9.}
 
 Figure \ref{Ringo-plotCher} displays an identified enriched region, 
@@ -547,14 +547,19 @@ for ChIP-enriched genomic regions, too.
 While this algorithm worked quite well on our data, 
 we do not claim it to be the definite algorithm for that task.
 
+\phead{Further reading}
+For an extended tutorial about how to use \Rpackage{Ringo} for the
+analysis of ChIP-chip data, please refer to \cite{Toedling2008} and
+the corresponding Bioconductor package \Rpackage{ccTutorial}.
+
+\phead{Package versions}
 This vignette was generated using the following package versions:
 
 <<sessionInfo, echo=FALSE, results=tex>>=
 toLatex(sessionInfo())
 @
 
-\clearpage
-\small
+%\small
 \section*{Acknowledgments}
 
 I thank Wolfgang Huber Oleg Sklyar, Tammo Kr\"uger, Richard Bourgon,
@@ -565,7 +570,7 @@ providing us with the example ChIP-chip data.\\
 This work was supported by the
 European Union (FP6 HeartRepair, LSHM-CT-2005-018630).
 
-
+\small
 %%% BIBLIOGRAPHY STARTS HERE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{abbrvnat}
 \bibliography{Ringo-Bibliography.bib}

@@ -1,8 +1,13 @@
 useDynLib("Ringo", ringoSlidingQuantile=sliding_quantile, ringoRegionOverlap=overlap_xy, ringoMovingMeanSd=moving_mean_sd)
 
 import("methods")
-import("graphics") 
-importFrom("stats", "update") 
+
+importFrom("graphics", "plot", "image", "hist") 
+importFrom("stats", "update")
+
+importFrom("genefilter", "shorth", "half.range.mode")
+importFrom("geneplotter", "smoothScatter")
+import("vsn")
 
 export("autocor", "chipAlongChrom","corPlot", "whichCsr",
        "computeRunningMedians", "sliding.quantile",

@@ -77,7 +77,7 @@ nimblegenScale <- function(myRG, ...){
 
 ### modified version of normalizeBetweenArrays to handle new clases in VSN
 normalizeBetweenArraysVSN <- function(object, targets=NULL, ...) {
-  require("vsn")
+  #require("vsn")
   stopifnot(is(object,"RGList")|is(object,"MAList"))
   y <- NULL
   if(!is.null(object$G) && !is.null(object$R)) {
@@ -86,7 +86,7 @@ normalizeBetweenArraysVSN <- function(object, targets=NULL, ...) {
   }
   if(!is.null(object$M) && !is.null(object$A)) y <- 2^cbind(object$A-object$M/2,object$A+object$M/2)
   if(is.null(y)) stop("object doesn't appear to be RGList or MAList")
-  y <- vsnMatrix(y,...)
+  y <- vsn::vsnMatrix(y,...)
   n2 <- ncol(exprs(y))/2
   G <- exprs(y)[,1:n2]
   R <- exprs(y)[,n2+(1:n2)]
