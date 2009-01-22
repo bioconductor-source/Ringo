@@ -1,9 +1,12 @@
 plotBM <- function(x, boxCol="darkblue", reorder=FALSE, frame=TRUE, ...){
     stopifnot(is.matrix(x))
     if (reorder) {
-        whichGroup = x %*% 2^((ncol(x)-1):0)
-        numTimes = table(whichGroup)
-        ord <- order(numTimes[as.character(whichGroup)], decreasing=FALSE)
+        ## treat them 
+        whichGroup <- x %*% 2^((ncol(x)-1):0)
+        numTimes <- table(whichGroup)
+        ## to avoid breaks in case >=2 categories occur equally often:
+        #numTimes <- numTimes + cumsum(rep(0.1, length(numTimes)))
+        ord <- order(numTimes[as.character(whichGroup)], whichGroup, decreasing=FALSE)
     } else {
         ord <- nrow(x):1
     }
