@@ -2,7 +2,7 @@ useDynLib("Ringo", ringoSlidingQuantile=sliding_quantile, ringoRegionOverlap=ove
 
 import("methods")
 
-importFrom("graphics", "plot", "image", "hist") 
+importFrom("graphics", "plot", "image", "hist", "polygon")
 importFrom("stats", "update")
 
 importFrom("genefilter", "shorth", "half.range.mode")
@@ -17,7 +17,7 @@ export("autocor", "chipAlongChrom","corPlot", "whichCsr",
        "posToProbeAnno","validProbeAnno", "regionOverlap",
        "features2Probes","sliding.meansd", "computeSlidingT",
        "getFeats", "upperBoundNull", "extractProbeAnno",
-       "exportCherList")
+       "exportCherList", "plotBM")
 
 S3method("plot", "autocor.result")
 S3method("image", "RGList")

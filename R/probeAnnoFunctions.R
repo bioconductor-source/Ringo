@@ -128,7 +128,7 @@ features2Probes <- function(gff, probeAnno, upstream=5000, checkUnique=TRUE, uni
   ## prepare result
   f2p <- vector("list", nrow(gff))
   names(f2p) <- gff$name
-  allChr <- unique(gff$chr)
+  allChr <- intersect(unique(gff$chr), chromosomeNames(probeAnno))
   if (verbose) cat("Chromosome ")
   for (chr in allChr){
     if (verbose) cat(chr,"... ")
@@ -142,6 +142,7 @@ features2Probes <- function(gff, probeAnno, upstream=5000, checkUnique=TRUE, uni
       chridx <- chridx[chruni %in% uniqueCodes]
       chrmid <- chrmid[chruni %in% uniqueCodes]
     }
+    if (length(chrmid)==0) next
     chrProbeDf <- data.frame(chr=rep(chr, length(chrmid)), start2=chrmid, end2=chrmid, stringsAsFactors=FALSE)
     chrGff <- subset(gff, chr==chr)
     chrOverlap <- regionOverlap(chrGff, chrProbeDf, startColumn="start2", endColumn="end2", mem.limit=mem.limit)
