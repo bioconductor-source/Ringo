@@ -10,8 +10,8 @@
   'Adjacent' enriched positions are condensed into a single Cher.
 }
 \usage{
-findChersOnSmoothed(smoothedX, probeAnno, thresholds, allChr = c(1:19,
- "X", "Y"), distCutOff = 600, minProbesInRow = 3, cellType = NULL,
+findChersOnSmoothed(smoothedX, probeAnno, thresholds, allChr = NULL,
+distCutOff = 600, minProbesInRow = 3, cellType = NULL,
  checkUnique = TRUE, uniqueCodes = c(0), verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -24,9 +24,10 @@ findChersOnSmoothed(smoothedX, probeAnno, thresholds, allChr = c(1:19,
     probe intensities are considered to correspond to enriched
     probes. The vector has to be of length equal the number of samples
     in \code{smoothedX}, with a single threshold for each sample.}
-  \item{allChr}{character vector of all chromosomes, on which Chers are
-    to be found. Every chromosome here has to have probes mapped to it
-    in the \code{probeAnno} environment.}
+  \item{allChr}{character vector of all chromosomes on which enriched
+    regions are sought. Every chromosome here has to have probes mapped
+    to it in the \code{probeAnno} environment. By default (\code{NULL})
+    the \code{chromosomeNames} of the probeAnno object are used.}
   \item{distCutOff}{integer; maximum amount of base pairs at which
     enriched probes are condensed into one Cher.}
   \item{minProbesInRow}{integer; minimum number of enriched

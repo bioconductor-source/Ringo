@@ -30,10 +30,16 @@ cherByThreshold <- function(positions, scores, threshold, distCutOff, minProbesI
 
 
 ### main cher-finding funtion at the moment
-findChersOnSmoothed <- function(smoothedX, probeAnno, thresholds, allChr=c(1:19,"X","Y"), distCutOff=600, minProbesInRow=3, cellType=NULL, checkUnique=TRUE, uniqueCodes=c(0), verbose=TRUE)
+findChersOnSmoothed <- function(smoothedX, probeAnno, thresholds, allChr=NULL, distCutOff=600, minProbesInRow=3, cellType=NULL, checkUnique=TRUE, uniqueCodes=c(0), verbose=TRUE)
 {
   stopifnot(is.numeric(thresholds), length(thresholds)==ncol(smoothedX),
             validObject(probeAnno), inherits(smoothedX,"ExpressionSet"))
+  ## validate character vector of selected chromosome names and set default
+  if (is.null(allChr))
+      allChr <- chromosomeNames(probeAnno)
+  else
+      stopifnot(is.character(allChr),
+                allChr %in% chromosomeNames(probeAnno))
   # look at the cellType definition
   if (!is.null(cellType)){
     stopifnot(is.character(cellType))
