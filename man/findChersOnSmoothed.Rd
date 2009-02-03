@@ -11,10 +11,10 @@
 }
 \usage{
 findChersOnSmoothed(smoothedX, probeAnno, thresholds, allChr = NULL,
-distCutOff = 600, minProbesInRow = 3, cellType = NULL,
- checkUnique = TRUE, uniqueCodes = c(0), verbose = TRUE)
+   distCutOff = 600, minProbesInRow = 3, cellType = NULL,
+   antibodyColumn=NULL, checkUnique = TRUE, uniqueCodes = c(0),
+   verbose = TRUE)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{smoothedX}{Object of class \code{ExpressionSet} holding the
     smoothed probe intensities, e.g. the result of function
@@ -39,6 +39,11 @@ distCutOff = 600, minProbesInRow = 3, cellType = NULL,
     indicating the common cell type for all samples in the
     \code{ExpressionSet} OR c. of length equal to \code{ncol(smoothedX)}
     specifying the cell type of each sample individually.}
+  \item{antibodyColumn}{the name or number of the column of the
+    \code{pData(smoothedX)} that holds the description of the antibody
+    used for each sample. This information is used to annotate found
+    ChIP-enriched regions accordingly. If \code{NULL} (default), the
+    \code{sampleNames} of \code{smoothedX} are used.}
   \item{checkUnique}{logical; indicates whether the uniqueness
     indicator of probe matches from the probeAnno environment should be
     used.}

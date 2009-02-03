@@ -13,7 +13,7 @@ chipAlongChrom(eSet, chrom, probeAnno, xlim, ylim = NULL,
  byStrand = FALSE, ylabel = "fold change [log]", rugCol = "#000010",
  itype = "r", ipch = 20, icex = 1, ilwd = 3, ilty = 1, useGFF = TRUE,
  gff = NULL, featCol = "darkblue", zero.line = TRUE, putLegend = TRUE,
- add = FALSE, maxInterDistance = 200, verbose = TRUE, ...)
+ add = FALSE, maxInterDistance = 200,  coord=NULL, verbose = TRUE, ...)
 }
 \arguments{
   \item{eSet}{An expression set containing the (normalized) ChIP
@@ -61,6 +61,9 @@ chipAlongChrom(eSet, chrom, probeAnno, xlim, ylim = NULL,
   \item{maxInterDistance}{numeric; only used when \code{itype} is either
     "r" or "u"; specifies the maximal distance up to which
     adjacent probe positions should be connected by a line.}
+  \item{coord}{optional integer of length 2; can be used instead of
+  \code{xlim} to specify the start and end coordinates of the genomic
+  region to plot}
   \item{verbose}{logical; progress output to STDOUT.}
   \item{\dots}{further parameters passed on to \code{plot.default}, see
     details}

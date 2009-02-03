@@ -1,8 +1,8 @@
 
 setClass("probeAnno",representation(map="environment", arrayName="character", genome="character"))
 
-setMethod("initialize", "probeAnno", function(.Object, map=new.env(), arrayName="", genome=""){
-  if (missing(map)) map <- new.env()
+setMethod("initialize", "probeAnno", function(.Object, map, arrayName="", genome=""){
+  if (missing(map)) map <- new.env(hash=TRUE)
   stopifnot(is.environment(map))
   .Object@map <- map
   .Object@arrayName <- arrayName

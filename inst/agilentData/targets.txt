@@ -1,0 +1,2 @@
+SlideNumber	FileName	Species	Tissue	Cy3	Cy5	Antibody
+H3K4me3Tc1Liver	H3K4Me3_Tc1Liver_sol1_mmChr17_part.txt	Mus musculus	Liver	input	H3K4me3	H3K4me3

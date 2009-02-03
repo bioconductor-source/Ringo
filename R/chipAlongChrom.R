@@ -1,7 +1,7 @@
 ## function to plot ChIP-chip intensities along chromosome, inspired by
 ##  tilingArray's plotAlongChrom
 
-chipAlongChrom <- function (eSet, chrom, probeAnno, xlim, ylim=NULL, samples=NULL, paletteName="Dark2", colPal=NULL, byStrand = FALSE, ylabel="fold change [log]", rugCol="#000010", itype="r", ipch=20,icex=1, ilwd=3, ilty=1, useGFF=TRUE, gff=NULL, featCol="darkblue", zero.line=TRUE, putLegend=TRUE, add=FALSE, maxInterDistance=200, verbose=TRUE, ...)
+chipAlongChrom <- function (eSet, chrom, probeAnno, xlim, ylim=NULL, samples=NULL, paletteName="Dark2", colPal=NULL, byStrand = FALSE, ylabel="fold change [log]", rugCol="#000010", itype="r", ipch=20,icex=1, ilwd=3, ilty=1, useGFF=TRUE, gff=NULL, featCol="darkblue", zero.line=TRUE, putLegend=TRUE, add=FALSE, maxInterDistance=200, coord=NULL, verbose=TRUE, ...)
 {
   # 0. check arguments  
   stopifnot(inherits(eSet,"ExpressionSet"), inherits(probeAnno, "probeAnno"), validObject(probeAnno))
@@ -9,6 +9,10 @@ chipAlongChrom <- function (eSet, chrom, probeAnno, xlim, ylim=NULL, samples=NUL
   if (is.null(eSetProbeNames))
     stop("Could not determine probe identifiers from expression set.\nCheck 'featureNames' or 'geneNames' of expression set.\n")
   if (is.null(samples)) samples <- 1:ncol(exprs(eSet))
+  if (!is.null(coord) && missing(xlim)){
+      stopifnot(is.numeric(coord), length(coord)==2)
+      xlim <- coord
+  }
   thisCall <- match.call()
   # 1. get intensities in selected region
   if (verbose) cat("Getting probe intensities in selected regions..,\n")
@@ -150,4 +154,3 @@ chipAlongChrom <- function (eSet, chrom, probeAnno, xlim, ylim=NULL, samples=NUL
   }#if (useGFF & ("gff" %in% names(chromLocObj)))  
   invisible(chromExprs)  
 }# chipAlongChrom
-

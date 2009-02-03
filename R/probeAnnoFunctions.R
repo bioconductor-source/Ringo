@@ -51,8 +51,8 @@ posToProbeAnno <- function(pos, chrNameColumn="CHROMOSOME",probeColumn="PROBE_ID
   probeindex <- 1:nrow(hits)
   probeMultiplicity <- table(hits[[probeColumn]])
   if (verbose) cat("Creating probeAnno mapping for chromosome ")
-  thisMapping = new.env()
   sp <- split(probeindex, as.factor(hits[[chrNameColumn]]))
+  thisMapping = new.env(hash=TRUE, size=length(sp)*4)
   # for every chromosome, assign the hiting probes to the corresponding vector:
   for(i in seq(along=sp)) {
     chromprobes = sp[[i]]

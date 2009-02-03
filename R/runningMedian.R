@@ -59,16 +59,18 @@ computeRunningMedians <- function(xSet, probeAnno, modColumn="Cy5", allChr, winH
       newExprs[chridx,i] <- chrrm
     }#for (i in 1:length(all.mods))
   } #for (chr in allChr)
-
+  if (verbose) cat("\nConstruction result ExpressionSet...")
   # cat construct ExpressionSet of results:
-  sample.labels <- vector("character", nlevels(grouping))
-  for (i in 1:nlevels(grouping)) sample.labels[i] <- as.character(levels(grouping)[i])
-  newPD <- new("AnnotatedDataFrame", data=data.frame(label=sample.labels, row.names=sample.labels),
-               varMetadata=data.frame("varLabel"=c("label"),row.names=c("label")))
+  sample.labels <- as.character(levels(grouping))
+  if (!combineReplicates)
+      newPD <- phenoData(xSet)
+  else
+      newPD <- new("AnnotatedDataFrame", data=data.frame(label=sample.labels, row.names=sample.labels), varMetadata=data.frame("varLabel"=c("label"),row.names=c("label")))
   newEset <- new('ExpressionSet',exprs=newExprs,  phenoData = newPD)
       # experimentData = [MIAME], annotation = [character], ...
   featureNames(newEset) <- featureNames(xSet)
   sampleNames(newEset)  <- sample.labels
+  if (verbose) cat("Done.\n")
   return(newEset)
 }#computeRunningMedians
 

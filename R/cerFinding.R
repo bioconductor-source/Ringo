@@ -7,7 +7,7 @@ cherByThreshold <- function(positions, scores, threshold, distCutOff, minProbesI
   highScores <- scores >= threshold
   highScores[is.na(highScores)] <- FALSE
   highScorePairs <- highScores[-length(highScores)] * highScores[-1]
-  closePositions <- as.numeric(diff(positions)<=distCutOff)  
+  closePositions <- as.numeric(diff(positions)<=distCutOff)
   cherPairs <- highScorePairs * closePositions
   cherClusters <- clusters(cherPairs, minLen=(minProbesInRow-1), doSelect=TRUE)
   nClusters <- nrow(cherClusters)
@@ -30,7 +30,7 @@ cherByThreshold <- function(positions, scores, threshold, distCutOff, minProbesI
 
 
 ### main cher-finding funtion at the moment
-findChersOnSmoothed <- function(smoothedX, probeAnno, thresholds, allChr=NULL, distCutOff=600, minProbesInRow=3, cellType=NULL, checkUnique=TRUE, uniqueCodes=c(0), verbose=TRUE)
+findChersOnSmoothed <- function(smoothedX, probeAnno, thresholds, allChr=NULL, distCutOff=600, minProbesInRow=3, cellType=NULL, antibodyColumn=NULL, checkUnique=TRUE, uniqueCodes=c(0), verbose=TRUE)
 {
   stopifnot(is.numeric(thresholds), length(thresholds)==ncol(smoothedX),
             validObject(probeAnno), inherits(smoothedX,"ExpressionSet"))
@@ -55,6 +55,14 @@ findChersOnSmoothed <- function(smoothedX, probeAnno, thresholds, allChr=NULL, d
     }
   } else {
     allCellTypes <- vector("character", ncol(smoothedX))
+  }
+  if (!is.null(antibodyColumn)){
+      antibodies <- as.character(pData(smoothedX)[[antibodyColumn]])
+      if (is.null(antibodies))
+          warning(paste("Column",antibodyColumn,"not defined not in the phenoData of object", deparse(substitute(xdf)),"."))
+          antibodies <- sampleNames(smoothedX)
+  } else {
+      antibodies <- sampleNames(smoothedX)
   }
   resultChers <- vector("list",ncol(smoothedX))
   for (i in 1:ncol(smoothedX)){

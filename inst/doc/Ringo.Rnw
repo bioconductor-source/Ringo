@@ -1,5 +1,5 @@
 %\VignetteIndexEntry{R Investigation of NimbleGen Oligoarrays}
-%\VignetteDepends{Ringo}
+%\VignetteDepends{Ringo, mclust}
 %\VignetteKeywords{microarray ChIP-chip NimbleGen nimblegen}
 %\VignettePackage{Ringo} % name of package
 
@@ -53,7 +53,7 @@ raiselinks,plainpages,pdftex]{hyperref}
 %%%%%%% START EDITING HERE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 
-\SweaveOpts{eps=false} % produce no 'eps' figures
+\SweaveOpts{eps=false, keep.source=TRUE} % produce no 'eps' figures
 
 \title{Ringo - R Investigation of NimbleGen Oligoarrays}
 \author{Joern Toedling}
@@ -61,16 +61,20 @@ raiselinks,plainpages,pdftex]{hyperref}
 \maketitle
 
 <<prepare, echo=FALSE>>=
-options(length=60)
+options(length=60, stringsAsFactors=FALSE)
 set.seed(123)
-@ 
+options(SweaveHooks=list(
+   along=function() par(mar=c(2.5,4.2,4,1.5), font.lab=2),
+   boxplot=function() par(mar=c(5,5,1,1), font.lab=4),
+   dens=function() par(mar=c(4.1, 4.1, 0.1, 0.1), font.lab=2)))
+@
 
 \section{Introduction}
 
 The package \Rpackage{Ringo} deals with the analysis of two-color
-oligonucleotide microarrays used in ChIP-chip projects. 
+oligonucleotide microarrays used in ChIP-chip projects.
 The package was started to facilitate the analysis of
-two-color microarrays from the company 
+two-color microarrays from the company
 NimbleGen\footnote{for NimbleGen one-color microarrays,
 we recommend the Bioconductor package \Rpackage{oligo}},
 but the package has a modular design,
@@ -84,16 +88,17 @@ ChIP-chip-specific and NimbleGen-specific functionalities.
 
 <<loadpackage, results=hide>>=
 library("Ringo")
-@ 
+@
 
-If you use Ringo for analyzing your data, please cite: \nocite{Ringo2007}
+If you use Ringo for analyzing your data, please cite:
 \begin{itemize}
 \item{Joern Toedling, Oleg Sklyar, Tammo Krueger, Jenny J Fischer, Silke Sperling, Wolfgang Huber (2007). Ringo - an R/Bioconductor package for analyzing ChIP-chip readouts. \textsl{BMC Bioinformatics}, 8:221.}
 \end{itemize}
+\nocite{Ringo2007}
 
 \subsection*{Getting help}
 
-If possible, please send questions about \Rpackage{Ringo} to the 
+If possible, please send questions about \Rpackage{Ringo} to the
 Bioconductor mailing list.\\
 See \url{http://www.bioconductor.org/docs/mailList.html} \\
 Their archive of questions and responses may prove helpful, too.
@@ -101,49 +106,50 @@ Their archive of questions and responses may prove helpful, too.
 
 \section{Reading in the raw data}
 
-For each microarray, the scanning output consists of two files, one holding
-the Cy3 intensities, the other one the Cy5 intensities. These files are 
-tab-delimited text files. 
+For each microarray, the scanning output consists of two files, one
+holding the Cy3 intensities, the other one the Cy5 intensities.
+These files are tab-delimited text files.
 
 The package comes with (shortened) example scanner output files,
 in NimbleGen's \emph{pair} format.
-These files are excerpts of the ChIP-chip demo data that NimbleGen 
+These files are excerpts of the ChIP-chip demo data that NimbleGen
 provide at their FTP site for free download.
 Their biological context, identification of DNA binding sites
-of complexes containing Suz12 in human cells, 
+of complexes containing Suz12 in human cells,
 has been described before \citep{Squazzo2006}.
 
 <<locateData>>=
 exDir <- system.file("exData",package="Ringo")
 list.files(exDir, pattern="pair.txt")
-head(read.delim(file.path(exDir,"MOD_20551_PMT1_pair.txt"), skip=1))[,c(1,4:7,9)]
+head(read.delim(file.path(exDir,"MOD_20551_PMT1_pair.txt"),
+                skip=1))[,c(1,4:7,9)]
 @
 
-In addition, there is a text file that holds details on the samples, 
-including which two \emph{pair} files belong to which 
-sample\footnote{You may have to construct such a targets file for your own 
+In addition, there is a text file that holds details on the samples,
+including which two \emph{pair} files belong to which
+sample\footnote{You may have to construct such a targets file for your own
 data. The \texttt{scripts} directory of this package contains a script
-\texttt{convertSampleKeyTxt.R} as an inspiration how the file 
+\texttt{convertSampleKeyTxt.R} as an inspiration how the file
 \texttt{SampleKey.txt} provided by NimbleGen could be used for this.}.
 
 <<exampleFilesTxt>>=
-read.delim(file.path(exDir,"example_targets.txt"), header=TRUE) 
-@ 
+read.delim(file.path(exDir,"example_targets.txt"), header=TRUE)
+@
 
-The columns \texttt{FileNameCy3} and \texttt{FileNameCy5} hold which of the
-raw data files belong to which sample. 
-The immuno-precipitated extract 
-was colored with the Cy5 dye in the experiment, so the column \texttt{Cy5} 
-essentially holds which antibody has been used for the immuno-precipitation, 
-in this case one against the protein \texttt{Suz12}.
+The columns \texttt{FileNameCy3} and \texttt{FileNameCy5} hold which
+of the raw data files belong to which sample.
+The immuno-precipitated extract was colored with the Cy5 dye in the
+experiment, so the column \texttt{Cy5} essentially holds which
+antibody has been used for the immuno-precipitation, in this case one
+against the protein \texttt{Suz12}.
 
 Furthermore, there is a file describing the reporter categories
-on the array (you might know these Spot Types files from \Rpackage{limma}
-\citep{limma05}).
+on the array (you might know these Spot Types files from
+\Rpackage{limma}~\citep{limma05}).
 
 <<spottypes>>=
-read.delim(file.path(exDir,"spottypes.txt"), header=TRUE) 
-@ 
+read.delim(file.path(exDir,"spottypes.txt"), header=TRUE)
+@
 
 Reading all these files, we can read in the raw reporter intensities
 and obtain an object of class \Rclass{RGList}, a class defined
@@ -151,37 +157,38 @@ in package \Rpackage{limma}.
 
 <<readNimblegen, results=hide>>=
 exRG <- readNimblegen("example_targets.txt","spottypes.txt",path=exDir)
-@ 
+@
 
-This object is essentially a list and contains the raw intensities of the two 
-hybridizations for the red and green channel plus information on the reporters on the array
-and on the analyzed samples.
+This object is essentially a list and contains the raw intensities of
+the two hybridizations for the red and green channel plus information
+on the reporters on the array and on the analyzed samples.
 
 <<showRG>>=
 head(exRG$R)
 head(exRG$G)
 head(exRG$genes)
 exRG$targets
-@ 
+@
 
 Users can alternatively supply raw two-color ChIP-chip readouts
 from other platforms in \Rclass{RGList} format and consecutively use
 \Rpackage{Ringo} to analyze that data.
+See Section~\ref{sec-agilent} for an example.
 
 
 \section{Mapping reporters to genomic coordinates}
 
 By \emph{reporters}, we mean the oligo-nucleotides or PCR products
-that have been fixated on the array for measuring the abundance of 
+that have been fixated on the array for measuring the abundance of
 corresponding genomic fragments in the ChIP-chip experiment.
 
 Each reporter has a unique identifier and (ideally) a unique sequence,
-but can, and probably does, appear in multiple copies as \emph{features}
-on the array surface.
+but can, and probably does, appear in multiple copies as
+\emph{features} on the array surface.
 
 A mapping of reporters to genomic coordinates is usually provided
-by the array manufacturer, such as in NimbleGen's *.POS files. 
-If the reporter sequences are provided as well, 
+by the array manufacturer, such as in NimbleGen's *.POS files.
+If the reporter sequences are provided as well,
 you may consider to perform a custom
 mapping of these sequences to the genome of interest, using alignment
 tools such as \emph{Exonerate} \citep{Slater2005}
@@ -192,20 +199,23 @@ Such a re-mapping of reporters to the genome can sometimes be
 necessary, for example when the array has designed on
 an outdated assembly of the genome.
 Re-mapping also provides the advantage that you can allow non-perfect
-matches of reporters to the genome, if desired. 
+matches of reporters to the genome, if desired.
 
 Once reporters have been mapped to the genome, this mapping needs to
 be made available to the data analysis functions.
-While a \Rclass{data.frame} may be an obvious way of representing such a
-mapping, repeatedly extracting sub-sets of the data frame related to a
-genomic region of interest turns out to be too slow for practical purposes.
-\Rpackage{Ringo}, similar to the Bioconductor package \Rpackage{tilingArray},
-employs an object of class \Rclass{probeAnno} to store the mapping between 
-reporters on the microarray and genomic positions.
-Per chromosome, the object holds four vectors of equal length and ordering
-that specify at which genomic positions reporter matches start and end, 
-what identifiers or indices these reporters have in the intensities data,
-and whether these reporters match uniquely to the genomic positions.
+While a \Rclass{data.frame} may be an obvious way of representing such
+a mapping, repeatedly extracting sub-sets of the data frame related to
+a genomic region of interest turns out to be too slow for practical
+purposes.
+\Rpackage{Ringo}, similar to the Bioconductor package
+\Rpackage{tilingArray}, employs an object of class \Rclass{probeAnno}
+to store the mapping between reporters on the microarray and genomic
+positions.
+Per chromosome, the object holds four vectors of equal length and
+ordering that specify at which genomic positions reporter matches
+start and end, what identifiers or indices these reporters have in the
+intensities data, and whether these reporters match uniquely to the
+genomic positions.
 
 <<loadProbeAnno>>=
 load(file.path(exDir,"exampleProbeAnno.rda"))
@@ -213,22 +223,22 @@ ls(exProbeAnno)
 show(exProbeAnno)
 head(exProbeAnno["9.start"])
 head(exProbeAnno["9.end"])
-@ 
+@
 
 The function \Rfunction{posToProbeAnno} allows generation
-of a valid \Rclass{probeAnno} object, 
+of a valid \Rclass{probeAnno} object,
 either from a file that corresponds to a NimbleGen \texttt{POS} file
-or from a \Rclass{data.frame} objects that holds the same information.
-The package's \texttt{scripts} directory contains 
-the script \texttt{mapReportersWithBiostrings.R}, which shows how to
-use \Rpackage{Biostrings} for mapping the 
-reporter sequences of the provided example data. and some
-Perl scripts that allow the conversion of multiple output files from
-common alignment tools such as Exonerate into one file that corresponds
-to a POS file.
+or from a \Rclass{data.frame} objects that holds the same
+information.
+The package's \texttt{scripts} directory contains a script
+\texttt{mapReportersWithBiostrings.R}, which shows how to use
+\Rpackage{Biostrings} for mapping the reporter sequences of the
+provided example data, and some Perl scripts that allow the conversion
+of multiple output files from common alignment tools such as Exonerate
+into one file that corresponds to a POS file.
 The function \Rfunction{validObject} can be used to perform a
-quick check whether a generated \Rclass{probeAnno} object will probably
-work with  other \Rpackage{Ringo} functions.
+quick check whether a generated \Rclass{probeAnno} object will
+probably work with  other \Rpackage{Ringo} functions.
 
 
 \section{Quality assessment}
@@ -251,32 +261,33 @@ image(exRG, 1, channel="green", mycols=c("black","green4","springgreen"))
 dev.off()
 @
 
-\myincfig{Ringo-imageRG}{0.6\textwidth}{Spatial distribution of raw
+\myincfig{Ringo-imageRG}{0.5\textwidth}{Spatial distribution of raw
 reporter intensities laid out by the reporter position on the
 microarray surface.}
 
 See figure \ref{Ringo-imageRG} for the image.
-Since the provided example data set only holds the intensities for reporters
-mapped to the forward strand of chromosome 9,
-the image only shows the few green dots of these reporters' positions.
-We see, however, that these chromosome 9 reporters are well distributed
-over the whole array surface rather than being clustered together in one
-part of the array.
+Since the provided example data set only holds the intensities for
+reporters mapped to the forward strand of~chromosome 9,
+the image only shows the few green dots of these reporters'
+positions.
+We see, however, that these chromosome 9 reporters are well
+distributed over the whole array surface rather than being clustered
+together in one part of the array.
 
-It may also be useful to look at the absolute distribution of 
+It may also be useful to look at the absolute distribution of
 the single-channel densities. \Rpackage{limma}'s function
 \Rfunction{plotDensities} may be useful for this purpose.
 %
 <<plotDensities, fig=TRUE, include=TRUE, width=6, height=4>>=
 plotDensities(exRG)
 @
-%
-In addition, the data file loaded above also contains a 
+
+In addition, the data file loaded above also contains a
 \emph{GFF (General Feature Format)}
-file of all transcripts on human chromosome 9 annotated in the 
-\href{http://www.ensembl.org}{Ensembl} database 
+file of all transcripts on human chromosome 9 annotated in the
+\href{http://www.ensembl.org}{Ensembl} database
 (release 46, August 2007).
-The script \texttt{retrieveGenomicFeatureAnnotation.R} in the 
+The script \texttt{retrieveGenomicFeatureAnnotation.R} in the
 package's scripts directory contains
 example source code showing how the Bioconductor package
 \Rpackage{biomaRt} can be used to generate such an annotated
@@ -284,9 +295,9 @@ genome features \Rclass{data.frame}.
 
 <<showGFF>>=
 head(exGFF[,c("name","symbol","chr","strand","start","end")])
-@ 
+@
 
-To assess the impact of the small distance between reporters 
+To assess the impact of the small distance between reporters
 on the data, one can look at the autocorrelation plot.
 For each base-pair lag $d$, it is assessed how strong the intensities
 of reporters at genomic positions $x+d$ are correlated with the probe
@@ -297,11 +308,11 @@ The computed correlation is plotted against the lag $d$.
 <<autocorRG0, results=hide, fig=TRUE, include=TRUE, width=6, height=4>>=
 exAc <- autocor(exRG, probeAnno=exProbeAnno, chrom="9", lag.max=1000)
 plot(exAc)
-@ 
+@
 
 We see some auto-correlation between probe position up to 800 base pairs
 apart. Since the sonicated fragments that are hybridized to the
-array have an average size in the range of up to 1000 bp, 
+array have an average size in the range of up to 1000~bp,
 such a degree of auto-correlation up to this distance can be expected.
 
 
@@ -309,9 +320,9 @@ such a degree of auto-correlation up to this distance can be expected.
 
 Following quality assessment of the raw data,
 we perform normalization of the probe intensities
-and derive fold changes of reporters' intensities in the enriched sample
-divided by their intensities in the non-enriched \emph{input} sample
-and take the (generalized) logarithm of these ratios.
+and derive fold changes of reporters' intensities in the enriched
+sample divided by their intensities in the non-enriched \emph{input}
+sample and take the (generalized) logarithm of these ratios.
 
 We use the variance-stabilizing normalization \citep{HuberVSN}
 or probe intensities and generate an \texttt{ExpressionSet} object
@@ -319,7 +330,7 @@ of the normalized probe levels.
 
 <<preprocess, eval=FALSE>>=
 exampleX <- preprocess(exRG)
-sampleNames(exampleX) <- 
+sampleNames(exampleX) <-
  with(exRG$targets, paste(Cy5,"vs",Cy3,sep="_"))
 print(exampleX)
 @ 
@@ -329,8 +340,8 @@ print(exampleX)
 @ 
 
 Among the provided alternative preprocessing options is also the
-Tukey-biweight scaling procedure that NimbleGen have used to scale ChIP-chip
-readouts so that the data is centered on zero.
+Tukey-biweight scaling procedure that NimbleGen have used to scale
+ChIP-chip readouts so that the data is centered on zero.
 
 <<preprocessNG, results=hide>>=
 exampleX.NG <- preprocess(exRG, method="nimblegen")
@@ -345,136 +356,134 @@ corPlot(cbind(exprs(exampleX),exprs(exampleX.NG)),
         grouping=c("VSN normalized","Tukey-biweight scaled"))
 @ 
 
-The same function can also be used to assess the correlation between biological 
-and technical replicates among the microarray samples.
+The same function can also be used to assess the correlation between
+biological and technical replicates among the microarray samples.
 
 
 \section{Visualize intensities along the chromosome}
 
-<<chipAlongChrom0, eval=FALSE>>=
-chipAlongChrom(exampleX, chrom="9", xlim=c(34318000,34321000), ylim=c(-2,4), probeAnno=exProbeAnno, gff=exGFF)
+<<chipAlongChrom, echo=TRUE, fig=TRUE, include=FALSE, width=9.6, height=4.8, results=hide, along=TRUE>>=
+chipAlongChrom(exampleX, chrom="9", xlim=c(34318000,34321000),
+               ylim=c(-2,4), probeAnno=exProbeAnno, gff=exGFF)
 @ 
-<<chipAlongChrom, echo=FALSE, fig=TRUE, include=FALSE, width=9.6, height=4.8, results=hide>>=
-par(mar=c(2.5,4.2,4,1.5), font.lab=2)
-chipAlongChrom(exampleX, chrom="9", xlim=c(34318000,34321000), ylim=c(-2,4), probeAnno=exProbeAnno, gff=exGFF)
-@ 
-
-\myincfig{Ringo-chipAlongChrom}{0.98\textwidth}{Normalized probe intensities around the TSS of the \texttt{Nudt2} gene.}
+%
+\myincfig{Ringo-chipAlongChrom}{0.98\textwidth}{Normalized probe
+  intensities around the TSS of the \texttt{Nudt2} gene.}
 
 See the result in figure \ref{Ringo-chipAlongChrom}.
 
 
 \section{Smoothing of probe intensities}
 
-Since the response of reporters to the same amount of hybridized genome material
-varies greatly, due to probe GC content, melting temperature, 
-secondary structure etc., it is suggested to do a smoothing over individual 
-probe intensities before looking for ChIP-enriched regions.
+Since the response of reporters to the same amount of hybridized
+genome material varies greatly, due to probe GC content, melting
+temperature,  secondary structure etc., it is suggested to do a
+smoothing over individual  probe intensities before looking for
+ChIP-enriched regions.
 
-Here, we slide a window of 800 bp width along the chromosome and replace the
-intensity at e genomic position $x_0$ by the median over the intensities
-of those reporters inside the window  that is centered at $x_0$.
+Here, we slide a window of 800 bp width along the chromosome and
+replace the intensity at e genomic position $x_0$ by the median over
+the intensities of those reporters inside the window  that is centered
+at~$x_0$.
 
 <<smoothing, results=hide>>=
 smoothX <- computeRunningMedians(exampleX, probeAnno=exProbeAnno,
 modColumn = "Cy5", allChr = "9", winHalfSize = 400)
 sampleNames(smoothX) <- paste(sampleNames(exampleX),"smoothed")
 @ 
-<<smoothAlongChrom0, eval=FALSE>>=
-chipAlongChrom(exampleX, chrom="9", xlim=c(34318000,34321000), ylim=c(-2,4), probeAnno=exProbeAnno, gff=exGFF)
-chipAlongChrom(smoothX, chrom="9", xlim=c(34318000,34321000), probeAnno=exProbeAnno, itype="l", ilwd=4, paletteName="Spectral", add=TRUE)
-@ 
 %
-<<smoothAlongChrom, echo=FALSE, fig=TRUE, include=FALSE, width=9.6, height=4.8, results=hide>>=
-#jpeg("Ringo-smoothAlongChrom.jpg", quality=100, width=960, height=480)
-par(mar=c(2.5,4.2,4,1.5), font.lab=2)
-chipAlongChrom(exampleX, chrom="9", xlim=c(34318000,34321000), ylim=c(-2,4), probeAnno=exProbeAnno, gff=exGFF)
-chipAlongChrom(smoothX, chrom="9", xlim=c(34318000,34321000), probeAnno=exProbeAnno, itype="l", ilwd=4, paletteName="Spectral", add=TRUE)
-#dev.off()
-@ 
-%
-\myincfig{Ringo-smoothAlongChrom}{0.98\textwidth}{Normalized and smoothed probe intensities around the TSS of the \texttt{Nudt2} gene.}
+<<smoothAlongChrom, echo=TRUE, fig=TRUE, include=FALSE, width=9.6, height=4.8, results=hide, along=TRUE>>=
+chipAlongChrom(exampleX, chrom="9", xlim=c(34318000,34321000), 
+               ylim=c(-2,4), probeAnno=exProbeAnno, gff=exGFF)
+chipAlongChrom(smoothX, chrom="9", xlim=c(34318000,34321000),
+               probeAnno=exProbeAnno, itype="l", ilwd=4,
+               paletteName="Spectral", add=TRUE)
+@
+\myincfig{Ringo-smoothAlongChrom}{0.98\textwidth}{Normalized and
+  smoothed probe intensities around the TSS of the \texttt{Nudt2}
+  gene.}
 
 See the smoothed probe levels in figure \ref{Ringo-smoothAlongChrom}.
 
 
 \section{Finding ChIP-enriched regions}
+\label{sec-threshold}
 
-To identify antibody-enriched genomic regions, we require the following:
-
+To identify antibody-enriched genomic regions, we require the
+following:
 \begin{itemize}
-\item smoothed intensities of reporters mapped to this region are exceed a certain threshold $y_0$
+\item smoothed intensities of reporters mapped to this region exceed a
+  certain threshold $y_0$
 \item the region contains at least three probe match positions
-\item each affected position is less than a defined maximum distance $d_{max}$ 
-apart from another affected position in the region (we require a certain
-probe spacing to have confidence in detected peaks\footnote{Note
-that the term ''peak'', while commonly used in ChIP-chip context,
-is slightly misleading and the term "ChIP-enriched region", 
-or "cher" in shorthand,
-is more appropriate. Within such regions the actual signal could show two
-or more actual signal peaks or none at all (long plateau).})
+\item each affected position is less than a defined maximum
+  distance~$d_{max}$
+apart from another affected position in the region (we require a
+certain probe spacing to have confidence in detected
+peaks\footnote{Note that the term ''peak'', while commonly used in
+  ChIP-chip context, is slightly misleading and the term
+  "ChIP-enriched region", or "cher" in shorthand, is more
+  appropriate. Within such regions the actual signal could show two or
+  more actual signal peaks or none at all (long plateau).})
 \end{itemize}
 
-For setting the threshold $y_0$, one has to assess the 
+For setting the threshold $y_0$, one has to assess the
 expected (smoothed) probe levels in non-enriched genomic regions,
 i.e. the \emph{null distribution} of probe levels.
-In a perfect world, we could use a log ratio of $0$ as definite cut-off.
+In a perfect world, we could use a log ratio of $0$ as definite
+cut-off.
 In this case the ``enriched'' DNA and the input DNA sample would be
-present in equal amounts, so no antibody-bound epitope, 
+present in equal amounts, so no antibody-bound epitope,
 could be found at this genomic site.
-In practice, there are some reasons why zero may be a too naive cut-off
-for calling a probe-hit genomic site \emph{enriched} in our case.
-See \citet{BourgonPhD} for an extensive discussion on problematic issues
-with ChIP-chip experiments. We will just briefly mention a few issues
-here.
+In practice, there are some reasons why zero may be a too naive
+cut-off for calling a probe-hit genomic site \emph{enriched} in our
+case.
+See~\citet{BourgonPhD} for an extensive discussion on problematic
+issues with ChIP-chip experiments.
+We will just briefly mention a few issues here.
 For once, during the immuno-precipitation, some non-antibody-bound
 regions may be pulled down in the assay and consequently enriched or
-some enriched DNA may cross-hybridize to other reporters. 
+some enriched DNA may cross-hybridize to other reporters.
 Furthermore, since genomic fragments after sonication are mostly a lot
 larger than the genomic distance between two probe-matched genomic
-positions, auto-correlation between reporters certainly is existent. 
+positions, auto-correlation between reporters certainly is existent.
 Importantly, different reporters measure the same DNA amount with a
 different efficiency even after normalizing the probe levels, due to 
 sequence properties of the probe, varying quality of the synthesis of
 reporters on the array and other reasons.
-To ameliorate this fact, we employ the sliding-window smoothing approach.
+To ameliorate this fact, we employ the sliding-window smoothing
+approach.
 
-The aforementioned issues make it difficult to come up with a reasonable 
-estimate for the null distribution of smoothed probe levels 
+The aforementioned issues make it difficult to come up with a
+reasonable estimate for the null distribution of smoothed probe levels
 in non-enriched genomic regions. 
 See Figure \ref{Ringo-histogramSmoothed} for the two histograms.
-We present one way (out of many) for objectively choosing the cutoff $y_0$.
-The histograms suggest the smoothed reporter levels follow a mixture of two 
-distributions, one being the null distribution of non-affected reporters and
-the other one the alternative one for the smoothed reporter values in
-H3K4me3-ChIP enriched regions.
-We assume the null distribution is symmetric and its mode is the one close to
-zero in the histogram. By mirroring its part left of the mode over the
-mode, we end up with an estimated null distribution.
-For the alternative distribution, we only assume that it is stochastically
-larger than the null distribution and that its mass to the left of the
-estimated mode of the null distribution is negligible.
+We present one way (out of many) for objectively choosing the
+threshold~$y_0$.
+The histograms suggest the smoothed reporter levels follow a mixture
+of two distributions, one being the null distribution of non-affected
+reporters and the other one the alternative one for the smoothed
+reporter values in ChIP-enriched regions.
+We assume the null distribution is symmetric and its mode is the one
+close to zero in the histogram. By mirroring its part left of the mode
+over the mode, we end up with an estimated null distribution.
+For the alternative distribution, we only assume that it is
+stochastically larger than the null distribution and that its mass to
+the left of the estimated mode of the null distribution is
+negligible.
 We estimate an upper bound $y_0$ for values arising from the null
-distribution and conclude that smoothed probe levels $y > y_0$ 
-are more likely to arise from the H3K4me3 enrichment distribution
+distribution and conclude that smoothed probe levels \mbox{$y > y_0$}
+are more likely to arise from the ChIP enrichment distribution
 than from the null distribution.
 These estimates are indicated by red vertical lines in the histograms.
 
 <<setY0>>=
 (y0 <- apply(exprs(smoothX),2,upperBoundNull))
 @ 
-<<histogramSmoothed0, eval=FALSE, results=hide>>=
-par(font.lab=2, mar=c(4,4,1,1))
-hist(exprs(smoothX)[,1], n=25, xlab="Smoothed reporter intensities [log]", xlim=c(-2,2), main=NA, col=brewer.pal(8,"Set2")[1])
-abline(v=y0[,1], col="red")
-@ 
-
-<<histogramSmoothed, echo=FALSE, fig=TRUE, include=FALSE, width=7, height=5, results=hide>>=
-#pdf(file="Ringo-histogramSmoothed.pdf", width=7, height=5)
-par(font.lab=2, mar=c(4,4,1,1))
-h1 <- hist(exprs(smoothX)[,1], n=25, xlab="Smoothed reporter intensities [log]", xlim=c(-3,5), main=NA, col=brewer.pal(8,"Set2")[1])
+%
+<<histogramSmoothed, echo=FALSE, fig=TRUE, include=FALSE, width=6, height=4, results=hide, dens=TRUE>>=
+h1 <- hist(exprs(smoothX)[,1], n=25, xlim=c(-3,5), main=NA,
+           xlab="Smoothed reporter intensities [log]")
 abline(v=y0[1], col="red")
-#dev.off()
 @ 
 %
 \myincfig{Ringo-histogramSmoothed}{0.65\textwidth}{Histograms of reporter intensities after smoothing of reporter level. The red vertical line is the cutoff values suggested by the histogram.}
@@ -487,14 +496,16 @@ While this threshold worked well for us,
 we do not claim this way to be a gold standard for determining the
 threshold. 
 In particular, it does not take into account the auto-correlation between
-near-by reporters. See \citet{BourgonPhD} for a more sophisticated algorithm
-that does take it into account.
+near-by reporters. See \citet{BourgonPhD} for a more sophisticated
+algorithm that does take it into account.
 
 <<cherFinding, results=hide>>=
-chersX <- findChersOnSmoothed(smoothX, probeAnno=exProbeAnno, thresholds=y0, allChr="9", distCutOff=600, cellType="human")
+chersX <- findChersOnSmoothed(smoothX, probeAnno=exProbeAnno, thresholds=y0,
+   allChr="9", distCutOff=600, cellType="human")
 chersX <- relateChers(chersX, exGFF)
 chersXD <- as.data.frame.cherList(chersX)
-@ 
+@
+%
 <<showChers>>=
 chersXD[order(chersXD$maxLevel, decreasing=TRUE),]
 @ 
@@ -502,28 +513,23 @@ chersXD[order(chersXD$maxLevel, decreasing=TRUE),]
 Note that in \Rpackage{Ringo} functions, 
 ``ChIP-enriched region'' is abbreviated to ``cher''.
  
-One characteristic of enriched regions that can be used for 
-sorting them is the element \texttt{maxLevel}, that is the highest smoothed
-probe level in the enriched region. 
+One characteristic of enriched regions that can be used for sorting
+them is the element \texttt{maxLevel}, that is the highest smoothed
+probe level in the enriched region.
 Alternatively, one can sort by the \texttt{score},
-that is the sum of smoothed probe levels minus the threshold. It is a 
-discretized version of to the area under the curve with the baseline being the 
-threshold. 
+that is the sum of smoothed probe levels minus the threshold.
+It is a discretized version of to the area under the curve with the
+baseline being the  threshold.
 
-<<plotCher0, eval=FALSE, results=hide>>=
-plot(chersX[[1]], smoothX, probeAnno=exProbeAnno, gff=exGFF, paletteName="Spectral")
-@ 
-<<plotCher, echo=FALSE, fig=TRUE, include=FALSE, width=9.6, height=4.8, results=hide>>=
-#jpeg("Ringo-plotCher.jpg", quality=100, width=960, height=480)
-par(mar=c(2.5,4.2,4,1.5), font.lab=2)
-plot(chersX[[1]], smoothX, probeAnno=exProbeAnno, gff=exGFF, paletteName="Spectral")
-#dev.off()
-@ 
+<<plotCher, fig=TRUE, include=FALSE, width=9.6, height=4.8, results=hide, along=TRUE>>=
+plot(chersX[[1]], smoothX, probeAnno=exProbeAnno, gff=exGFF,
+     paletteName="Spectral")
+@
 %
 \myincfig{Ringo-plotCher}{0.9\textwidth}{One of the identified Suz12-antibody
 enriched regions on chromosome 9.}
 
-Figure \ref{Ringo-plotCher} displays an identified enriched region, 
+Figure~\ref{Ringo-plotCher} displays an identified enriched region, 
 which is located upstream of the \texttt{Nudt2} gene. 
 This ChIP-enriched region was already obvious in plots of the 
 normalized data (see Figure \ref{Ringo-smoothAlongChrom}).
@@ -531,20 +537,204 @@ While it is reassuring that our method recovers it as well, a number
 of other approaches would undoubtedly have reported it as well.
 
 
+\section{Agilent data}
+\label{sec-agilent}
+
+The package \Rpackage{Ringo} can also be applied to ChIP-chip data
+from manufacturers other than NimbleGen.
+As long as the data is supplied as an \Rclass{RGList} or
+\Rclass{ExpressionSet}, the functions of the package can be used,
+although certain function arguments may need to be changed from their
+default setting.
+As an example, we demonstrate how \Rpackage{Ringo} can be used for
+the analysis of ChIP-chip data generated on two-color microarrays from
+Agilent.
+These data have been described in \citet{Schmidt2008}, and
+the raw data files were downloaded from the ArrayExpress
+database~\citep[accession: E-TABM-485]{Parkinson2009}.
+The data are ChIP-chip measurements of the
+histone modification H3K4me3 in a 300~kb region of chromosome 17
+in mouse Tc1 liver cells.
+These demo data files included in this package
+are only excerpts of the original data files.
+
+First we read in the raw data using the function
+\Rfunction{read.maimages} from package \Rpackage{limma}.
+
+<<readAgilentData, results=hide>>=
+agiDir <- system.file("agilentData", package="Ringo")
+arrayfiles <- list.files(path=agiDir,
+ pattern="H3K4Me3_Tc1Liver_sol1_mmChr17_part.txt")
+RG <- read.maimages(arrayfiles, source="agilent", path=agiDir)
+@
+Annotation of the one sample was provided and we created a targets
+file that contains this sample annotation.
+<<readAgiTargets, results=hide>>=
+at <- readTargets(file.path(agiDir,"targets.txt"))
+RG$targets <- at
+@
+Have a look at the raw data structure in R.
+<<showAgilentRG>>=
+show(RG)
+@
+
+We can only perform limited quality assessment of these data, as the
+data only consist of one sample and the demo data files are only a
+short excerpt of the full raw data from that microarray.
+Have a look at the spatial distribution of the raw intensities on the
+microarray surface.
+
+<<imageAgiRG0, eval=FALSE>>=
+par(mar=c(0.01,0.01,0.01,0.01), bg="black")
+image(RG, 1, channel="red", dim1="Col", dim2="Row",
+      mycols=c("sienna","darkred","orangered"))
+@ 
+%
+<<imageAgiRG,eval=TRUE,results=hide,echo=FALSE>>=
+jpeg("Ringo-imageAgiRG.jpg", quality=100, height=455, width=534)
+par(mar=c(0.01,0.01,0.01,0.01), bg="black")
+image(RG, 1, channel="red", dim1="Row", dim2="Col",
+      mycols=c("sienna","darkred","orangered"))
+dev.off()
+@
+\myincfig{Ringo-imageAgiRG}{0.6\textwidth}{Spatial distribution of raw
+reporter intensities of the Agilent microarray, laid out by the
+reporter position on the microarray surface.}
+
+See the result in Figure~\ref{Ringo-imageAgiRG}.
+Again, the sparseness of the image is due to the fact that the example
+data is only a short excerpt of the original raw data file from the
+microarray.
+
+To create a  \Rclass{probeAnno} object for this array, there are two
+possibilites:
+\begin{enumerate}
+\item one option -- in many cases the preferable one -- is to remap
+  all the probe sequences from the array description file to the
+  current genome build
+\item often, as in this case, the systematic name Agilent gives to
+  reporters on the array corresponds to the genomic coordinates these
+  reporters were designed to match. Therefore, if one decides to
+  accept the mapping provided by the manufacturer, these systematic
+  names can be used to generate a \Rclass{probeAnno} object.
+\end{enumerate}
+
+Here, we show the second option and use the systematic names of the
+reporters, as provided in the raw data file.
+
+<<makeAgilentProbeAnno, results=hide>>=
+pA <- extractProbeAnno(RG, "agilent", genome="mouse", 
+   microarray="Agilent Tiling Chr17")
+@
+
+\phead{Genome annotation}
+The provided Agilent example data relate to chromosome~17 of the Mouse
+genome. We have used the package \Rpackage{biomaRt} to retrieve
+annotated genes on this chromosome from the Ensembl
+database\footnote{See the script
+  \texttt{retrieveGenomicFeatureAnnotation.R} in the package's
+  \texttt{scripts} directory for details.}.
+
+<<agiLoadGenomeAnno>>=
+load(file=file.path(agiDir,"mm9chr17.RData"))
+@
+
+\phead{Data processing}
+We preprocess the data in the same way as the previous example data
+set.
+<<preprocessAgilentData, results=hide>>=
+X <- preprocess(RG[RG$genes$ControlType==0,], method="nimblegen", 
+                idColumn="ProbeName")
+sampleNames(X) <- X$SlideNumber
+@
+We visualize the data in the region around the start site of the gene
+\textit{Rab11b} on chromosome~17.
+@ 
+For setting the parameters of the sliding-window smoothing, we
+first investigate the spacing between adjacent reporter matches on the
+genome.
+<<agiProbeDistances>>=
+probeDists <- diff(pA["17.start"])
+br <- c(0, 100, 200, 300, 500, 1000, 10000, max(probeDists))
+table(cut(probeDists, br))
+@
+The majority of match positions are $100--300$~bp apart.
+<<agiSmoothing, results=hide>>=
+smoothX <- computeRunningMedians(X, modColumn="Antibody",
+              winHalfSize=500, min.probes=3, probeAnno=pA)
+sampleNames(smoothX) <- paste(sampleNames(X),"smooth",sep=".")
+@
+We visualize the data before and after smoothing in the region around
+the start site of the gene \textit{Rab11b} on chromosome~17.
+<<agiSmoothAlongChrom, along=TRUE, fig=TRUE, include=FALSE, width=9.6, height=4.8, results=hide>>=
+chipAlongChrom(X, probeAnno=pA, chr="17", coord=33887000+c(0, 13000),
+               gff=mm9chr17, maxInterDistance=450)
+chipAlongChrom(smoothX, probeAnno=pA, chr="17", add=TRUE,
+               coord=33887000+c(0, 13000), paletteName="Set1",
+               maxInterDistance=450)
+@
+\myincfig{Ringo-agiSmoothAlongChrom}{0.98\textwidth}{Normalized and
+  smoothed Agilent reporter intensities around the TSS of the gene
+  \textit{Rap11b}.}
+See the result in Figure~\ref{Ringo-agiSmoothAlongChrom}.
+
+\phead{Find ChIP-enriched regions}
+We compare two approaches to determine the threshold $y_0$ above
+which smoothed reporter levels are considered to indicate enrichment.
+The first one is the non-parametric approach that we introduced
+before~(see Section~\ref{sec-threshold}). The second one is
+similar. Only both the null distribution and the alternative
+distribution are assumed to be Gaussians. The threshold is minimal
+reporter levels with a sufficiently small $p$-value under the Gaussian
+null distribution.
+<<agiGetTwoThresholds, results=hide>>=
+y0  <- upperBoundNull(exprs(smoothX))
+y0G <- twoGaussiansNull(exprs(smoothX))
+@
+<<agiShowHistogram, fig=TRUE, include=FALSE, width=5, height=4, dens=TRUE>>=
+hist(exprs(smoothX), n=100, main=NA, 
+     xlab="Smoothed expression level [log2]")
+abline(v=y0, col="red", lwd=2)
+abline(v=y0G, col="blue", lwd=2)
+legend(x="topright", lwd=2, col=c("red","blue"),
+       legend=c("Non-parametric symmetric Null", "Gaussian Null"))
+@
+Even though the non-parametric estimate is usually preferable,
+with few data points such as in this case, the estimate derived from a
+Gaussian null distribution might provide a better threshold for
+enrichment. We are going to use this threshold $y_{0G}$ for the
+identification of ChIP-enriched regions.
+<<agiFindChers, results=hide>>=
+chersX <- findChersOnSmoothed(smoothX, probeAnno=pA, threshold=y0G,
+                              cellType="Tc1Liver")
+chersX <- relateChers(chersX, gff=mm9chr17, upstream=5000)
+@
+
+We find \Sexpr{length(chersX)} ChIP-enriched regions.
+
+<<agiShowChers>>=
+chersXD <- as.data.frame(chersX)
+head(chersXD[order(chersXD$maxLevel, decreasing=TRUE),])
+@
+
+This concludes the example of how \Rpackage{Ringo} can be used to
+analyze other types of ChIP-chip data.
+
 \section{Concluding Remarks}
 
-The package \Rpackage{Ringo} aims to facilitate the analysis 
+The package \Rpackage{Ringo} aims to facilitate the analysis
 ChIP-chip readouts.
-We constructed it during the analysis of a ChIP-chip experiment for the 
-genome-wide identification of modified histone sites on data
-gained from NimbleGen two-color microarrays. 
-Analogous two-color microarray platforms, however, can also be processed.
+We constructed it during the analysis of a ChIP-chip experiment for
+the genome-wide identification of modified histone sites on data
+gained from NimbleGen two-color microarrays.
+Analogous two-color microarray platforms, however, can also be
+processed.
 Key functionalities of \Rpackage{Ringo} are data read-in,
 quality assessment, preprocessing of the raw data,
 and visualization of the raw and preprocessed data.
-The package contains a heuristic algorithm for the detection of
-for ChIP-enriched genomic regions, too. 
-While this algorithm worked quite well on our data, 
+The package also contains algorithms for the detection of
+for ChIP-enriched genomic regions.
+While one of these algorithm worked quite well with our data,
 we do not claim it to be the definite algorithm for that task.
 
 \phead{Further reading}
