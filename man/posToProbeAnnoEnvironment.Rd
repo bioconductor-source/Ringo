@@ -14,7 +14,7 @@
 \usage{
 posToProbeAnno(pos, chrNameColumn = "CHROMOSOME",
    probeColumn = "PROBE_ID", chrPositionColumn = "POSITION",
-   lengthColumn = "LENGTH", genome="unknown",
+   lengthColumn = "LENGTH", sep="\t", genome="unknown",
    microarrayPlatform="unknown", verbose = TRUE, ...)
 }
 \arguments{
@@ -29,14 +29,17 @@ posToProbeAnno(pos, chrNameColumn = "CHROMOSOME",
   \item{lengthColumn}{name of the column that holds the length of the 
     match position, in case of perfect match should correspond to the
     sequence length of the probe}
- \item{genome}{string; denotes genome (and assembly) the reporters have
-   been mapped to for this probeAnno object, e.g. "M. musculus (mm9)"}
- \item{microarrayPlatform}{string; denotes the commercial or custom
-   microarray platform/design that holds the reporters whose mapping is
-   stored in this probeAnno object, e.g. "NimbleGen MOD SUZ12"}
+  \item{sep}{string; denotes the seperator between elements in the
+    supplied mappings file \code{pos}; passed on to function
+    \code{scan}; ignored if \code{pos} is not a filename.}
+  \item{genome}{string; denotes genome (and assembly) the reporters have
+    been mapped to for this probeAnno object, e.g. "M. musculus (mm9)"}
+  \item{microarrayPlatform}{string; denotes the commercial or custom
+    microarray platform/design that holds the reporters whose mapping is
+    stored in this probeAnno object, e.g. "NimbleGen MOD SUZ12"}
   \item{verbose}{logical; should progress be written to STDOUT?}
-  \item{\dots}{further arguments passed on to function \code{read.delim}
-    if \code{pos} is a file path.}
+  \item{\dots}{further arguments passed on to function \code{scan},
+    which is used for reading in the file \code{pos}.}
 }
 \details{
   The default column names correspond to the column names in a NimbleGen
@@ -50,7 +53,7 @@ posToProbeAnno(pos, chrNameColumn = "CHROMOSOME",
   The results is an object of class \code{probeAnno}.
 }
 \author{Joern Toedling \email{toedling@ebi.ac.uk}}
-\seealso{\code{\link{probeAnno-class}}, \code{\link{read.delim}}}
+\seealso{\code{\link{probeAnno-class}}, \code{\link{scan}}}
 \examples{
  exPos <- read.delim(file.path(system.file("exData",package="Ringo"),
                      "MOD_2003-12-05_SUZ12_1in2.pos"),

@@ -14,8 +14,8 @@
 ## This script has the following parts
 ## 1. Read the table containing the POS file or MUMmer or BLAT hits
 ## 2. Construct along-chromosome vectors for probeAnno environment:
-##    start, end: (integer) 
-##    index: positions of the PM on the chip (integer) 
+##    start, end: (integer)
+##    index: positions of the PM on the chip (integer)
 ##    unique: whether the probe hits multiple places (logical)
 ##-------------------------------------------------------------------------
 
@@ -32,43 +32,58 @@
 # chr1:4483138-4484138    CHR01   CHR01P004483140 4483140 50      1
 # chr1:4483138-4484138    CHR01   CHR01P004483245 4483245 50      1
 
-posToProbeAnno <- function(pos, chrNameColumn="CHROMOSOME",probeColumn="PROBE_ID", chrPositionColumn="POSITION", lengthColumn="LENGTH", genome="unknown", microarrayPlatform="unknown", verbose=TRUE, ...){
-  if (!is.data.frame(pos) && !is.matrix(pos)){
-    stopifnot(is.character(pos), file.exists(pos))
-    hits <- read.delim(pos, header=TRUE, as.is=TRUE, ...)
-  } else {
-    hits <- as.data.frame(pos)
-  }
-  columnsAreIn <- c(chrNameColumn, probeColumn, chrPositionColumn, lengthColumn) %in% names(hits)
-  if (!all(columnsAreIn))
-    stop(paste("\nColumn(s)",paste(c(chrNameColumn, probeColumn, chrPositionColumn, lengthColumn)[!columnsAreIn],sep=", ", collapse=", "),"are not found in file or data.frame",deparse(substitute(pos)),".\n"))
-  hits$END    <- hits[[chrPositionColumn]] + hits[[lengthColumn]] - 1
-  hits$MIDDLE <- round((hits[[chrPositionColumn]] + hits$END)/2)
-  hitOrder <- order(hits[[chrNameColumn]], hits$MIDDLE)
-  hits <- hits[hitOrder,]
-  if (length(grep("chr",hits[[chrNameColumn]], ignore.case=TRUE)))
+posToProbeAnno <- function(pos, chrNameColumn="CHROMOSOME",probeColumn="PROBE_ID", chrPositionColumn="POSITION", lengthColumn="LENGTH", sep="\t", genome="unknown", microarrayPlatform="unknown", verbose=TRUE, ...){
+    if (!is.data.frame(pos) && !is.matrix(pos)){
+        stopifnot(is.character(pos), file.exists(pos))
+        hits <- read.delim(pos, header=TRUE, as.is=TRUE, ...)
+        con <- file(pos, open="r")
+        headerLine <- readLines(con, 1)
+        headers <- unlist(strsplit(headerLine, split=sep))
+        columnsAreIn <- c(chrNameColumn, probeColumn, chrPositionColumn, lengthColumn) %in% headers
+        if (!all(columnsAreIn))
+            stop(paste("\nColumn(s)",paste(c(chrNameColumn, probeColumn, chrPositionColumn, lengthColumn)[!columnsAreIn],sep=", ", collapse=", "),"are not found in file or data.frame",deparse(substitute(pos)),".\n"))
+        signat <- as.list(rep("", length(headers)))
+        names(signat) <- headers
+        signat[[chrPositionColumn]] <- 0L
+        signat[[lengthColumn]] <- 0L
+        dat <- scan(con, what=signat, sep=sep, quiet=TRUE, ...)
+        close(con)
+        hits <- as.data.frame(dat, stringsAsFactors=FALSE)
+    } else {
+        hits <- as.data.frame(pos)
+        columnsAreIn <- c(chrNameColumn, probeColumn, chrPositionColumn, lengthColumn) %in% names(hits)
+        if (!all(columnsAreIn))
+            stop(paste("\nColumn(s)",paste(c(chrNameColumn, probeColumn, chrPositionColumn, lengthColumn)[!columnsAreIn],sep=", ", collapse=", "),"are not found in file or data.frame",deparse(substitute(pos)),".\n"))
+    }
+    hits$END    <- hits[[chrPositionColumn]] + hits[[lengthColumn]] - 1
+    hits$MIDDLE <- round((hits[[chrPositionColumn]] + hits$END)/2)
+    hitOrder <- order(hits[[chrNameColumn]], hits$MIDDLE)
+    hits <- hits[hitOrder,]
+    if (length(grep("chr",hits[[chrNameColumn]], ignore.case=TRUE)))
     hits[[chrNameColumn]] <- gsub("chr(0)?","", hits[[chrNameColumn]], ignore.case=TRUE)
-  probeindex <- 1:nrow(hits)
-  probeMultiplicity <- table(hits[[probeColumn]])
-  if (verbose) cat("Creating probeAnno mapping for chromosome ")
-  sp <- split(probeindex, as.factor(hits[[chrNameColumn]]))
-  thisMapping = new.env(hash=TRUE, size=length(sp)*4)
-  # for every chromosome, assign the hiting probes to the corresponding vector:
-  for(i in seq(along=sp)) {
-    chromprobes = sp[[i]]
-    nm  = names(sp)[i]
-    cat(nm, "")
-    assign(paste(nm, "start", sep="."),  as.integer(hits[chromprobes, chrPositionColumn]), envir=thisMapping)
-    assign(paste(nm, "end", sep="."),  as.integer(hits[chromprobes,"END"]) , envir=thisMapping)
-    assign(paste(nm, "index", sep="."),  hits[chromprobes, probeColumn],  envir=thisMapping)
-    assign(paste(nm, "unique", sep="."), as.integer(probeMultiplicity[hits[[probeColumn]][chromprobes]]>1)*3, envir=thisMapping)
-    ## uniqueness codes:  0 = probe has one unique hit;   3= probe has multiple hits
-  }# for(i in seq(along=sp))
-  if (verbose) cat("Done.\n")
-  myProbeAnno <- new("probeAnno", map=thisMapping)
-  genome(myProbeAnno) <- genome
-  arrayName(myProbeAnno) <- microarrayPlatform
-  return(myProbeAnno)
+    probeindex <- 1:nrow(hits)
+    probeMultiplicity <- table(hits[[probeColumn]])
+    allProbeNames <- names(probeMultiplicity)
+    if (verbose) cat("Creating probeAnno mapping for chromosome ")
+    sp <- split(probeindex, as.factor(hits[[chrNameColumn]]))
+    thisMapping = new.env(hash=TRUE, size=length(sp)*4)
+    # for every chromosome, assign the corresponding vectors
+    for(i in seq(along=sp)) {
+        chromprobes <- sp[[i]]
+        nm <- names(sp)[i]
+        if (verbose) cat(nm, "")
+        assign(paste(nm, "start", sep="."),  as.integer(hits[chromprobes, chrPositionColumn]), envir=thisMapping)
+        assign(paste(nm, "end", sep="."),  as.integer(hits[chromprobes,"END"]) , envir=thisMapping)
+        assign(paste(nm, "index", sep="."),  hits[chromprobes, probeColumn],  envir=thisMapping)
+        idx <- match(hits[chromprobes, probeColumn], allProbeNames)
+        assign(paste(nm, "unique", sep="."), as.integer(as.numeric(probeMultiplicity[idx]>1)*3), envir=thisMapping)
+        ## uniqueness codes:  0 = probe has one unique hit;   3= probe has multiple hits
+    }# for(i in seq(along=sp))
+    if (verbose) cat("Done.\n")
+    myProbeAnno <- new("probeAnno", map=thisMapping)
+    genome(myProbeAnno) <- genome
+    arrayName(myProbeAnno) <- microarrayPlatform
+    return(myProbeAnno)
 }#posToProbeAnno
 
 validProbeAnno <- function(probeAnno){
