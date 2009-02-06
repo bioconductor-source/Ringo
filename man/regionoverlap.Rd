@@ -29,8 +29,8 @@ endColumn = "end", mem.limit=1e8)
   \code{nrow(ydf)} columns, in which entry \code{X[i,j]} specifies the
   length of the overlap between region \code{i} of the first list
   (\code{xdf}) and region \code{j} of the second list (\code{ydf}).
-  Since this matrix is very sparse, we use the \code{matrix.csr}
-  representation from the \code{SparseM} package for it.
+  Since this matrix is very sparse, we use the \code{dgCMatrix}
+  representation from the \code{Matrix} package for it.
 }
 \author{Joern Toedling \email{toedling@ebi.ac.uk}}
 \note{
@@ -45,7 +45,7 @@ endColumn = "end", mem.limit=1e8)
   for each part. During computation, matrices of size
   \code{nrow(xdf)} times \code{nrow(ydf)} are created.
 }
-\seealso{\code{\link[SparseM]{matrix.csr-class}}}
+\seealso{\code{\link[Matrix]{dgCMatrix-class}}}
 \examples{
   ## toy example:
   regionsH3ac <- data.frame(chr=c("chr1","chr7","chr8","chr1","chrX","chr8"), start=c(100,100,100,510,100,60), end=c(200, 200, 200,520,200,80))
@@ -59,6 +59,6 @@ start=c(500,100,50,80,100), end=c(700, 200, 250, 120,200))
 
   ## compare it to the result:
   as.matrix(regionOverlap(regionsH3ac, regionsH4ac))
-  whichCsr(regionOverlap(regionsH3ac, regionsH4ac))
+  nonzero(regionOverlap(regionsH3ac, regionsH4ac))
 }
 \keyword{manip}

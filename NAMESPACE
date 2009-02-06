@@ -9,7 +9,10 @@ importFrom("genefilter", "shorth", "half.range.mode")
 importFrom("geneplotter", "smoothScatter")
 import("vsn")
 
-export("autocor", "chipAlongChrom","corPlot", "whichCsr",
+importClassesFrom("Matrix", "dgCMatrix")
+importFrom("Matrix", "cBind")
+
+export("autocor", "chipAlongChrom","corPlot",
        "computeRunningMedians", "sliding.quantile",
        "findChersOnSmoothed", "cherByThreshold","newCher","relateChers",
        "preprocess","nimblegenScale","readNimblegen", "asExprSet",
@@ -28,4 +31,4 @@ exportClasses("probeAnno", "cher")
 exportMethods("get", "ls","initialize", "plot", "show",
               "arrayName", "chromosomeNames", "genome",
               "arrayName<-", "genome<-", "update",
-              "cellType", "cellType<-")
+              "cellType", "cellType<-", "nonzero")

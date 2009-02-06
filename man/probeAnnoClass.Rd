@@ -11,6 +11,8 @@
 \alias{chromosomeNames}
 \alias{[<-,probeAnno-method}
 \alias{[,probeAnno-method}
+\alias{[,probeAnno,ANY,ANY,ANY-method}
+\alias{[<-,probeAnno,ANY,ANY,ANY-method}
 \alias{chromosomeNames,probeAnno-method}
 \alias{get,character,missing,probeAnno,missing,missing-method}
 \alias{initialize,probeAnno-method}
@@ -19,7 +21,6 @@
 \alias{genome<-,probeAnno,character-method}
 \alias{genome,probeAnno-method}
 \alias{coerce,environment,probeAnno-method}
-
 \title{Class "probeAnno"}
 \description{A class that holds the mapping between reporters/probes
   on a microarray and their genomic match  position(s) in a chosen

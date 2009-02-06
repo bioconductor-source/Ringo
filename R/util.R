@@ -97,24 +97,10 @@ compute.gc <- function(probe.sequences, digits=2){
     listLen(splitted.seqs), digits=digits)
 }#compute.gc
 
-whichCsr <- function(X, arr.ind=TRUE){
-  ## function to get a two-column matrix containing the indices of the
-  ### non-zero elements in a "matrix.csr" class matrix
-  stopifnot(inherits(X, "matrix.csr"))
-  if (all(X@ra==0)) return(NULL)
-  res <- cbind(rep(seq(dim(X)[1]),diff(X@ia)), # row indices
-               X@ja )# column indices directly saved in matrix.csr format
-  colnames(res) <- c("row","col")
-  ## remove zero elements
-  res <- res[X@ra != 0,,drop=FALSE]
-  return(res)
-}# whichCsr
-
 getFeats <- function(cl){
   stopifnot(is.list(cl), inherits(cl[[1]],"cher"))
   return(unique(unlist(sapply(cl, function(cher) cher@extras[c("typeUpstream", "typeInside", "typeDownstream")]), use.names=FALSE)))
 }# getFeats
-
 
 exportCCData <- function(X, pA, method="GFF", outfile="myCCData.gff", samples, chrs, checkUnique=TRUE, uniqueCodes=c(0), verbose=TRUE)
 {

@@ -11,3 +11,5 @@ setGeneric("arrayName<-", function(x, value) standardGeneric("arrayName<-"))
 
 setGeneric("genome", function(x) standardGeneric("genome"))
 setGeneric("genome<-", function(x, value) standardGeneric("genome<-"))
+
+setGeneric("nonzero", function(x) standardGeneric("nonzero"))

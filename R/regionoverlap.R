@@ -10,8 +10,8 @@ regionOverlap <- function(xdf, ydf, chrColumn="chr",startColumn="start",endColum
   ### avoid creation of too big matrices here:
   if (log2(nrow(xdf))+log2(nrow(ydf))<log2(mem.limit)){
     res <- .Call(ringoRegionOverlap, as.character(xdf[[chrColumn]]), as.integer(as.character(xdf[[startColumn]])), as.integer(as.character(xdf[[endColumn]])), as.character(ydf[[chrColumn]]), as.integer(as.character(ydf[[startColumn]])), as.integer(as.character(ydf[[endColumn]])))
-    ## convert the result to matrix.csr
-    res <- as.matrix.csr(res)
+    ## convert the result to a dgCMatrix (package matrix)
+    res <- as(res, "dgCMatrix")
   } else {
     ## iterative procedure:
     if (log2(nrow(xdf))> log2(mem.limit))
@@ -24,11 +24,11 @@ regionOverlap <- function(xdf, ydf, chrColumn="chr",startColumn="start",endColum
       lastYCol <-  yRowSeq[j]
       partYdf <- ydf[firstYCol:lastYCol,,drop=FALSE]
       thisRes <- .Call(ringoRegionOverlap, as.character(xdf[[chrColumn]]), as.integer(as.character(xdf[[startColumn]])), as.integer(as.character(xdf[[endColumn]])), as.character(partYdf[[chrColumn]]), as.integer(as.character(partYdf[[startColumn]])), as.integer(as.character(partYdf[[endColumn]])))
-      thisRes <- as.matrix.csr(thisRes)
+      thisRes <- as(thisRes, "dgCMatrix")
       partRess[[j]] <- thisRes
       firstYCol <-  lastYCol+1
     }# for (j in seq(length(yRowSeq)))
-    res <- do.call("cbind", partRess)
+    res <- do.call("cBind", partRess)
   }
   return(res)
 }#regionOverlap

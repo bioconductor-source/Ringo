@@ -27,7 +27,8 @@ computeRunningMedians <- function(xSet, probeAnno, modColumn="Cy5", allChr, winH
     grouping <- factor(sampleNames(xSet))
 
   newExprs <- matrix(NA, nrow=nrow(exprs(xSet)), ncol=nlevels(grouping))
-  rownames(newExprs) <- featureNames(xSet)
+  rownames(newExprs) <- allProbes <- featureNames(xSet)
+  
   for (chr in allChr){
     if (verbose) cat("\nChromosome",chr, "...\n")
     chrsta <- probeAnno[paste(chr,"start",sep=".")]
@@ -43,6 +44,8 @@ computeRunningMedians <- function(xSet, probeAnno, modColumn="Cy5", allChr, winH
         warning(paste("No reporters with unique hits on chromosome",chr,".\n"))
         next}
     } #  if (checkUnique)
+    if (is.character(chridx))
+        chridx <- match(chridx, allProbes)
     for (i in 1:nlevels(grouping)){
       modSamples   <- which(grouping == levels(grouping)[i])
       if (verbose) cat(sampleNames(xSet)[modSamples],"... ")
@@ -51,7 +54,7 @@ computeRunningMedians <- function(xSet, probeAnno, modColumn="Cy5", allChr, winH
       combined.pos <- rep(chrmid, each=length(modSamples))
       slidingRes <- sliding.quantile(positions=combined.pos, scores=combined.dat, half.width=winHalfSize, prob=quant, return.counts=TRUE)
       slidingRes <- slidingRes[seq(1, nrow(slidingRes)+1-length(modSamples), by=length(modSamples)),,drop=FALSE]
-      chrrm <- slidingRes[,"quantile"] #chrrm <- slidingRes[,"median"]
+      chrrm <- slidingRes[,"quantile"]
       slidingRes[,"count"] <- slidingRes[,"count"]/length(modSamples)
       areBelow <- slidingRes[,"count"] < min.probes
       if (any(areBelow)) chrrm[areBelow] <- NA

@@ -161,8 +161,8 @@ features2Probes <- function(gff, probeAnno, upstream=5000, checkUnique=TRUE, uni
     chrProbeDf <- data.frame(chr=rep(chr, length(chrmid)), start2=chrmid, end2=chrmid, stringsAsFactors=FALSE)
     chrGff <- subset(gff, chr==chr)
     chrOverlap <- regionOverlap(chrGff, chrProbeDf, startColumn="start2", endColumn="end2", mem.limit=mem.limit)
-    idxOverlap <- whichCsr(chrOverlap)
-    if (length(idxOverlap)==0) next
+    idxOverlap <- nonzero(chrOverlap)
+    if (nrow(idxOverlap)==0) next
     ## for each overlapping Feature:
     for (i in unique(idxOverlap[,1])){
       fprobes <- (chrmid[idxOverlap[idxOverlap[,1]==i,2]]-realTSS[chrGff$name[i]])*chrGff$strand[i]

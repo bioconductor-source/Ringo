@@ -10,7 +10,6 @@
 \alias{readNgIntensitiesTxt}
 \alias{normalizeBetweenArraysVSN}
 \alias{relateChers2}
-\alias{whichCsr}
 \alias{oneChannelVSN}
 \alias{exportCCData}
 \alias{pair2xys}
