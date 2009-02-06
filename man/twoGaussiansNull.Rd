@@ -1,5 +1,4 @@
 \name{twoGaussiansNull}
-\Rdversion{1.1}
 \alias{twoGaussiansNull}
 \title{
   Estimate a threshold from Gaussian mixture distribution
