@@ -64,6 +64,7 @@ findChersOnSmoothed <- function(smoothedX, probeAnno, thresholds, allChr=NULL, d
   } else {
       antibodies <- sampleNames(smoothedX)
   }
+  allProbes <- featureNames(smoothedX)
   resultChers <- vector("list",ncol(smoothedX))
   for (i in 1:ncol(smoothedX)){
     this.sample <- sampleNames(smoothedX)[i]
@@ -82,6 +83,8 @@ findChersOnSmoothed <- function(smoothedX, probeAnno, thresholds, allChr=NULL, d
         chridx <- chridx[chruni %in% uniqueCodes]
         chrmid <- chrmid[chruni %in% uniqueCodes]
       } #  if (checkUnique)
+      if (is.character(chridx))
+        chridx <- match(chridx, allProbes)
       chrrm <- exprs(smoothedX)[chridx,i]
       chr.chers <- cherByThreshold(chrmid, chrrm, threshold=thresholds[i], distCutOff=distCutOff, minProbesInRow=minProbesInRow)
       if (length(chr.chers)==0) return(list())

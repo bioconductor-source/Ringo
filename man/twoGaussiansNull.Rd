@@ -15,7 +15,6 @@
 \usage{
 twoGaussiansNull(x, p.adj.method = "BY", max.adj.p = 0.1, var.equal = FALSE, ...)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{numeric vector of data values}
   \item{p.adj.method}{method for adjusting the p-values for multiple

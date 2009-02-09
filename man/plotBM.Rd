@@ -1,5 +1,4 @@
 \name{plotBM}
-\Rdversion{1.1}
 \alias{plotBM}
 \alias{plotBinaryMatrix}
 \title{
