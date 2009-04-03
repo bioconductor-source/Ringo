@@ -1,14 +1,16 @@
 useDynLib(Ringo, ringoSlidingQuantile=sliding_quantile, ringoRegionOverlap=overlap_xy, ringoMovingMeanSd=moving_mean_sd)
 
 import("methods")
+#import("Matrix")
 
 importFrom("graphics", "plot", "image", "hist", "polygon")
 importFrom("stats", "update", "p.adjust")
-
 importFrom("genefilter", "shorth", "half.range.mode")
 importFrom("geneplotter", "smoothScatter")
-import("vsn")
-import("Matrix")
+
+## instead of import Matrix
+#importClassesFrom("Matrix", "dgCMatrix")
+#importFrom("Matrix", "cBind", ".M.classEnv")
 
 export("autocor", "chipAlongChrom","corPlot",
        "computeRunningMedians", "sliding.quantile",
