@@ -40,7 +40,7 @@ corPlot <- function(eset, samples=NULL, grouping=NULL, ref=NULL, useSmoothScatte
   datmat <- eset%*%groupmat
   colnames(datmat) <- as.character(levels(grouping))
   if (useSmoothScatter)
-    pairs(datmat, lower.panel=function(...) {par(new=TRUE); geneplotter::smoothScatter(..., nrpoints=0); abline(0,1,col="red")}, upper.panel=panel.cor)
+    pairs(datmat, lower.panel=function(...) {par(new=TRUE); smoothScatter(..., nrpoints=0); abline(0,1,col="red")}, upper.panel=panel.cor)
   else
     pairs(datmat, lower.panel=panel.scatter, upper.panel=panel.cor)
   invisible(NULL)

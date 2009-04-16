@@ -3,10 +3,9 @@ useDynLib(Ringo, ringoSlidingQuantile=sliding_quantile, ringoRegionOverlap=overl
 import("methods")
 #import("Matrix")
 
-importFrom("graphics", "plot", "image", "hist", "polygon")
+importFrom("graphics", "plot", "image", "hist", "polygon", "smoothScatter")
 importFrom("stats", "update", "p.adjust")
 importFrom("genefilter", "shorth", "half.range.mode")
-importFrom("geneplotter", "smoothScatter")
 
 ## instead of import Matrix
 #importClassesFrom("Matrix", "dgCMatrix")
