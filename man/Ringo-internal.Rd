@@ -13,11 +13,17 @@
 \alias{oneChannelVSN}
 \alias{exportCCData}
 \alias{pair2xys}
+\alias{alongChromTicks}
+\alias{featureColors}
+\alias{featureColors}
+\alias{plotAlongChromLegend}
+\alias{newVP}
+\alias{plotOneChIPSample}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Internal Ringo functions}
 \description{
   Called internally by other \code{Ringo} functions.
   Normally need not be called by the user.
 }
-\author{Matt Ritchie, Tammo Krueger, Joern Toedling}
+\author{Matt Ritchie, Tammo Krueger, Wolfgang Huber, Joern Toedling}
 \keyword{internal}% at least one, from doc/KEYWORDS

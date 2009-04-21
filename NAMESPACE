@@ -11,7 +11,7 @@ importFrom("genefilter", "shorth", "half.range.mode")
 #importClassesFrom("Matrix", "dgCMatrix")
 #importFrom("Matrix", "cBind", ".M.classEnv")
 
-export("autocor", "chipAlongChrom","corPlot",
+export("autocor", "chipAlongChrom1","corPlot",
        "computeRunningMedians", "sliding.quantile",
        "findChersOnSmoothed", "cherByThreshold","newCher","relateChers",
        "preprocess","nimblegenScale","readNimblegen", "asExprSet",
@@ -19,7 +19,8 @@ export("autocor", "chipAlongChrom","corPlot",
        "posToProbeAnno","validProbeAnno", "regionOverlap",
        "features2Probes","sliding.meansd", "computeSlidingT",
        "getFeats", "upperBoundNull", "extractProbeAnno",
-       "exportCherList", "plotBM", "twoGaussiansNull")
+       "exportCherList", "plotBM", "twoGaussiansNull",
+       "chipAlongChrom")
 
 S3method("plot", "autocor.result")
 S3method("image", "RGList")

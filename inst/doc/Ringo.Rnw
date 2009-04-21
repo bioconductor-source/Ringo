@@ -393,11 +393,9 @@ sampleNames(smoothX) <- paste(sampleNames(exampleX),"smoothed")
 @ 
 %
 <<smoothAlongChrom, echo=TRUE, fig=TRUE, include=FALSE, width=9.6, height=4.8, results=hide, along=TRUE>>=
-chipAlongChrom(exampleX, chrom="9", xlim=c(34318000,34321000), 
+combX <- combine(updateObject(exampleX), updateObject(smoothX))
+chipAlongChrom(combX, chrom="9", xlim=c(34318000,34321000), 
                ylim=c(-2,4), probeAnno=exProbeAnno, gff=exGFF)
-chipAlongChrom(smoothX, chrom="9", xlim=c(34318000,34321000),
-               probeAnno=exProbeAnno, itype="l", ilwd=4,
-               paletteName="Spectral", add=TRUE)
 @
 \myincfig{Ringo-smoothAlongChrom}{0.98\textwidth}{Normalized and
   smoothed probe intensities around the TSS of the \texttt{Nudt2}
@@ -481,7 +479,7 @@ These estimates are indicated by red vertical lines in the histograms.
 @ 
 %
 <<histogramSmoothed, echo=FALSE, fig=TRUE, include=FALSE, width=6, height=4, results=hide, dens=TRUE>>=
-h1 <- hist(exprs(smoothX)[,1], n=25, xlim=c(-3,5), main=NA,
+h1 <- hist(exprs(smoothX)[,1], n=50, xlim=c(-1.25,2.25), main=NA,
            xlab="Smoothed reporter intensities [log]")
 abline(v=y0[1], col="red")
 @ 
@@ -664,14 +662,17 @@ smoothX <- computeRunningMedians(X, modColumn="Antibody",
               winHalfSize=500, min.probes=3, probeAnno=pA)
 sampleNames(smoothX) <- paste(sampleNames(X),"smooth",sep=".")
 @
-We visualize the data before and after smoothing in the region around
+%
+<<combineExpressionSetsAgi, eval=FALSE, echo=FALSE>>=
+## why does this not work?
+combX <- combine(updateObject(X), updateObject(smoothX))
+@
+
+We visualize the data after smoothing in the region around
 the start site of the gene \textit{Rab11b} on chromosome~17.
 <<agiSmoothAlongChrom, along=TRUE, fig=TRUE, include=FALSE, width=9.6, height=4.8, results=hide>>=
-chipAlongChrom(X, probeAnno=pA, chr="17", coord=33887000+c(0, 13000),
+chipAlongChrom(smoothX, probeAnno=pA, chr="17", coord=33887000+c(0, 13000),
                gff=mm9chr17, maxInterDistance=450)
-chipAlongChrom(smoothX, probeAnno=pA, chr="17", add=TRUE,
-               coord=33887000+c(0, 13000), paletteName="Set1",
-               maxInterDistance=450)
 @
 \myincfig{Ringo-agiSmoothAlongChrom}{0.98\textwidth}{Normalized and
   smoothed Agilent reporter intensities around the TSS of the gene
