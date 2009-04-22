@@ -73,6 +73,7 @@ computeSlidingT <- function(xSet, probeAnno, allChr=c(1:19,"X","Y"), test="one.s
   newPD <- new("AnnotatedDataFrame", data=data.frame(label=sample.labels, row.names=sample.labels), varMetadata=data.frame("varLabel"=c("label"),row.names=c("label")))
   newEset <- new('ExpressionSet',exprs=newExprs,  phenoData = newPD)
   featureNames(newEset) <- featureNames(xSet)
+  featureData(newEset)  <- featureData(xSet)
   sampleNames(newEset)  <- sample.labels
   if (verbose) cat("done.\n")
   return(newEset)

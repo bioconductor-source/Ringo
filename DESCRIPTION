@@ -1,8 +1,8 @@
 Package: Ringo
 Type: Package
 Title: R Investigation of ChIP-chip Oligoarrays
-Version: 1.9.1
-Date: 2009-04-21
+Version: 1.9.2
+Date: 2009-04-22
 Author: Joern Toedling, Oleg Sklyar, Tammo Krueger, Matt Ritchie, Wolfgang Huber
 Maintainer: J. Toedling <toedling@ebi.ac.uk>
 Depends: methods, Biobase (>= 1.14.1), RColorBrewer, limma, Matrix, grid

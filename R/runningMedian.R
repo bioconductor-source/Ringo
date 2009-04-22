@@ -12,7 +12,9 @@ sliding.quantile <- function(positions, scores, half.width, prob=0.5, return.cou
   return(res)
 }#sliding.quantile
 
-computeRunningMedians <- function(xSet, probeAnno, modColumn="Cy5", allChr, winHalfSize=400, min.probes=5, quant=0.5, combineReplicates=FALSE, checkUnique=TRUE, uniqueCodes=c(0), verbose=TRUE)
+computeRunningMedians <- function(xSet, probeAnno, modColumn="Cy5", allChr,
+   winHalfSize=400, min.probes=5, quant=0.5, combineReplicates=FALSE,
+   nameSuffix=".sm", checkUnique=TRUE, uniqueCodes=c(0), verbose=TRUE)
 {
   stopifnot(inherits(xSet,"ExpressionSet"),inherits(probeAnno,"probeAnno"),
             validObject(probeAnno),
@@ -64,7 +66,7 @@ computeRunningMedians <- function(xSet, probeAnno, modColumn="Cy5", allChr, winH
   } #for (chr in allChr)
   if (verbose) cat("\nConstruction result ExpressionSet...")
   # cat construct ExpressionSet of results:
-  sample.labels <- as.character(levels(grouping))
+  sample.labels <- paste(as.character(levels(grouping)), nameSuffix, sep="")
   if (!combineReplicates)
       newPD <- phenoData(xSet)
   else
@@ -72,8 +74,8 @@ computeRunningMedians <- function(xSet, probeAnno, modColumn="Cy5", allChr, winH
   newEset <- new('ExpressionSet',exprs=newExprs,  phenoData = newPD)
       # experimentData = [MIAME], annotation = [character], ...
   featureNames(newEset) <- featureNames(xSet)
+  featureData(newEset)  <- featureData(xSet)
   sampleNames(newEset)  <- sample.labels
   if (verbose) cat("Done.\n")
   return(newEset)
 }#computeRunningMedians
-

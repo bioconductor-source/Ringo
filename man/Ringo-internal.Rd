@@ -19,6 +19,7 @@
 \alias{plotAlongChromLegend}
 \alias{newVP}
 \alias{plotOneChIPSample}
+\alias{cbind2,ExpressionSet,ExpressionSet-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Internal Ringo functions}
 \description{

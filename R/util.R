@@ -90,6 +90,15 @@ takeMeanOverGroups <- function(xSet, modColumn="Cy5")
 }#takeMeanOverGroups
 
 
+setMethod("cbind2",signature=c("ExpressionSet","ExpressionSet"),
+   function(x, y){
+     stopifnot(all.equal(featureNames(x), featureNames(y)))
+     dat <- cbind(exprs(x), exprs(y))
+     colnames(dat) <- make.names(c(sampleNames(x), sampleNames(y)), unique=TRUE)
+     X2 <- new("ExpressionSet", exprs=dat)
+     return(X2)
+})
+
 compute.gc <- function(probe.sequences, digits=2){
   stopifnot(is.character(probe.sequences))
   splitted.seqs <- strsplit(toupper(probe.sequences),split="")

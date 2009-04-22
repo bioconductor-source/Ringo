@@ -7,8 +7,8 @@
 }
 \usage{
 computeRunningMedians(xSet, probeAnno, modColumn = "Cy5",
- allChr, winHalfSize = 400, min.probes = 5,
- quant = 0.5, combineReplicates = FALSE, checkUnique=TRUE,
+ allChr, winHalfSize = 400, min.probes = 5, quant = 0.5,
+ combineReplicates = FALSE, nameSuffix = ".sm", checkUnique=TRUE,
  uniqueCodes=c(0), verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -39,6 +39,9 @@ computeRunningMedians(xSet, probeAnno, modColumn = "Cy5",
     levels and samples of the same type in the window. The resulting
     ExpressionSet has so many columns as are there different entries in
     the column \code{modColumn}}
+  \item{nameSuffix}{character; suffix attached to the sample labels of
+    the supplied ExpressionSet \code{xSet} for the sample names of the
+    resulting ExpressionSet.}
   \item{checkUnique}{logical; indicates whether the uniqueness
     indicator of probe matches from the probeAnno environment should be
     used.}
@@ -53,7 +56,7 @@ computeRunningMedians(xSet, probeAnno, modColumn = "Cy5",
   results samples is the number of levels in the supplied
   \code{modColumn} of the supplied ExpressionSet's phenoData.
 }
-\author{Joern Toedling \email{toedling@ebi.ac.uk}}
+\author{Joern Toedling \email{joern.toedling@curie.fr}}
 \seealso{\code{\link[Biobase]{ExpressionSet}},
   \code{\link{sliding.quantile}}, \code{\link{probeAnno-class}}}
 \examples{
@@ -61,13 +64,12 @@ computeRunningMedians(xSet, probeAnno, modColumn = "Cy5",
   load(file.path(exDir,"exampleProbeAnno.rda"))
   load(file.path(exDir,"exampleX.rda"))
   smoothX <- computeRunningMedians(exampleX, probeAnno=exProbeAnno,
-modColumn = "Cy5", allChr = c("9"), winHalfSize = 400, verbose = TRUE)
+                                   winHalfSize = 400)
+  combX <- combine(exampleX, smoothX)
   if (interactive()){
-   par(mfrow=c(1,1))
-   chipAlongChrom(exampleX, chrom="9", xlim=c(34318000,34321000), ylim=c(-2,4), probeAnno=exProbeAnno, gff=exGFF)
-   chipAlongChrom(smoothX, chrom="9", xlim=c(34318000,34321000),
-probeAnno=exProbeAnno, itype="l", ilwd=4, paletteName="Spectral",
-add=TRUE)
+   grid.newpage()
+   plot(combX, exProbeAnno, chrom="9", xlim=c(34318000,34321000),
+        ylim=c(-2,4), gff=exGFF)
   }
 }
 \keyword{manip}% at least one, from doc/KEYWORDS

@@ -145,8 +145,12 @@ against the protein \texttt{Suz12}.
 
 Furthermore, there is a file describing the reporter categories
 on the array (you might know these Spot Types files from
-\Rpackage{limma}~\citep{limma05}).
-
+\Rpackage{limma}~\citep{limma05})\footnote{The spot types file is
+  usally not provided by the array manufacturer, but needs to be
+  created manually. You can use the file that comes with the package
+  as a template and extend it as needed. See:\\
+  \Sexpr{file.path("<your-install-directory-of-Rpackages>","Ringo", "exData", "spottypes.txt").}
+}
 <<spottypes>>=
 read.delim(file.path(exDir,"spottypes.txt"), header=TRUE)
 @
@@ -362,10 +366,17 @@ biological and technical replicates among the microarray samples.
 
 \section{Visualize intensities along the chromosome}
 
+The function \Rfunction{chipAlongChrom} provides a way to visualize
+the ChIP-chip data in a specified genome region.
+For convenience, this function can also be invoked by using the
+function \Rfunction{plot} with an \Rclass{ExpressionSet} object
+as first argument and a \Rclass{probeAnno} object as second
+argument.
+
 <<chipAlongChrom, echo=TRUE, fig=TRUE, include=FALSE, width=9.6, height=4.8, results=hide, along=TRUE>>=
-chipAlongChrom(exampleX, chrom="9", xlim=c(34318000,34321000),
-               ylim=c(-2,4), probeAnno=exProbeAnno, gff=exGFF)
-@ 
+plot(exampleX, exProbeAnno, chrom="9", xlim=c(34318000,34321000),
+     ylim=c(-2,4), gff=exGFF, colPal=c("skyblue", "darkblue"))
+@
 %
 \myincfig{Ringo-chipAlongChrom}{0.98\textwidth}{Normalized probe
   intensities around the TSS of the \texttt{Nudt2} gene.}
@@ -393,9 +404,9 @@ sampleNames(smoothX) <- paste(sampleNames(exampleX),"smoothed")
 @ 
 %
 <<smoothAlongChrom, echo=TRUE, fig=TRUE, include=FALSE, width=9.6, height=4.8, results=hide, along=TRUE>>=
-combX <- combine(updateObject(exampleX), updateObject(smoothX))
-chipAlongChrom(combX, chrom="9", xlim=c(34318000,34321000), 
-               ylim=c(-2,4), probeAnno=exProbeAnno, gff=exGFF)
+combX <- combine(exampleX, smoothX)
+plot(combX, exProbeAnno, chrom="9", xlim=c(34318000,34321000), 
+     ylim=c(-2,4), gff=exGFF, colPal=c("skyblue", "steelblue"))
 @
 \myincfig{Ringo-smoothAlongChrom}{0.98\textwidth}{Normalized and
   smoothed probe intensities around the TSS of the \texttt{Nudt2}
@@ -663,16 +674,13 @@ smoothX <- computeRunningMedians(X, modColumn="Antibody",
 sampleNames(smoothX) <- paste(sampleNames(X),"smooth",sep=".")
 @
 %
-<<combineExpressionSetsAgi, eval=FALSE, echo=FALSE>>=
-## why does this not work?
-combX <- combine(updateObject(X), updateObject(smoothX))
-@
-
 We visualize the data after smoothing in the region around
 the start site of the gene \textit{Rab11b} on chromosome~17.
+%
 <<agiSmoothAlongChrom, along=TRUE, fig=TRUE, include=FALSE, width=9.6, height=4.8, results=hide>>=
-chipAlongChrom(smoothX, probeAnno=pA, chr="17", coord=33887000+c(0, 13000),
-               gff=mm9chr17, maxInterDistance=450)
+combX <- combine(X, smoothX)
+plot(combX, pA, chr="17", coord=33887000+c(0, 13000),
+     gff=mm9chr17, maxInterDistance=450, paletteName="Paired")
 @
 \myincfig{Ringo-agiSmoothAlongChrom}{0.98\textwidth}{Normalized and
   smoothed Agilent reporter intensities around the TSS of the gene
