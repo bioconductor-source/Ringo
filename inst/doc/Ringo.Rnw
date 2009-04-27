@@ -149,7 +149,7 @@ on the array (you might know these Spot Types files from
   usally not provided by the array manufacturer, but needs to be
   created manually. You can use the file that comes with the package
   as a template and extend it as needed. See:\\
-  \Sexpr{file.path("<your-install-directory-of-Rpackages>","Ringo", "exData", "spottypes.txt").}
+  \Sexpr{file.path("<your-install-directory-of-Rpackages>","Ringo", "exData", "spottypes.txt")}.
 }
 <<spottypes>>=
 read.delim(file.path(exDir,"spottypes.txt"), header=TRUE)
