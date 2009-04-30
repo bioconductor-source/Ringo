@@ -1,7 +1,6 @@
 \name{plot.autocor.result}
 \alias{plotAutocor}
 \alias{plot.autocor.result}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Plots auto-correlation of probe intensities}
 \description{
   Function to plot the auto-correlation of probe intensities
@@ -11,7 +10,6 @@
 \method{plot}{autocor.result}(x, 
 plot.title = "ChIP: Autocorrelation of Intensities", ...)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{an object of class \code{autocor.result}, the result  of
     function \code{autocor}}
@@ -28,7 +26,7 @@ plot.title = "ChIP: Autocorrelation of Intensities", ...)
 \value{
   invisible \code{NULL}
 }
-\author{Joern Toedling \email{toedling@ebi.ac.uk}}
+\author{Joern Toedling}
 \seealso{\code{\link{autocor}}}
 \examples{
   ## see the help page of 'autocor' for an example

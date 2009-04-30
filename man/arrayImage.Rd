@@ -1,7 +1,6 @@
 \name{image.RGList}
 \alias{arrayImage}
 \alias{image.RGList}
-%%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Function to visualize spatial distribution of raw intensities}
 \description{
   Function to visualize spatial distribution of raw intensities on
@@ -15,7 +14,6 @@
          mycols=NULL, mybreaks=NULL, dim1="X", dim2="Y",
          ppch=20, pcex=0.3, verbose=TRUE, ...)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{object of class \code{RGList} containing red and green
     channel raw intensities; possibly result of \code{readNimblegen}.}
@@ -49,8 +47,7 @@
   invisibly returns NULL; function is called for its side effect, this
   is producing the plot
 }
-%\references{ ~put references to the literature/web site here ~ }
-\author{Joern Toedling \email{toedling@ebi.ac.uk}}
+\author{Joern Toedling}
 \seealso{\code{\link{readNimblegen}},\code{\link[graphics]{plot.default}},
   \code{\link[graphics]{points.default}}}
 \examples{
@@ -62,4 +59,4 @@
    ## strand of chromosome 9.
    ## you can see these probes are distributed all over the array
 }
-\keyword{hplot}% at least one, from doc/KEYWORDS
+\keyword{hplot}

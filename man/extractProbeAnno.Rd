@@ -1,7 +1,6 @@
 \name{extractProbeAnno}
 \alias{extractProbeAnno}
 \alias{probeAnnoFromRGList}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Build probeAnno from match positions in an RGList}
 \description{
   This function can be used to build a probeAnno object from the
@@ -13,7 +12,6 @@
 \usage{
 extractProbeAnno(object, format = "agilent", ...)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{object}{an object that holds the data and the probe match
     positions, currently can only be of class \code{RGList}}
@@ -41,7 +39,6 @@ extractProbeAnno(object, format = "agilent", ...)
   An object of  class \code{probeAnno} holding the mapping between
   reporters and genomic positions.
 }
-\author{Joern Toedling \email{toedling@ebi.ac.uk}}
+\author{Joern Toedling}
 \seealso{ \code{\link{posToProbeAnno}}, \code{\link{probeAnno-class}}}
-%\examples{}
 \keyword{manip}

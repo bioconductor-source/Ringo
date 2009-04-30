@@ -9,7 +9,6 @@
 \usage{
 ftr2xys(ftr.file, path=getwd())
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{ftr.file}{character; file path of feature report file to convert
     into an xys file}
@@ -25,15 +24,13 @@ ftr2xys(ftr.file, path=getwd())
   its side effect to write the xys-file into the current
   working directory.
 }
-%\references{ ~put references to the literature/web site here ~ }
-\author{Joern Toedling \email{toedling@ebi.ac.uk}}
+\author{Joern Toedling}
 \note{
   This function should only be used with one-color Nimblegen
   microarrays and when the correct xys-file of the raw
   data is not available. The output file can be used with the function
   \code{read.xysfiles} of package \code{oligo}.
 }
-%\seealso{ ~~objects to See Also as \code{\link{help}}, ~~~ }
 \examples{
  \dontrun{
    sapply(list.files(pattern=".ftr$"),ftr2xys)

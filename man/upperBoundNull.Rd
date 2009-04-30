@@ -39,7 +39,7 @@ upperBoundNull(x, modeMethod = "shorth", limits = c(-1, 1), prob = 0.99, ...)
   a single numeric value which is the estimated upper bound for the null
   distribution.
 }
-\author{Joern Toedling \email{toedling@ebi.ac.uk}, based on suggestions
+\author{Joern Toedling, based on suggestions
   by Richard Bourgon}
 \note{
   This way of estimating the null distribution is mentioned in the PhD

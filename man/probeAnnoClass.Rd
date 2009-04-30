@@ -75,9 +75,9 @@
       its \code{map} slot}
   }
 }
-\author{Joern Toedling \email{toedling@ebi.ac.uk}; Wolfgang Huber}
-\note{'probeAnno' objects used to be environments and are still in
-  package \code{tilingArray}}
+\author{Joern Toedling \email{joern.toedling@curie.fr}; Wolfgang Huber}
+\note{'probeAnno' objects used to be environments and still are used as
+  such in package \code{tilingArray}}
 \seealso{posToProbeAnno}
 \examples{
   pa <- new("probeAnno")

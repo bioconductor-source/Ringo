@@ -8,7 +8,6 @@
 \usage{
 relateChers(pl, gff, upstream = 5000, verbose = TRUE)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{pl}{Object of class \code{cherList}}
   \item{gff}{\code{data.frame} holding genomic feature annotation}
@@ -36,7 +35,7 @@ relateChers(pl, gff, upstream = 5000, verbose = TRUE)
   \code{typeUpstream} and \code{typeInside} filled in with the names
   of the features that have been related to.
 }
-\author{Joern Toedling \email{toedling@ebi.ac.uk}}
+\author{Joern Toedling}
 \examples{
   # see findChersOnSmoothed for an example
 }

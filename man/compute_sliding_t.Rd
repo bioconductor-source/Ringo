@@ -32,14 +32,13 @@ computeSlidingT(xSet, probeAnno, allChr = c(1:19, "X", "Y"), test = "one.sample"
     uniqueness?}
   \item{verbose}{logical; detailed progress output to STDOUT?}
 }
-%\details{}
 \value{
   An object of class \code{ExpressionSet}, holding the T statistics
   values for the probes of the supplied ExpressionSet. The number of
   results samples is the number of levels in the supplied factor
   \code{grouping}.
 }
-\author{Joern Toedling \email{toedling@ebi.ac.uk}}
+\author{Joern Toedling}
 \note{the option \code{two.sample} is not implemented yet} 
 \seealso{\code{\link{sliding.meansd}}}
 \examples{

@@ -9,9 +9,8 @@
 }
 \usage{
 regionOverlap(xdf, ydf, chrColumn = "chr", startColumn = "start",
-endColumn = "end", mem.limit=1e8)
+              endColumn = "end", mem.limit=1e8)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{xdf}{\code{data.frame} that holds the first set of genomic regions}
   \item{ydf}{\code{data.frame} that holds the first set of genomic regions}
@@ -32,7 +31,7 @@ endColumn = "end", mem.limit=1e8)
   Since this matrix is very sparse, we use the \code{dgCMatrix}
   representation from the \code{Matrix} package for it.
 }
-\author{Joern Toedling \email{toedling@ebi.ac.uk}}
+\author{Joern Toedling}
 \note{
   The function only return the absolute length of overlapping regions in
   base-pairs. It does not return the position of the overlap or the

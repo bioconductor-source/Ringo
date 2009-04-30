@@ -25,9 +25,6 @@ nimblegenScale(myRG, ...)
 \references{for more details on the Tukey biweight estimator:
   Statistical Algorithms Description Document, 2002,
   Affymetrix. }
-\author{Joern Toedling \email{toedling@ebi.ac.uk}}
-%\note{ ~~further notes~~ }
-%\seealso{}
-%\examples{}
-\keyword{manip}% at least one, from doc/KEYWORDS
-\keyword{internal}% __ONLY ONE__ keyword per line
+\author{Joern Toedling}
+\keyword{manip}
+\keyword{internal}

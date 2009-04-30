@@ -93,7 +93,7 @@ chipAlongChrom1(eSet, chrom, probeAnno, xlim, ylim = NULL,
       \code{type} "b".}
   }
 }
-\author{Joern Toedling \email{toedling@ebi.ac.uk}}
+\author{Joern Toedling}
 \note{Use the function \code{\link[geneplotter]{alongChrom}} for
   alternative ways to display probe intensities in genomic regions.}
 \seealso{\code{\link[graphics]{plot.default}};

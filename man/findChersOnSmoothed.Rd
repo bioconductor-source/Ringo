@@ -65,7 +65,7 @@ findChersOnSmoothed(smoothedX, probeAnno, thresholds, allChr = NULL,
    region, this single probe does arguably not provide enough evidence
    for calling this genomic region enriched.
 }
-\author{Joern Toedling \email{toedling@ebi.ac.uk}}
+\author{Joern Toedling}
 \seealso{\code{\link{cherByThreshold}},\code{\link{computeRunningMedians}},
   \code{\link{relateChers}}}
 \examples{

@@ -14,13 +14,13 @@ export("autocor", "chipAlongChrom1","corPlot",
        "features2Probes","sliding.meansd", "computeSlidingT",
        "getFeats", "upperBoundNull", "extractProbeAnno",
        "exportCherList", "plotBM", "twoGaussiansNull",
-       "chipAlongChrom")
+       "chipAlongChrom", "quantilesOverPositions")
 
 S3method("plot", "autocor.result")
 S3method("image", "RGList")
 S3method("as.data.frame", "cherList")
 
-exportClasses("probeAnno", "cher")
+exportClasses("probeAnno", "cher", "qop")
 
 exportMethods("get", "ls","initialize", "plot", "show",
               "arrayName", "chromosomeNames", "genome",

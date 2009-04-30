@@ -31,7 +31,7 @@ readNimblegen(hybesFile, spotTypesFile, path = getwd(),
 \value{
   Returns raw intensity values in form of an \code{RGList}.
 }
-\author{Joern Toedling \email{toedling@ebi.ac.uk}}
+\author{Joern Toedling}
 \seealso{\code{\link[limma]{rglist}},
   \code{\link[limma]{readTargets}}}
 \examples{

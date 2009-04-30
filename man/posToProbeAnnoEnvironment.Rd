@@ -52,7 +52,7 @@ posToProbeAnno(pos, chrNameColumn = "CHROMOSOME",
 \value{
   The results is an object of class \code{probeAnno}.
 }
-\author{Joern Toedling \email{toedling@ebi.ac.uk}}
+\author{Joern Toedling}
 \seealso{\code{\link{probeAnno-class}}, \code{\link{scan}}}
 \examples{
  exPos <- read.delim(file.path(system.file("exData",package="Ringo"),

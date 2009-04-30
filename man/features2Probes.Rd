@@ -9,7 +9,6 @@
 \usage{
 features2Probes(gff, probeAnno, upstream = 5000, checkUnique = TRUE, uniqueCodes = c(0), mem.limit=1e8, verbose = TRUE)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{gff}{\code{data.frame} holding genomic feature annotation}
   \item{probeAnno}{Object of class \code{environment} holding the
@@ -40,7 +39,7 @@ features2Probes(gff, probeAnno, upstream = 5000, checkUnique = TRUE, uniqueCodes
   the strand the feature is on) and its names being the identifiers of
   these probes.
 }
-\author{Joern Toedling \email{toedling@ebi.ac.uk}}
+\author{Joern Toedling}
 \note{
   This resulting mapping is not used excessively by other Ringo
   functions, so creating this mapping is optional at this time,

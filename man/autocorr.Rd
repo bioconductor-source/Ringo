@@ -2,7 +2,6 @@
 \alias{autocorr}
 \alias{autocor}
 \alias{autocorrelation}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Function to compute auto-correlation of probe intensities}
 \description{
   Function to compute auto-correlation of probe intensities at specified
@@ -13,7 +12,6 @@ autocor(x, probeAnno, chrom = "1", samples = NULL, lag.max = 2000,
 lag.step=100, cor.method = "pearson", 
 channel = c("red","green","logratio"), verbose = TRUE)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{an object either of class \code{ExpressionSet} containing the
     normalized probe intensities or of class \code{RGList} containing
@@ -45,7 +43,7 @@ channel = c("red","green","logratio"), verbose = TRUE)
   the vector. Argument \code{chrom} is stored as attribute
   \code{chromosome} of the result.
 }
-\author{Joern Toedling \email{toedling@ebi.ac.uk}}
+\author{Joern Toedling}
 \seealso{\code{\link{cor}},\code{\link{plot.autocor.result}}}
 \examples{
   exDir <- system.file("exData",package="Ringo")

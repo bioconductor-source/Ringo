@@ -84,7 +84,7 @@ preprocess(myRG, method="vsn", ChIPChannel="R", inputChannel="G",
   \code{\link[limma]{backgroundCorrect}} on the \code{RGList} before
   \code{preprocess}ing.
 }
-\author{Joern Toedling \email{toedling@ebi.ac.uk}}
+\author{Joern Toedling}
 \seealso{\code{\link[limma]{normalizeWithinArrays}},
   \code{\link[limma]{normalizeBetweenArrays}},
   \code{\link[limma]{malist}},\code{\link[Biobase]{ExpressionSet}},

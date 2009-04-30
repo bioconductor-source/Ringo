@@ -24,7 +24,7 @@ validProbeAnno(probeAnno)
   environment was identified. This potential problem is explained as a
   warning.
 }
-\author{Joern Toedling \email{toedling@ebi.ac.uk}}
+\author{Joern Toedling}
 \seealso{\code{\link{posToProbeAnno}}}
 \examples{
  ## first a toy example:
