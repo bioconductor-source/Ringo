@@ -1,6 +1,5 @@
 # function to assess ChIP probe intensity autocorrelation
-
-autocor <- function(x, probeAnno, chrom="1",samples=NULL, lag.max= 2000, lag.step=100, cor.method="pearson", channel=c("red","green","logratio"), verbose=TRUE)
+autocor <- function(x, probeAnno, chrom, samples=NULL, lag.max= 2000, lag.step=100, cor.method="pearson", channel=c("red","green","logratio"), idColumn="ID", verbose=TRUE)
 {
   stopifnot(inherits(x,"ExpressionSet")|inherits(x,"RGList"),
             inherits(probeAnno, "probeAnno"), validObject(probeAnno))
@@ -15,6 +14,8 @@ autocor <- function(x, probeAnno, chrom="1",samples=NULL, lag.max= 2000, lag.ste
 
   ## a. handle ExpressionSets (normalized data)
   if (inherits(x,"ExpressionSet")){
+    if (is.character(probeidx))
+      probeidx <- match(probeidx, featureNames(x))
     if (is.null(samples))
       samples <- 1:ncol(exprs(x))
     dat <- rowMeans(exprs(x)[,samples,drop=FALSE])
@@ -22,6 +23,13 @@ autocor <- function(x, probeAnno, chrom="1",samples=NULL, lag.max= 2000, lag.ste
 
   ## b. hande RGLists (raw data)
   if (inherits(x,"RGList")){
+    stopifnot(all(c("R","G","genes") %in% names(x)))
+    ## speed up look-ups to the matrix by using row numbers
+    #   instead of row names
+    if (is.character(probeidx)){
+      stopifnot( idColumn %in% names(x$genes) )
+      probeidx <- match(probeidx, x$genes[[idColumn]])
+    }
     if (is.null(samples))
       samples <- 1:ncol(x$R)
     channel <- match.arg(channel, c("red","green","logratio"))
@@ -29,7 +37,7 @@ autocor <- function(x, probeAnno, chrom="1",samples=NULL, lag.max= 2000, lag.ste
                   "red"=rowMeans(x$R[,samples,drop=FALSE]),
                   "green"=rowMeans(x$G[,samples,drop=FALSE]),
                   "logratio"=log2(rowMeans(x$R[,samples,drop=FALSE]))-log2(rowMeans(x$G[,samples,drop=FALSE])))
-    names(dat) <- x$genes$'ID'
+    names(dat) <- x$genes[[idColumn]]
   }#if (inherits(x,"RGList"))
   
   if (verbose) cat("Lag: ")

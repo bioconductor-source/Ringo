@@ -259,7 +259,8 @@ image(exRG, 1, channel="green", mycols=c("black","green4","springgreen"))
 @ 
 
 <<imageRG,eval=TRUE,results=hide,echo=FALSE>>=
-jpeg("Ringo-imageRG.jpg", quality=100, height=400, width=360)
+#jpeg("Ringo-imageRG.jpg", quality=100, height=400, width=360)
+png("Ringo-imageRG.png", units="in", res=200, height=4, width=3.5)
 par(mar=c(0.01,0.01,0.01,0.01), bg="black")
 image(exRG, 1, channel="green", mycols=c("black","green4","springgreen"))
 dev.off()
@@ -600,7 +601,8 @@ image(RG, 1, channel="red", dim1="Col", dim2="Row",
 @ 
 %
 <<imageAgiRG,eval=TRUE,results=hide,echo=FALSE>>=
-jpeg("Ringo-imageAgiRG.jpg", quality=100, height=455, width=534)
+#jpeg("Ringo-imageAgiRG.jpg", quality=100, height=455, width=534)
+png("Ringo-imageAgiRG.png", res=200, units="in", height=4.55, width=5.34)
 par(mar=c(0.01,0.01,0.01,0.01), bg="black")
 image(RG, 1, channel="red", dim1="Row", dim2="Col",
       mycols=c("sienna","darkred","orangered"))

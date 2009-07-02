@@ -8,9 +8,10 @@
   offsets from the original positions. 
 }
 \usage{
-autocor(x, probeAnno, chrom = "1", samples = NULL, lag.max = 2000,
-lag.step=100, cor.method = "pearson", 
-channel = c("red","green","logratio"), verbose = TRUE)
+autocor(x, probeAnno, chrom, samples = NULL, lag.max = 2000,
+        lag.step = 100, cor.method = "pearson", 
+        channel = c("red","green","logratio"),
+        idColumn = "ID", verbose = TRUE)
 }
 \arguments{
   \item{x}{an object either of class \code{ExpressionSet} containing the
@@ -29,6 +30,13 @@ channel = c("red","green","logratio"), verbose = TRUE)
   \item{channel}{character; in case \code{x} is an \code{RGList}, which
     channel to plot, either \code{red}, \code{green} or the
     \code{logratio} \code{log2(red)-log2(green)}}
+  \item{idColumn}{string; indicating which column of the \code{genes}
+    data.frame of the \code{RGList} holds the identifier for reporters
+    on the microarray. Character entries of the \code{index} elements of
+    the \code{probeAnno} will be matched against these identifiers.
+    If the \code{index} elements of the \code{probeAnno} are numeric or
+    \code{x} is of class \code{ExpressionSet}, this argument will be
+    ignored.}
   \item{verbose}{logical; extended output to STDOUT}
 }
 \details{
