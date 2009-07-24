@@ -27,10 +27,16 @@
         mybreaks = c(-1, quantile(myDat, probs = seq(0, 1, length.out = length(mycols)), na.rm = TRUE))
     stopifnot(length(mybreaks) - 1 == length(mycols))
     myCut <- cut(myDat, mybreaks)
-    plot(x=1, y=1, xlim=c(1, maxX), ylim=c(1,maxY), type="n", xaxt="n", yaxt="n", xlab=NA, ylab=NA, pch=ppch, cex=pcex, ...)
+    plot(x=1, y=1, xlim=c(1, maxX), ylim=c(1,maxY), type="n", xaxt="n", yaxt="n", xlab=NA, ylab=NA, pch=ppch, cex=pcex, frame.plot=FALSE, ...)
+    ## outline array borders:
+    polygon(x=c(0, maxX+1, maxX+1, 0), y=c(0, 0, maxY+1, maxY+1), xpd=TRUE)
+    ## plot intensities colour-coded:
     points(x=myRG$genes[[dim1]], y=myRG$genes[[dim2]], col=mycols[as.numeric(myCut)], pch=ppch, cex=pcex, ...)
-    invisible(NULL)  
+    invisible(NULL)
 }#image.RGList
-
+             
 "arrayImage" <-
   function(x,...) { image.RGList(x,...) }
+
+setMethod("image", signature(x="RGList"),
+          function(x,...) { image.RGList(x,...) })

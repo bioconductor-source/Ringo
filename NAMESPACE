@@ -5,7 +5,7 @@ importFrom("graphics", "plot", "image", "hist", "polygon", "smoothScatter")
 importFrom("stats", "update", "p.adjust")
 importFrom("genefilter", "shorth", "half.range.mode")
 
-export("autocor", "chipAlongChrom1","corPlot",
+export("autocor", "chipAlongChrom1","corPlot", "image.RGList",
        "computeRunningMedians", "sliding.quantile",
        "findChersOnSmoothed", "cherByThreshold","newCher","relateChers",
        "preprocess","nimblegenScale","readNimblegen", "asExprSet",
@@ -22,7 +22,7 @@ S3method("as.data.frame", "cherList")
 
 exportClasses("probeAnno", "cher", "qop")
 
-exportMethods("get", "ls","initialize", "plot", "show",
+exportMethods("get", "ls","initialize", "plot", "show", "image",
               "arrayName", "chromosomeNames", "genome",
               "arrayName<-", "genome<-", "update",
               "cellType", "cellType<-", "nonzero", "cbind2")

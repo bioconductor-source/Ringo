@@ -1,6 +1,7 @@
 \name{image.RGList}
 \alias{arrayImage}
 \alias{image.RGList}
+\alias{image,RGList-method}
 \title{Function to visualize spatial distribution of raw intensities}
 \description{
   Function to visualize spatial distribution of raw intensities on

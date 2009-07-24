@@ -57,7 +57,6 @@ raiselinks,plainpages,pdftex]{hyperref}
 
 \title{Ringo - R Investigation of NimbleGen Oligoarrays}
 \author{Joern Toedling}
-\date{}
 \maketitle
 
 <<prepare, echo=FALSE>>=
