@@ -9,7 +9,8 @@
   genes, for example: genes related to ChIP-enriched regions.
 }
 \usage{
-sigGOTable(selGenes, gene2GO, universeGenes, ontology = "BP", maxP = 0.001)
+sigGOTable(selGenes, gene2GO, universeGenes, ontology = "BP",
+           maxP = 0.001, algorithm = "elim")
 }
 \arguments{
   \item{selGenes}{character; names of the genes in the list; must
@@ -31,6 +32,10 @@ sigGOTable(selGenes, gene2GO, universeGenes, ontology = "BP", maxP = 0.001)
   \item{maxP}{numeric; which maximum p-value to allow for GO terms to be
     called significantly associated to the gene list
   }
+  \item{algorithm}{string; one of \sQuote{elim},  \sQuote{classic},  or
+    \sQuote{weight}; which method to use in the topGO analyis; see the
+    topGO package for details.
+  }
 }
 \details{
   This function is really just a convenience wrapper around functions in
@@ -48,7 +53,7 @@ sigGOTable(selGenes, gene2GO, universeGenes, ontology = "BP", maxP = 0.001)
   This function in this form only works with the package
   topGO versions >= 1.13.1.
 }
-%\seealso{}
+\seealso{function \code{runTest} in package \code{topGO}}
 \examples{
  \dontrun{
    library("topGO")

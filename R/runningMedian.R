@@ -48,6 +48,17 @@ computeRunningMedians <- function(xSet, probeAnno, modColumn="Cy5", allChr,
     } #  if (checkUnique)
     if (is.character(chridx))
         chridx <- match(chridx, allProbes)
+    ## check if any NAs or non-matching numbers are in chridx:
+    areProbes <- is.element(chridx, seq(nrow(xSet)))
+    if (!all(areProbes)){
+      warning(paste(sum(!areProbes),"probes on chromosome",chr,
+                    "are listed in",deparse(substitute(probeAnno)),
+                    ", but do not correspond to features of",
+                    deparse(substitute(xSet)),"."))
+      chridx <- chridx[areProbes]
+      chrmid <- chrmid[areProbes]
+    }
+    ### iterate over sample groups:
     for (i in 1:nlevels(grouping)){
       modSamples   <- which(grouping == levels(grouping)[i])
       if (verbose) cat(sampleNames(xSet)[modSamples],"... ")
@@ -68,7 +79,7 @@ computeRunningMedians <- function(xSet, probeAnno, modColumn="Cy5", allChr,
   # cat construct ExpressionSet of results:
   sample.labels <- paste(as.character(levels(grouping)), nameSuffix, sep="")
   if (!combineReplicates)
-      newPD <- phenoData(xSet)
+      newPD <- phenoData(xSet)[order(grouping),]
   else
       newPD <- new("AnnotatedDataFrame", data=data.frame(label=sample.labels, row.names=sample.labels), varMetadata=data.frame("varLabel"=c("label"),row.names=c("label")))
   newEset <- new('ExpressionSet',exprs=newExprs,  phenoData = newPD)
