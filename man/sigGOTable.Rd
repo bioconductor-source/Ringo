@@ -30,7 +30,9 @@ sigGOTable(selGenes, gene2GO, universeGenes, ontology = "BP",
     \dQuote{MF}, or \dQuote{CC}.
   }
   \item{maxP}{numeric; which maximum p-value to allow for GO terms to be
-    called significantly associated to the gene list
+    called significantly associated to the gene list; passed on topGO
+    function \code{runTest} and used to subset the table of significant
+    GO terms reported by topGO.
   }
   \item{algorithm}{string; one of \sQuote{elim},  \sQuote{classic},  or
     \sQuote{weight}; which method to use in the topGO analyis; see the

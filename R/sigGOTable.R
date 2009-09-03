@@ -11,7 +11,8 @@ sigGOTable <- function(selGenes, gene2GO, universeGenes, ontology="BP", maxP=0.0
   names(inGenes) <- universeGenes
   GOdata <- new("topGOdata", ontology=ontology, allGenes=inGenes, 
                 annot=annFUN.gene2GO, gene2GO=gene2GO)
-  resultFisher <- runTest(GOdata, algorithm = algorithm, statistic = "fisher")
+  resultFisher <- runTest(GOdata, algorithm=algorithm,
+                          statistic="fisher", cutOff=maxP)
   sTab <- GenTable(GOdata, p.value=resultFisher, topNodes=length(usedGO(GOdata)))
   sTab <- subset(sTab, as.numeric(p.value) < maxP)
   return(sTab)
