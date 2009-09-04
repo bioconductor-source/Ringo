@@ -36,9 +36,9 @@ corPlot(eset, samples = NULL, grouping = NULL, ref = NULL,
   produce the pairs plot.
 }
 \author{Joern Toedling}
-\seealso{\code{\link[Biobase]{ExpressionSet}},\code{\link[stats]{relevel}},
+\seealso{\code{\link[Biobase:class.ExpressionSet]{ExpressionSet}},\code{\link[stats]{relevel}},
   \code{\link[graphics]{pairs}},
-  \code{\link[genePlotter]{smoothScatter}}}
+  \code{\link[graphics]{smoothScatter}}}
 \examples{
    data(sample.ExpressionSet)
    if (interactive()) 

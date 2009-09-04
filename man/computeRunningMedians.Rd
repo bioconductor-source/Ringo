@@ -57,7 +57,7 @@ computeRunningMedians(xSet, probeAnno, modColumn = "Cy5",
   \code{modColumn} of the supplied ExpressionSet's phenoData.
 }
 \author{Joern Toedling \email{joern.toedling@curie.fr}}
-\seealso{\code{\link[Biobase]{ExpressionSet}},
+\seealso{\code{\link[Biobase:class.ExpressionSet]{ExpressionSet}},
   \code{\link{sliding.quantile}}, \code{\link{probeAnno-class}}}
 \examples{
   exDir <- system.file("exData",package="Ringo")

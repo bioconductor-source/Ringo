@@ -90,7 +90,7 @@ chipAlongChrom(eSet,  probeAnno, chrom, xlim, ylim,
   before.
 }
 \seealso{
-  \code{\link[Biobase]{ExpressionSet-class}},
+  \code{\link[Biobase:class.ExpressionSet]{ExpressionSet-class}},
   \code{\link{probeAnno-class}},
   \code{\link[grid]{grid.points}},
   \code{plotAlongChrom} in package \code{tilingArray}}

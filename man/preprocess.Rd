@@ -86,9 +86,9 @@ preprocess(myRG, method="vsn", ChIPChannel="R", inputChannel="G",
 }
 \author{Joern Toedling}
 \seealso{\code{\link[limma]{normalizeWithinArrays}},
-  \code{\link[limma]{normalizeBetweenArrays}},
-  \code{\link[limma]{malist}},\code{\link[Biobase]{ExpressionSet}},
-  \code{\link[vsn]{vsnMatrix}}}
+  \code{\link[limma:normalizebetweenarrays]{normalizeBetweenArrays}},
+  \code{\link[limma]{malist}},\code{\link[Biobase:class.ExpressionSet]{ExpressionSet}},
+  \code{\link[vsn:vsn2]{vsnMatrix}}}
 \examples{
    exDir <- system.file("exData",package="Ringo")
    exRG <- readNimblegen("example_targets.txt","spottypes.txt",

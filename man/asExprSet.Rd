@@ -28,7 +28,7 @@
   \code{ExpressionSet}s.
 }
 \author{Joern Toedling}
-\seealso{\code{\link[Biobase]{ExpressionSet}}, \code{\link{preprocess}}}
+\seealso{\code{\link[Biobase:class.ExpressionSet]{ExpressionSet}}, \code{\link{preprocess}}}
 \examples{
   exDir <- system.file("exData",package="Ringo")
   exRG  <- readNimblegen("example_targets.txt","spottypes.txt",path=exDir)

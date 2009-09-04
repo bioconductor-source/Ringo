@@ -94,8 +94,9 @@ chipAlongChrom1(eSet, chrom, probeAnno, xlim, ylim = NULL,
   }
 }
 \author{Joern Toedling}
-\note{Use the function \code{\link[geneplotter]{alongChrom}} for
-  alternative ways to display probe intensities in genomic regions.}
+\note{Use the function \code{alongChrom} from
+  package \code{geneplotter} fo an alternative way to display probe
+  intensities in genomic regions.}
 \seealso{\code{\link[graphics]{plot.default}};
   \code{plotAlongChrom} in package \code{tilingArray}}
 \examples{

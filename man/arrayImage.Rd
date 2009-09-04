@@ -37,7 +37,7 @@
     is called 'Y' with some NimbleGen arrays and 'Col' with some Agilent
     arrays.}
   \item{ppch}{which symbol to use for intensities; passed on as
-    \code{pch} to \code{points.default}}
+    \code{pch} to \code{points..default}}
   \item{pcex}{enlargement factor for intensity symbols; passed on as
     \code{cex} to \code{points.default}}
   \item{verbose}{logical; extended output to STDOUT?}
@@ -50,7 +50,7 @@
 }
 \author{Joern Toedling}
 \seealso{\code{\link{readNimblegen}},\code{\link[graphics]{plot.default}},
-  \code{\link[graphics]{points.default}}}
+  \code{\link[graphics]{points}}}
 \examples{
    exDir <- system.file("exData",package="Ringo")
    exRG <- readNimblegen("example_targets.txt","spottypes.txt",path=exDir)
