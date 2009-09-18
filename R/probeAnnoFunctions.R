@@ -95,13 +95,7 @@ validProbeAnno <- function(probeAnno){
     chromElements <- grep("[[:digit:]]+\\..*",envElements, value=TRUE)
     if (length(chromElements)==0){
       warning("Enviroment does not contain any chromosome/strand probe mappings, expecting elements named for example 1.start\n"); return(FALSE)}
-    isStrandSpecific <- length(grep("\\.\\+\\.",chromElements))>0 || length(grep("\\.-\\.",chromElements))>0
-    sp <- strsplit(chromElements,split="\\.")
-    if (isStrandSpecific){
-      uniChromNames <- sapply(sp, function(x) paste(x[1:2],collapse="."))
-    } else {
-      uniChromNames <- sapply(sp, function(x) x[1])
-    }
+    uniChromNames <- gsub("\\.start$","", chromElements)
     for (thisName in uniChromNames){
       theseElemNames <- paste(thisName,c("start","end","index","unique"),sep=".")
       theseAreIn <- theseElemNames %in% envElements

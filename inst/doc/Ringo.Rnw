@@ -762,7 +762,8 @@ toLatex(sessionInfo())
 %\small
 \section*{Acknowledgments}
 
-I thank Wolfgang Huber Oleg Sklyar, Tammo Kr\"uger, Richard Bourgon,
+Many thanks to Wolfgang Huber, Oleg Sklyar,
+Tammo Kr\"uger, Richard Bourgon,
 and Matt Ritchie for source code contributions to
 and lots of helpful suggestions on Ringo, 
 Todd Richmond and NimbleGen Systems, Inc. for 
