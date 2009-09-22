@@ -76,18 +76,20 @@ preprocess(myRG, method="vsn", ChIPChannel="R", inputChannel="G",
 }
 \note{
   Since Ringo version 1.5.6, this function does not call limma's
-  function \code{\link[limma]{backgroundCorrect}} directly any
+  function \code{\link[limma:backgroundcorrect]{backgroundCorrect}} directly any
   longer. If wanted by the user, background correction should be
   indicated as additional arguments passed on to
   \code{\link[limma]{normalizeWithinArrays}} or
-  \code{\link[limma]{normalizeBetweenArrays}}, or alternatively call
-  \code{\link[limma]{backgroundCorrect}} on the \code{RGList} before
-  \code{preprocess}ing.
+  \code{\link[limma:normalizebetweenarrays]{normalizeBetweenArrays}}, or
+  alternatively call 
+  \code{\link[limma:backgroundcorrect]{backgroundCorrect}} on the
+  \code{RGList} before \code{preprocess}ing.
 }
 \author{Joern Toedling}
 \seealso{\code{\link[limma]{normalizeWithinArrays}},
   \code{\link[limma:normalizebetweenarrays]{normalizeBetweenArrays}},
-  \code{\link[limma]{malist}},\code{\link[Biobase:class.ExpressionSet]{ExpressionSet}},
+  \code{\link[limma]{malist}},
+  \code{\link[Biobase:class.ExpressionSet]{ExpressionSet}},   
   \code{\link[vsn:vsn2]{vsnMatrix}}}
 \examples{
    exDir <- system.file("exData",package="Ringo")
