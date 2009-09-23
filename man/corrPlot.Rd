@@ -27,7 +27,7 @@ corPlot(eset, samples = NULL, grouping = NULL, ref = NULL,
   \item{ref}{reference than only applies if argument \code{grouping} is
     given; see \code{\link[stats]{relevel}}}
   \item{useSmoothScatter}{logical; should the function
-    \code{\link[genePlotter]{smoothScatter}} be used? 
+    \code{\link[graphics]{smoothScatter}} be used? 
     given; see \code{\link[stats]{relevel}}}
   \item{\dots}{additional arguments, not used yet}
 }
@@ -39,7 +39,7 @@ corPlot(eset, samples = NULL, grouping = NULL, ref = NULL,
 \seealso{\code{\link[Biobase:class.ExpressionSet]{ExpressionSet}},
   \code{\link[stats]{relevel}},  
   \code{\link[graphics]{pairs}},
-  \code{\link[graphics:smoothscatter]{smoothScatter}}}
+  \code{\link[graphics]{smoothScatter}}}
 \examples{
    data(sample.ExpressionSet)
    if (interactive()) 
