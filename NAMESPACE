@@ -23,6 +23,6 @@ S3method("as.data.frame", "cherList")
 exportClasses("probeAnno", "cher", "qop")
 
 exportMethods("get", "ls","initialize", "plot", "show", "image",
-              "arrayName", "chromosomeNames", "genome",
+              "arrayName", "chromosomeNames", "genome", "probes",
               "arrayName<-", "genome<-", "update",
               "cellType", "cellType<-", "nonzero", "cbind2")

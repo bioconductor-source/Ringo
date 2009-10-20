@@ -12,7 +12,9 @@
 \alias{cellType,cher-method}
 \alias{cellType}
 \alias{cellType<-}
-
+\alias{probes}
+\alias{probes,cher-method}
+\alias{probes,cherList-method}
 \title{Class "cher" - ChIP-enriched region}
 \description{
   An object of class \code{cher} (ChIP-enriched region) holds
@@ -45,7 +47,7 @@
     \item{\code{score}:}{\code{numeric} of a cher score, currently we
       use the sum of smoothed probe levels (log fold changes),
       e.g. 69.16}
-    \item{\code{probes}:}{\code{character vector} of probe identifiers
+    \item{\code{probes}:}{\code{vector} of probe identifiers
       of all probes with match positions in the \code{cher}}
     \item{\code{extras}:}{\code{list} of further elements used to
       annotate the \code{cher}; examples of such that are used in
@@ -94,6 +96,8 @@
       \code{examples} below for an example how to use this method.}
     \item{cellType}{obtain or replace the description of the cell type,
       the ChIP-enriched regions was found in with this antibody}
+    \item{probes}{obtain the vector of probes involved in a
+      ChIP-enriched region} 
   }
 }
 \author{Joern Toedling, Tammo Krueger}

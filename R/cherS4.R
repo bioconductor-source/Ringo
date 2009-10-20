@@ -79,3 +79,11 @@ setMethod("cellType", signature(x="cher"), function(x){
 
 setReplaceMethod("cellType", signature(x="cher", value="character"),
   function(x, value){x@cellType <- value; return(x)})
+
+### obtain vector of probes in a cher
+setMethod("probes", signature(x="cher"), function(x){
+  x@probes})
+
+## or of all chers in a list
+setMethod("probes", signature(x="cherList"), function(x){
+  sort(unique(unlist(lapply(x, probes), use.names=FALSE)))})

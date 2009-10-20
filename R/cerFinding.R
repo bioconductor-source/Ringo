@@ -83,18 +83,25 @@ findChersOnSmoothed <- function(smoothedX, probeAnno, thresholds, allChr=NULL, d
         chridx <- chridx[chruni %in% uniqueCodes]
         chrmid <- chrmid[chruni %in% uniqueCodes]
       } #  if (checkUnique)
+      ### need two vectors:
+      ## a. character vector of probe names on the chromosome
+      ## b. numeric vector of indices of these probes in the data set
+      if (is.character(chridx))
+        chrprobes <- chridx
+      else
+        chrprobes <- allProbes[chridx]
       if (is.character(chridx))
         chridx <- match(chridx, allProbes)
       chrrm <- exprs(smoothedX)[chridx,i]
       chr.chers <- cherByThreshold(chrmid, chrrm, threshold=thresholds[i], distCutOff=distCutOff, minProbesInRow=minProbesInRow)
       if (length(chr.chers)==0) return(list())
       ## new version: return objects of class cher instead
-      names(chridx) <- chrmid
+      names(chrprobes) <- as.character(chrmid)
       chr.chers <- lapply(as.list(1:length(chr.chers)), function(z){
         x <- chr.chers[[z]];
         cherID <- paste(thisCellType, this.sample, paste("chr",chr,sep=""), paste("cher",z,sep=""),sep=".")
         cherID <- gsub("(^\\.+)|(\\.+$)","",cherID)#remove any leading and trailing dots
-        thisCher <- new("cher", name=cherID, chromosome=chr, start=as.integer(names(x)[1]), end=as.integer(names(x)[length(x)]), cellType=as.character(thisCellType), antibody=as.character(this.sample), maxLevel=max(x), score=attr(x,"score"), probes=as.character(chridx[names(x)]))
+        thisCher <- new("cher", name=cherID, chromosome=chr, start=as.integer(names(x)[1]), end=as.integer(names(x)[length(x)]), cellType=as.character(thisCellType), antibody=as.character(this.sample), maxLevel=max(x), score=attr(x,"score"), probes=as.vector(chrprobes[names(x)]))
         return(thisCher)})
       return(chr.chers)
     })
