@@ -1,13 +1,13 @@
 \name{exportCherList}
 \alias{exportCherList}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Function to export cherList into a file}
 \description{
  Function to export cherList into a file of gff or BED format. This
  files can be imported as tracks into genome browsers.
 }
 \usage{
-exportCherList(object, filename = "chers.gff", format = "gff3", ...)
+exportCherList(object, filename = "chers.gff", format = "gff3",
+               genome="hg18", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -15,6 +15,9 @@ exportCherList(object, filename = "chers.gff", format = "gff3", ...)
   \item{filename}{character; path to file to be written}
   \item{format}{Format of exported file; currently only "gff3" and "bed"
     are supported}
+  \item{genome}{character; which genome the ChIP-enriched regions were
+    found in denoting species and assembly, e.g. \sQuote{hg18} or
+    \sQuote{mm9}}
   \item{\dots}{further arguments to be passed on to the \code{trackSet}
     method}
 }
@@ -43,4 +46,3 @@ exportCherList(object, filename = "chers.gff", format = "gff3", ...)
 }
 \keyword{IO}
 \keyword{file}
-% __ONLY ONE__ keyword per line
