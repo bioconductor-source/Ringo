@@ -26,7 +26,7 @@ computeRunningMedians <- function(xSet, probeAnno, modColumn="Cy5", allChr,
   if (combineReplicates)
     grouping <- factor(pData(xSet)[[modColumn]])
   else
-    grouping <- factor(sampleNames(xSet))
+    grouping <- factor(sampleNames(xSet), levels=sampleNames(xSet))
 
   newExprs <- matrix(NA, nrow=nrow(exprs(xSet)), ncol=nlevels(grouping))
   rownames(newExprs) <- allProbes <- featureNames(xSet)

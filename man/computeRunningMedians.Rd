@@ -52,9 +52,11 @@ computeRunningMedians(xSet, probeAnno, modColumn = "Cy5",
 }
 \value{
   An object of class \code{ExpressionSet}, holding smoothed intensity
-  values for the probes of the supplied ExpressionSet. The number of
-  results samples is the number of levels in the supplied
-  \code{modColumn} of the supplied ExpressionSet's phenoData.
+  values for the probes of the supplied ExpressionSet.
+  The number of results samples is either the number of levels in the
+  supplied \code{modColumn} of the supplied ExpressionSet's phenoData if
+  \code{combineReplicates} is set to TRUE or equal to the number of
+  samples in the supplied ExpressionSet \code{xSet} otherwise.
 }
 \author{Joern Toedling \email{joern.toedling@curie.fr}}
 \seealso{\code{\link[Biobase:class.ExpressionSet]{ExpressionSet}},

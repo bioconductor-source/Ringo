@@ -668,7 +668,7 @@ probeDists <- diff(pA["17.start"])
 br <- c(0, 100, 200, 300, 500, 1000, 10000, max(probeDists))
 table(cut(probeDists, br))
 @
-The majority of match positions are $100--300$~bp apart.
+The majority of match positions are \mbox{100--300~bp} apart.
 <<agiSmoothing, results=hide>>=
 smoothX <- computeRunningMedians(X, modColumn="Antibody",
               winHalfSize=500, min.probes=3, probeAnno=pA)
@@ -756,7 +756,7 @@ the corresponding Bioconductor package \Rpackage{ccTutorial}.
 This vignette was generated using the following package versions:
 
 <<sessionInfo, echo=FALSE, results=tex>>=
-toLatex(sessionInfo())
+toLatex(sessionInfo(), locale=FALSE)
 @
 
 %\small
