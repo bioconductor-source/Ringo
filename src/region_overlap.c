@@ -65,6 +65,7 @@ SEXP overlap_xy(SEXP chromx, SEXP startx, SEXP endx, SEXP chromy, SEXP starty, S
 	}//if (ys <=  xe)
 	INTEGER(res)[j*nptx+i] = overlap;
       }
+      R_CheckUserInterrupt();
     }
 
     // return a matrix of dimension nptx * npty

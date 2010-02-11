@@ -41,6 +41,9 @@ setMethod("plot",signature=c("cher","missing"), function(x){
   stop("For plotting objects of class 'cher', you need to provide at least\n 1) the 'cher' object\n 2) an ExpressionSet that holds the data the region was found on\n 3) a probeAnno object.\n")
 })
 
+## define list of cher objects as S3 class:
+setOldClass("cherList")
+
 setMethod("plot",signature=c("cher","ExpressionSet"), function(x, y, probeAnno, samples=NULL, extent=1000, gff=NULL, ...){
   if (!is.null(samples)&is.character(samples))
     samples <- match(samples, sampleNames(y))
