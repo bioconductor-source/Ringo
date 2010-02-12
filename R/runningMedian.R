@@ -16,9 +16,14 @@ computeRunningMedians <- function(xSet, probeAnno, modColumn="Cy5", allChr,
    winHalfSize=400, min.probes=5, quant=0.5, combineReplicates=FALSE,
    nameSuffix=".sm", checkUnique=TRUE, uniqueCodes=c(0), verbose=TRUE)
 {
-  stopifnot(inherits(xSet,"ExpressionSet"),inherits(probeAnno,"probeAnno"),
-            validObject(probeAnno),
-            is.numeric(quant), (quant>=0)&(quant<=1), length(quant)==1)
+  ## 0. check arguments:
+  stopifnot(inherits(xSet,"ExpressionSet"),
+            inherits(probeAnno,"probeAnno"), validObject(probeAnno),
+            is.numeric(quant), (quant>=0)&(quant<=1), length(quant)==1 )
+  if (!modColumn %in% varLabels(xSet))
+    stop(paste("There is no column ",deparse(substitute(modColumn)),
+               " defined in the phenoData of ",
+               deparse(substitute(xSet)),".\n", sep=""))
   ## which chromosomes to do the smoothing for:
   if (missing(allChr)) allChr <- chromosomeNames(probeAnno)
   stopifnot(is.character(allChr))
