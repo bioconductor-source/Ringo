@@ -38,10 +38,18 @@ twoGaussiansNull(x, p.adj.method = "BY", max.adj.p = 0.1, var.equal = FALSE, ...
 }
 \author{Joern Toedling, Aleksandra Pekowska}
 \note{
+  Please note that the use of the package 'mclust' is only free for 
+  strict academic use (see the license of 'mclust' here:
+  \url{http://www.stat.washington.edu/mclust/license.txt} ).
+  The alternative function \code{\link{upperBoundNull}} does not have
+  this restriction.
+  
   Thanks to Richard Bourgon for pointing out the necessity of providing
   this method as an alternative way of estimating the threshold.
 }
-\seealso{\code{mclust}, \code{\link[stats]{p.adjust}}}
+\seealso{\code{mclust}, \code{\link[stats]{p.adjust}},
+  \code{\link{upperBoundNull}}
+}
 \examples{
   exDir <- system.file("exData",package="Ringo")
   load(file.path(exDir,"exampleProbeAnno.rda"))
