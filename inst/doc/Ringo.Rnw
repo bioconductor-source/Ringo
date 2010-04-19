@@ -774,6 +774,6 @@ European Union (FP6 HeartRepair, LSHM-CT-2005-018630).
 \small
 %%% BIBLIOGRAPHY STARTS HERE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{abbrvnat}
-\bibliography{Ringo-Bibliography.bib}
+\bibliography{Ringo-Bibliography}
 
 \end{document}

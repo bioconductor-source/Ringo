@@ -10,5 +10,6 @@ pdf:	Ringo.tex
 clean:
 	rm -f *.out *.bbl *.aux *.log *.blg *.brf *.toc  *~ *.eps
 	rm -f *.nfs*
-	rm -f Ringo-*.jpg Ringo-*.png Ringo-*.pdf Rplots.ps Rplots.pdf
+	rm -f Ringo-*.jpg Ringo-*.png Ringo-*.pdf
+#	rm -f Rplots.pdf Rplots.ps # problem on build machine 'gewurz'
 #	rm -f *.dvi *.ps Ringo.tex
