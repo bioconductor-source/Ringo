@@ -35,7 +35,8 @@
 posToProbeAnno <- function(pos, chrNameColumn="CHROMOSOME",probeColumn="PROBE_ID", chrPositionColumn="POSITION", lengthColumn="LENGTH", sep="\t", genome="unknown", microarrayPlatform="unknown", verbose=TRUE, ...){
     if (!is.data.frame(pos) && !is.matrix(pos)){
         stopifnot(is.character(pos), file.exists(pos))
-        hits <- read.delim(pos, header=TRUE, as.is=TRUE, ...)
+        hits <- read.delim(pos, header=TRUE, as.is=TRUE,
+                           stringsAsFactors=FALSE, ...)
         con <- file(pos, open="r")
         headerLine <- readLines(con, 1)
         headers <- unlist(strsplit(headerLine, split=sep))
@@ -55,6 +56,12 @@ posToProbeAnno <- function(pos, chrNameColumn="CHROMOSOME",probeColumn="PROBE_ID
         if (!all(columnsAreIn))
             stop(paste("\nColumn(s)",paste(c(chrNameColumn, probeColumn, chrPositionColumn, lengthColumn)[!columnsAreIn],sep=", ", collapse=", "),"are not found in file or data.frame",deparse(substitute(pos)),".\n"))
     }
+    ## factors in data.frame and thus probeAnno can pose
+    ##  difficulities later on
+    if (is.factor(hits[[chrNameColumn]]))
+      hits[[chrNameColumn]] <- as.character(hits[[chrNameColumn]])
+    if (is.factor(hits[[probeColumn]]))
+      hits[[probeColumn]] <- as.character(hits[[probeColumn]])
     hits$END    <- hits[[chrPositionColumn]] + hits[[lengthColumn]] - 1
     hits$MIDDLE <- round((hits[[chrPositionColumn]] + hits$END)/2)
     hitOrder <- order(hits[[chrNameColumn]], hits$MIDDLE)
