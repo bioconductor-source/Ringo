@@ -16,7 +16,7 @@ computeSlidingT(xSet, probeAnno, allChr = c(1:19, "X", "Y"), test = "one.sample"
   \item{allChr}{Character vector of all chromosomes in genome}
   \item{test}{character; one of \code{one.sample} or \code{two.sample}}
   \item{grouping}{factor vector of length equal to number of samples,
-    currently not required}
+    not required if \code{test=one.sample}}
   \item{winHalfSize}{Half the size of the window centered at a probe
     position, in which all other probes contribute to the calculation of
     the mean and standard deviation.}
@@ -39,7 +39,7 @@ computeSlidingT(xSet, probeAnno, allChr = c(1:19, "X", "Y"), test = "one.sample"
   \code{grouping}.
 }
 \author{Joern Toedling}
-\note{the option \code{two.sample} is not implemented yet} 
+%\note{the option \code{two.sample} is not implemented yet} 
 \seealso{\code{\link{sliding.meansd}}}
 \examples{
  exDir <- system.file("exData",package="Ringo")
