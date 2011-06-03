@@ -81,7 +81,7 @@ chipAlongChrom(eSet,  probeAnno, chrom, xlim, ylim,
   probe levels (element \code{y}) in the selected genomic region.
 }
 %\details{}
-\author{Joern Toedling \email{joern.toedling@curie.fr}}
+\author{Joern Toedling}
 \note{
   The S4 method is provided as a mere convenience wrapper.
 

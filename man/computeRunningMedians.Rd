@@ -58,7 +58,7 @@ computeRunningMedians(xSet, probeAnno, modColumn = "Cy5",
   \code{combineReplicates} is set to TRUE or equal to the number of
   samples in the supplied ExpressionSet \code{xSet} otherwise.
 }
-\author{Joern Toedling \email{joern.toedling@curie.fr}}
+\author{Joern Toedling}
 \seealso{\code{\link[Biobase:class.ExpressionSet]{ExpressionSet}},
   \code{\link{sliding.quantile}}, \code{\link{probeAnno-class}}}
 \examples{

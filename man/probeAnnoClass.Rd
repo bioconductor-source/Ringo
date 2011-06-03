@@ -75,7 +75,7 @@
       its \code{map} slot}
   }
 }
-\author{Joern Toedling \email{joern.toedling@curie.fr}; Wolfgang Huber}
+\author{Joern Toedling; Wolfgang Huber}
 \note{'probeAnno' objects used to be environments and still are used as
   such in package \code{tilingArray}}
 \seealso{posToProbeAnno}
