@@ -15,3 +15,5 @@ setGeneric("genome<-", function(x, value) standardGeneric("genome<-"))
 setGeneric("nonzero", function(x) standardGeneric("nonzero"))
 
 setGeneric("probes", function(x) standardGeneric("probes"))
+
+setGeneric("image")

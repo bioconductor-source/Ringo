@@ -4,8 +4,9 @@ import("methods")
 importFrom("graphics", "plot", "image", "hist", "polygon", "smoothScatter")
 importFrom("stats", "update", "p.adjust")
 importFrom("genefilter", "shorth", "half.range.mode")
+importMethodsFrom("BiocGenerics", "plot")
 
-export("autocor", "chipAlongChrom1","corPlot", "image.RGList",
+export("autocor", "chipAlongChrom1","corPlot", "image", "image.RGList",
        "computeRunningMedians", "sliding.quantile",
        "findChersOnSmoothed", "cherByThreshold","newCher","relateChers",
        "preprocess","nimblegenScale","readNimblegen", "asExprSet",
@@ -22,7 +23,7 @@ S3method("as.data.frame", "cherList")
 
 exportClasses("probeAnno", "cher", "qop")
 
-exportMethods("get", "ls","initialize", "plot", "show", "image",
+exportMethods("get", "ls","initialize", "plot", "show",
               "arrayName", "chromosomeNames", "genome", "probes",
               "arrayName<-", "genome<-", "update",
               "cellType", "cellType<-", "nonzero", "cbind2")
