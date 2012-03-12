@@ -114,14 +114,14 @@ readNimblegenHeader <- function (file, headerPattern="# software=NimbleScan")
 {
     firstfield <- scan(file, what = "", sep = "\t", quote = "\"",
         nlines = 50, flush = TRUE, quiet = TRUE, blank.lines.skip = FALSE,
-        multi.line = FALSE, allowEscape = FALSE)
+        multi.line = FALSE, allowEscapes = FALSE)
     NHeaderRecords <- grep(headerPattern, firstfield)
     if (length(NHeaderRecords)==0){
       warning(paste("File ",file, " did not contain expected header line starting with '",headerPattern,"'\n.", sep=""))
       out <- list(NHeaderRecords = 0, BeginRawData = 1)
     } else {
       txt <- scan(file, what = "", sep = "\t", quote = "\"", nlines = NHeaderRecords -
-                  1, quiet = TRUE, allowEscape = FALSE)
+                  1, quiet = TRUE, allowEscapes = FALSE)
       out <- list(NHeaderRecords = NHeaderRecords, BeginRawData = NHeaderRecords)
       out$Version <- txt[grep("version=", txt) + 1]
       out$Date <- txt[grep("date=", txt) + 1]

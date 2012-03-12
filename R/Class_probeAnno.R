@@ -34,7 +34,7 @@ setValidity("probeAnno", function(object){
     if (!all(theseAreIn)){
       fails <- c(fails, paste("Environment ",deparse(substitute(map))," seems to hold information for chromosome/strand '",thisName,"', but does not contain elements '",paste(theseElemNames[!theseAreIn],collapse="', '"),"'.\n",sep=""))
     }
-    theseElements <- mget(theseElemNames, env=map)
+    theseElements <- mget(theseElemNames, envir=map)
     ## check if the maps related to the same chromosome/strand match up
     if (length(unique(sapply(theseElements,length)))!=1){
       print(sapply(theseElements, length))
@@ -68,7 +68,7 @@ setMethod("[",signature(x="probeAnno"),
      stopifnot(is.character(i), length(i)==1)
      if (!exists(i, envir=x@map))
        stop(paste("No mapping '",i,"' in this 'probeAnno' object.\n", sep=""))
-     get(i, env=x@map)
+     get(i, envir=x@map)
 })
 
 setReplaceMethod("[",signature(x="probeAnno"),

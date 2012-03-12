@@ -109,7 +109,7 @@ validProbeAnno <- function(probeAnno){
       if (!all(theseAreIn)){
         warning(paste("Environment ",deparse(substitute(probeAnno))," seems to hold information for chromosome/strand '",thisName,"', but does not contain elements '",paste(theseElemNames[!theseAreIn],collapse="', '"),"'.\n",sep=""))
         return(FALSE)}
-      theseElements <- mget(theseElemNames, env=probeAnno)
+      theseElements <- mget(theseElemNames, envir=probeAnno)
       ## check if the objects related to the same chromosome/strand match up
       if (length(unique(sapply(theseElements,length)))!=1){
         print(sapply(theseElements, length))
