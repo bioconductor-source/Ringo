@@ -78,7 +78,8 @@ setReplaceMethod("[",signature(x="probeAnno"),
      x
 })
 
-setMethod("get", signature(x="character", pos="missing", envir="probeAnno", mode="missing", inherits="missing"),  function( x, pos="missing", envir, mode="missing", inherits="missing"){
+setMethod("get", signature(x="character", pos="missing", envir="probeAnno"),
+          function(x, pos="missing", envir, mode="missing", inherits="missing"){
   stopifnot(is.character(x), length(x)==1)
   if (!exists(x, envir=envir@map))
     stop(paste("No mapping '",x,"' in this 'probeAnno' object.\n", sep=""))

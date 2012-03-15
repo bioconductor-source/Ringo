@@ -8,7 +8,7 @@
 
 .onAttach <- function(libname, pkgname) {
   ## show vignette in windows menu
-  if(.Platform$OS.type=="windows" && require(Biobase) && interactive() && .Platform$GUI=="Rgui"){
+  if(.Platform$OS.type=="windows" && interactive() && .Platform$GUI=="Rgui"){
     addVigs2WinMenu("Ringo")
   }
 } # .onAttach

@@ -14,7 +14,7 @@
 \alias{[,probeAnno,ANY,ANY,ANY-method}
 \alias{[<-,probeAnno,ANY,ANY,ANY-method}
 \alias{chromosomeNames,probeAnno-method}
-\alias{get,character,missing,probeAnno,missing,missing-method}
+\alias{get,character,missing,probeAnno-method}
 \alias{initialize,probeAnno-method}
 \alias{ls,probeAnno,missing,missing,missing,missing-method}
 \alias{show,probeAnno-method}

@@ -3,6 +3,7 @@ useDynLib(Ringo, ringoSlidingQuantile=sliding_quantile, ringoRegionOverlap=overl
 import("methods")
 importFrom("graphics", "plot", "image", "hist", "polygon", "smoothScatter")
 importFrom("stats", "update", "p.adjust")
+importFrom("BiocGenerics", "get")
 importFrom("genefilter", "shorth", "half.range.mode")
 importMethodsFrom("stats4", "plot")
 
