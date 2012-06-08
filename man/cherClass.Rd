@@ -8,6 +8,7 @@
 \alias{Cher}
 \alias{cherList}
 \alias{cherList-class}
+\alias{chersToBED}
 \alias{cellType<-,cher,character-method}
 \alias{cellType,cher-method}
 \alias{cellType}

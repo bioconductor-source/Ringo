@@ -65,7 +65,7 @@ relateChers <- function(pl, gff, upstream=5000, verbose=TRUE){
   stopifnot(is.list(pl),inherits(pl[[1]],"cher"),
             inherits(gff,"data.frame"),
             all(c("strand","name","start","end","chr") %in% names(gff)),
-            all(gff$start<gff$end))
+            all(gff$start <= gff$end))
   cherChr <- sapply(pl, function(x) x@chromosome)
   cherMid <- sapply(pl, function(x) round((x@start+x@end)/2))
   ## get borders of upstream region:
@@ -97,3 +97,58 @@ relateChers <- function(pl, gff, upstream=5000, verbose=TRUE){
   class(pl) <- unique(c("cherList", class(pl)))
   return(pl)
 }#relateChers
+
+
+
+### export cherList as BED file
+chersToBED <- function(z, file, trackDef=TRUE, doSort=TRUE,  ...){
+  # convert cherList to BED file
+  # z: cherList
+  # trackDef: logical; should USCS track definition be included
+  # ...: further arguments that are appended to the track-definition line, for example:   color="255,255,0"
+  stopifnot(inherits(z, "cherList"))
+  zd <- as.data.frame.cherList(z)
+  stopifnot(all(c("name","chr","start","end") %in% names(zd)))
+
+  ## make sure chromosome column starts with 'chr'
+  zd$chr <- paste("chr", gsub("^chr", "", zd$chr), sep="")
+  ## BED format uses zero-based, half-open interval notation
+  zd$start <- zd$start-1L
+
+  ## sorting
+  if (doSort){
+    chr <- gsub("^chr", "", zd$chr)
+    ## replace some chromosome names by numbers for sorting:
+    chr <- gsub("X$","100", chr)
+    chr <- gsub("Y$","200", chr)
+    chr <- gsub("MT?$","300", chr)
+    chr <- gsub("_random$","000", chr)
+    suppressWarnings(chr <- as.numeric(chr))
+    ord <- order(chr, zd$start, zd$end)
+    zd <- zd[ord,]
+  }
+  
+  # output
+  if (trackDef){ # track definition line wanted?
+     ## default track attributes
+    attribs <- list(name="chers1",
+                    description="Found ChIP-enriched regions",
+                    color="200,100,00", visibility="full")
+    trackLine <- 'track type=bed'
+    ## additional track attributes specified?trackDef <- paste('track type=', format, sep='')
+    further.args <- as.list(match.call(expand.dots=FALSE)[["..."]])
+    if (length(further.args)>0)
+      for (i in 1:length(further.args))
+        attribs[names(further.args)[i]] <- eval(further.args[[i]])
+    
+    for (i in 1:length(attribs))
+      trackLine <- paste(trackLine, ' ', 
+                         names(attribs)[i],'="',
+                         attribs[[i]],'"', sep="")
+    cat(trackLine, "\n", file=file, sep="")
+  }#if (trackDef) 
+  write.table(zd[,c("chr", "start", "end", "name")],
+              sep="\t", col.names=FALSE, row.names=FALSE,
+              quote=FALSE, file=file, append=trackDef)
+  invisible(zd)
+}#chersToBED

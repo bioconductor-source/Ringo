@@ -5,6 +5,7 @@ importFrom("graphics", "plot", "image", "hist", "polygon", "smoothScatter")
 importFrom("stats", "update", "p.adjust")
 importFrom("BiocGenerics", "get")
 importFrom("genefilter", "shorth", "half.range.mode")
+importFrom("vsn", "vsnMatrix")
 importMethodsFrom("stats4", "plot")
 
 export("autocor", "chipAlongChrom1","corPlot", "image", "image.RGList",
@@ -16,7 +17,8 @@ export("autocor", "chipAlongChrom1","corPlot", "image", "image.RGList",
        "features2Probes","sliding.meansd", "computeSlidingT",
        "getFeats", "upperBoundNull", "extractProbeAnno",
        "exportCherList", "plotBM", "twoGaussiansNull",
-       "chipAlongChrom", "quantilesOverPositions", "sigGOTable")
+       "chipAlongChrom", "quantilesOverPositions", "sigGOTable",
+       "chersToBED")
 
 S3method("plot", "autocor.result")
 S3method("image", "RGList")
