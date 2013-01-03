@@ -5,7 +5,6 @@
 #include <R.h>
 #include <Rdefines.h>
 #include <Rinternals.h>
-#include <R_ext/RConverters.h>
 #include <R_ext/Rdynload.h>
 //#include <R_ext/Utils.h>
 
