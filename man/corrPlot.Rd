@@ -3,7 +3,7 @@
 \alias{corPlot}
 \title{Function to plot correlation of different samples}
 \description{
-  This function can be used to visualize the (rank) correlation in
+  This function can be used to visualise the (rank) correlation in
   expression data between different samples or sample groups.
 }
 \usage{
@@ -27,13 +27,13 @@ corPlot(eset, samples = NULL, grouping = NULL, ref = NULL,
   \item{ref}{reference than only applies if argument \code{grouping} is
     given; see \code{\link[stats]{relevel}}}
   \item{useSmoothScatter}{logical; should the function
-    \code{\link[graphics]{smoothScatter}} be used? 
-    given; see \code{\link[stats]{relevel}}}
+    \code{\link[graphics]{smoothScatter}} be used?}
   \item{\dots}{additional arguments, not used yet}
 }
 \value{
-  No useful return. The function is called for its side-effect to
-  produce the pairs plot.
+  The function only returns NULL (invisible). 
+  The function is called for its side-effect
+  producing the pairs plot.
 }
 \author{Joern Toedling}
 \seealso{\code{\link[Biobase:class.ExpressionSet]{ExpressionSet}},
