@@ -2,12 +2,7 @@
 #include <algorithm>
 #include <list>
 
-using namespace std;
-
-// the above stuff is pure C++, thus needs to be outside the 'extern "C"'
-
-extern "C" {
-
+// include R headers (moved outside "extern C" in v1.35.1
 #include <R.h>
 #include <Rdefines.h>
 #include <Rinternals.h>
@@ -15,8 +10,13 @@ extern "C" {
 #include <R_ext/Rdynload.h>
 #include <R_ext/Utils.h> 
  
-  /* MAIN PART */
+using namespace std;
 
+// the above stuff is pure C++, thus needs to be outside the 'extern "C"'
+
+extern "C" {
+
+  /* MAIN PART */
 
  /* This next function replaced the sliding.median function. 
      It uses a different data structure, a linked list, and in 

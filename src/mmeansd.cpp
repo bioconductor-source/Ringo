@@ -1,17 +1,19 @@
 #include <algorithm>
 #include <cmath>
 
-using namespace std;
-// the above stuff is pure C++, thus needs to be outside the 'extern "C"'
-
-extern "C" {
-
+// R headers, moved outside "extern C" in v1.35.1
 #include <R.h>
 #include <Rdefines.h>
 #include <Rinternals.h>
 #include <R_ext/Error.h>
 #include <R_ext/Rdynload.h>
 #include <R_ext/Utils.h> 
+
+
+using namespace std;
+// the above stuff is pure C++, thus needs to be outside the 'extern "C"'
+
+extern "C" {
 
 /* This function compute the mean and sd within a sliding window.
    given one set of position and an according set of values and 
