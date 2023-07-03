@@ -1,7 +1,7 @@
 Package: Ringo
 Type: Package
 Title: R Investigation of ChIP-chip Oligoarrays
-Version: 1.65.0
+Version: 1.65.1
 Date: 2016-03-07
 Author: Joern Toedling, Oleg Sklyar, Tammo Krueger, Matt Ritchie, Wolfgang Huber
 Maintainer: J. Toedling <jtoedling@yahoo.de>
@@ -27,3 +27,4 @@ Reference: Joern Toedling, Oleg Sklyar, Tammo Krueger, Jenny J. Fischer,
 License: Artistic-2.0
 biocViews: Microarray,TwoChannel,DataImport,QualityControl,Preprocessing
 LazyLoad: yes
+PackageStatus: Deprecated
